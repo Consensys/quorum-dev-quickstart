@@ -1,0 +1,67 @@
+server {
+    listen       80;
+    server_name  localhost;
+
+    #charset koi8-r;
+    #access_log  /var/log/nginx/host.access.log  main;
+
+    # a common HTTP RPC entrypoint mainly for the explorer service
+    location /jsonrpc {
+        rewrite /jsonrpc/?(.*) /$1  break;
+        proxy_pass http://rpcnode:8545;
+        proxy_redirect     off;
+        proxy_set_header   Host $host;
+    }
+
+    # a common WS RPC entrypoint mainly for the explorer service
+    location /jsonws {
+        rewrite /jsonws/?(.*) /$1  break;
+        proxy_pass http://rpcnode:8546;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+    }
+
+    # a common HTTP GraphQL entrypoint
+    location /graphql {
+      proxy_pass http://rpcnode:8547;
+      proxy_redirect     off;
+      proxy_set_header   Host $host;
+    }
+
+    # a generic HTTP RPC entrypoint pointing to each available node
+    location ~* /(?<serviceName>(.*))/jsonrpc {
+      # Use Docker default local network DNS IP as resolver
+      resolver 127.0.0.11 ipv6=off;
+      rewrite /jsonrpc/?(.*) /$1  break;
+      proxy_pass http://${serviceName}:8545;
+      proxy_redirect     off;
+      proxy_set_header   Host $host;
+    }
+
+    # a generic WS RPC entrypoint pointing to each available node
+    location ~* /(?<serviceName>(.*))/jsonws {
+      # Use Docker default local network DNS IP as resolver
+      resolver 127.0.0.11 ipv6=off;
+      rewrite /jsonws/?(.*) /$1  break;
+      proxy_pass http://${serviceName}:8546;
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "Upgrade";
+    }
+
+    location / {
+      root   /usr/share/nginx/html;
+      try_files $uri /index.html;
+      index  index.html index.htm;
+    }
+
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+      root   /usr/share/nginx/html;
+    }
+}

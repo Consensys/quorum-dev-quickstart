@@ -1,0 +1,18 @@
+.idea/
+*.iml
+*.lock
+
+#ignore all the DB and temp files and folders created by besu
+/privacy/besu/data*/database
+/privacy/besu/data*/private*
+/privacy/besu/data*/uploads
+/privacy/besu/data*/besu.ports
+logs/
+/volumes/
+.DS_Store
+permissioning-smart-contracts/
+/config/besu/networkFiles/node*/data/
+/config/besu/networkFiles/validator*/data/
+/config/besu/networkFiles/bootnode/data/
+/config/besu/networkFiles/rpcnode/data/
+config/besu/ibft2GenesisPermissioning.json

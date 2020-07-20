@@ -1,0 +1,361 @@
+---
+version: '2.4'
+services:
+
+  orion1:
+    image: "pegasyseng/orion:develop"
+    environment:
+      - ORION_OTHERNODES=http://orion2:8080/,http://orion3:8080/
+      - ORION_NODEURL=http://orion1:8080
+      - ORION_CLIENTURL=http://orion1:8888
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: ["/config/orion.conf"]
+    volumes:
+      - ./config/orion/orion.conf:/config/orion.conf
+      - ./config/orion/networkFiles/orion1:/keys/
+      - ./logs/orion:/var/log/
+      - ./config/orion/log-config.xml:/config/log-config.xml
+    mem_limit: 1024m
+
+  orion2:
+    image: "pegasyseng/orion:develop"
+    environment:
+      - ORION_OTHERNODES=http://orion1:8080/,http://orion3:8080/
+      - ORION_NODEURL=http://orion2:8080
+      - ORION_CLIENTURL=http://orion2:8888
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: ["/config/orion.conf"]
+    volumes:
+      - ./config/orion/orion.conf:/config/orion.conf
+      - ./config/orion/networkFiles/orion2:/keys/
+      - ./logs/orion:/var/log/
+      - ./config/orion/log-config.xml:/config/log-config.xml
+    mem_limit: 1024m
+
+  orion3:
+    image: "pegasyseng/orion:develop"
+    environment:
+      - ORION_OTHERNODES=http://orion2:8080/,http://orion1:8080/
+      - ORION_NODEURL=http://orion3:8080
+      - ORION_CLIENTURL=http://orion3:8888
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: ["/config/orion.conf"]
+    volumes:
+      - ./config/orion/orion.conf:/config/orion.conf
+      - ./config/orion/networkFiles/orion3:/keys/
+      - ./logs/orion:/var/log/
+      - ./config/orion/log-config.xml:/config/log-config.xml
+    mem_limit: 1024m
+
+  bootnode:
+    build:
+      context: besu/.
+      args:
+        BESU_VERSION: ${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    entrypoint: /opt/besu/bootnode_start.sh
+    command: &base_options [
+      "--config-file=/config/config.toml",
+      "--genesis-file=/config/genesis.json",
+      "--node-private-key-file=/opt/besu/keys/key",
+      "--min-gas-price=0",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
+      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
+      "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED}" ]
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
+      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
+    mem_limit: 2048m
+
+  validator2:
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
+      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/validator2/keys:/opt/besu/keys
+    depends_on:
+      - bootnode
+    mem_limit: 2048m
+
+  validator3:
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
+      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/validator3/keys:/opt/besu/keys
+    depends_on:
+      - bootnode
+    mem_limit: 2048m
+
+  validator4:
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
+      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/validator4/keys:/opt/besu/keys
+    depends_on:
+      - bootnode
+    mem_limit: 2048m
+
+  rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
+      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
+    depends_on:
+      - bootnode
+    ports:
+      - 8545:8545/tcp
+    mem_limit: 2048m
+
+  ethsignerProxy:
+    image: pegasyseng/ethsigner:latest
+    command: [
+      "--chain-id=2018",
+      "--http-listen-host=0.0.0.0",
+      "--downstream-http-port=8545",
+      "--downstream-http-host=rpcnode",
+      "file-based-signer",
+      "-k",
+      "/opt/ethsigner/keyfile",
+      "-p",
+      "/opt/ethsigner/passwordfile"
+    ]
+    volumes:
+      - ./config/ethsigner/password:/opt/ethsigner/passwordfile
+      - ./config/ethsigner/key:/opt/ethsigner/keyfile
+    depends_on:
+      - bootnode
+      - rpcnode
+    ports:
+      - 18545:8545/tcp
+
+  node1:
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: [
+      "--config-file=/config/config.toml",
+      "--genesis-file=/config/genesis.json",
+      "--node-private-key-file=/opt/besu/keys/key",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
+      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
+      "--min-gas-price=0",
+      "--privacy-enabled",
+      "--privacy-url=http://orion1:8888",
+      "--privacy-public-key-file=/config/orion/orion.pub",
+      "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED}"]
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
+      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/node1/keys:/opt/besu/keys
+      - ./config/orion/networkFiles/orion1/nodeKey.pub:/config/orion/orion.pub
+    depends_on:
+      - bootnode
+      - orion1
+    ports:
+      - 20000:8545/tcp
+      - 20001:8546/tcp
+    mem_limit: 2048m
+
+  node2:
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: [
+      "--config-file=/config/config.toml",
+      "--genesis-file=/config/genesis.json",
+      "--node-private-key-file=/opt/besu/keys/key",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
+      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
+      "--min-gas-price=0",
+      "--privacy-enabled",
+      "--privacy-url=http://orion2:8888",
+      "--privacy-public-key-file=/config/orion/orion.pub",
+      "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED}"]
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
+      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/node2/keys:/opt/besu/keys
+      - ./config/orion/networkFiles/orion2/nodeKey.pub:/config/orion/orion.pub
+    depends_on:
+      - bootnode
+      - orion2
+    ports:
+      - 20002:8545/tcp
+      - 20003:8546/tcp
+    mem_limit: 2048m
+
+  node3:
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: [
+      "--config-file=/config/config.toml",
+      "--genesis-file=/config/genesis.json",
+      "--node-private-key-file=/opt/besu/keys/key",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
+      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
+      "--min-gas-price=0",
+      "--privacy-enabled",
+      "--privacy-url=http://orion3:8888",
+      "--privacy-public-key-file=/config/orion/orion.pub",
+      "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED}"]
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
+      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/node3/keys:/opt/besu/keys
+      - ./config/orion/networkFiles/orion3/nodeKey.pub:/config/orion/orion.pub
+    depends_on:
+      - bootnode
+      - orion3
+    ports:
+      - 20004:8545/tcp
+      - 20005:8546/tcp
+    mem_limit: 2048m
+
+  explorer:
+    build: block-explorer-light/.
+    image: sample-network/block-explorer-light:${BESU_VERSION}
+    depends_on:
+      - rpcnode
+    ports:
+      - 25000:80/tcp
+
+  prometheus:
+    image: "prom/prometheus"
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090/tcp
+
+  grafana:
+    image: "grafana/grafana"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+    volumes:
+      - ./config/grafana/provisioning/:/etc/grafana/provisioning/
+      - grafana:/var/lib/grafana
+    ports:
+      - 3000:3000/tcp
+
+  redis:
+    image: redis:alpine
+
+  elasticsearch:
+    build: ./elk/elasticsearch
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "http.host=0.0.0.0"
+      - "transport.host=127.0.0.1"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    mem_limit: 2048m
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.6.1
+    environment:
+      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+      XPACK_MONITORING_ENABLED: "true"
+      XPACK_MONITORING_COLLECTION_ENABLED: "true"
+      SERVER_NAME: "localhost"
+    depends_on:
+      - elasticsearch
+    links:
+      - elasticsearch
+    ports:
+      - 5601:5601/tcp
+
+  logstash:
+    build: ./elk/logstash
+    environment:
+      - ES_HOST=http://elasticsearch:9200
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+      - elasticsearch
+    links:
+      - redis
+      - elasticsearch
+
+  filebeat:
+    build: ./elk/filebeat
+    environment:
+      - ENV_NAME=dev
+      - IP_ADDRESS=127.0.0.1
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    links:
+      - redis
+    volumes:
+      - ./logs/besu/:/var/log/besu/
+      - ./logs/orion/:/var/log/orion/
+
+volumes:
+  public-keys:
+
+  prometheus:
+
+  grafana:
