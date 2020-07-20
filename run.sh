@@ -42,16 +42,16 @@ while getopts "hc:p:" o; do
       algo=${OPTARG}
       case "${algo}" in
         ibft2)
-          export QS_BESU_CONS_API="IBFT"
+          export BESU_CONS_API="IBFT"
           ;;
         clique)
-          export QS_BESU_CONS_API="CLIQUE"
+          export BESU_CONS_API="CLIQUE"
           ;;
         *)
           echo "Error: Unsupported consensus value." >&2
           displayUsage
       esac
-      export QS_POA_ALGO="${algo}"
+      export BESU_CONS_ALGO="${algo}"
       LOCK_FILE=.sampleNetworks.lock
       QS_VERSION=$BESU_VERSION
       ;;

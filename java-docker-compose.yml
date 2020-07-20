@@ -16,14 +16,14 @@ services:
       "--config-file=/config/config.toml",
       "--genesis-file=/config/genesis.json",
       "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,${QS_BESU_CONS_API}",
-      "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,${QS_BESU_CONS_API}"]
+      "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,${BESU_CONS_API}",
+      "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,${BESU_CONS_API}"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
 
   validator2:
@@ -37,7 +37,7 @@ services:
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator2/keys:/opt/besu/keys
     depends_on:
       - bootnode
@@ -53,7 +53,7 @@ services:
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator3/keys:/opt/besu/keys
     depends_on:
       - bootnode
@@ -69,7 +69,7 @@ services:
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator4/keys:/opt/besu/keys
     depends_on:
       - bootnode
@@ -85,7 +85,7 @@ services:
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
     depends_on:
       - bootnode

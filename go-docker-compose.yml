@@ -1,0 +1,196 @@
+---
+version: '3.4'
+services:
+
+  bootnode:
+    build:
+      context: quorum
+      args:
+        QUORUM_VERSION: ${QUORUM_VERSION}
+    image: sample-network/quorum:${QUORUM_VERSION}
+    ports:
+      - "22000:8545"
+    environment:
+      - NODE_ID=1
+      - PRIVATE_CONFIG=ignore
+    entrypoint: >
+      /bin/sh -c
+      "
+      geth --datadir=/data init /config/genesis.json;
+
+      geth
+#      --nodekey=/config/keys/nodekey
+      --identity=node${NODE_ID}-${QUORUM_CONSENSUS:-istanbul}
+      --verbosity=5
+      --networkid ${QUORUM_NETWORK_ID}
+      --rpc
+      --rpccorsdomain "*"
+      --rpcvhosts "*"
+      --rpcaddr 0.0.0.0
+      --rpcport 8545
+      --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONSENSUS:-istanbul}
+      --port 21000
+      --unlock 0
+      --allow-insecure-unlock
+      --nousb
+      --emitcheckpoints --istanbul.blockperiod 1 --mine --minerthreads 1 --syncmode full"
+    volumes:
+#      -  vol1:/data
+      - ./config/quorum/config.toml:/config/config.toml
+      - ./logs/geth:/var/log/
+      - ./config/quorum/${QUORUM_CONS_ALGO}Genesis.json:/config/genesis.json
+      - ./config/quorum/networkFiles/bootnode:/config/keys
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.11
+#
+#  validator2:
+#    image: sample-network/quorum:${QUORUM_VERSION}
+#    ports:
+#      - "22001:8545"
+#    environment:
+#      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+#      - NODE_ID=2
+#    entrypoint: >
+#      /bin/sh -c
+#      "
+#      geth --datadir /data init /config/genesis.json;
+#
+#      geth
+#      --nodekey=/config/keys/nodekey
+#      --identity node$${NODE_ID}-${QUORUM_CONSENSUS:-istanbul} \
+#      --datadir /data \
+#      --verbosity 5 \
+#      --networkid ${QUORUM_NETWORK_ID} \
+#      --rpc --rpccorsdomain "*" --rpcvhosts "*" --rpcaddr 0.0.0.0 --rpcport 8545 \
+#      --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONSENSUS:-istanbul} \
+#      --port 21000 \
+#      --unlock 0 --allow-insecure-unlock \
+#      --nousb \
+#      --emitcheckpoints --istanbul.blockperiod 1 --mine --minerthreads 1 --syncmode full \
+#      ${QUORUM_GETH_ARGS:-}"
+#    volumes:
+#      -  vol2:/data
+#      - ./config/quorum/config.toml:/config/config.toml
+#      - ./logs/geth:/var/log/
+#      - ./config/quorum/${QUORUM_CONS_ALGO}Genesis.json:/config/genesis.json
+#      - ./config/quorum/networkFiles/validator2:/config/keys
+#    networks:
+#      quorum-examples-net:
+#        ipv4_address: 172.16.239.12
+#
+#
+#  validator3:
+#    image: sample-network/quorum:${QUORUM_VERSION}
+#    ports:
+#      - "22002:8545"
+#    environment:
+#      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+#      - NODE_ID=3
+#    entrypoint: >
+#      /bin/sh -c
+#      "
+#      geth --datadir /data init /config/genesis.json;
+#
+#      geth
+#      --nodekey=/config/keys/nodekey
+#      --identity node$${NODE_ID}-${QUORUM_CONSENSUS:-istanbul} \
+#      --datadir /data \
+#      --verbosity 5 \
+#      --networkid ${QUORUM_NETWORK_ID} \
+#      --rpc --rpccorsdomain "*" --rpcvhosts "*" --rpcaddr 0.0.0.0 --rpcport 8545 \
+#      --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONSENSUS:-istanbul} \
+#      --port 21000 \
+#      --unlock 0 --allow-insecure-unlock \
+#      --nousb \
+#      --emitcheckpoints --istanbul.blockperiod 1 --mine --minerthreads 1 --syncmode full \
+#      ${QUORUM_GETH_ARGS:-}"
+#    volumes:
+#      -  vol3:/data
+#      - ./config/quorum/config.toml:/config/config.toml
+#      - ./logs/geth:/var/log/
+#      - ./config/quorum/${QUORUM_CONS_ALGO}Genesis.json:/config/genesis.json
+#      - ./config/quorum/networkFiles/validator3:/config/keys
+#    networks:
+#      quorum-examples-net:
+#        ipv4_address: 172.16.239.13
+#
+#  validator4:
+#    image: sample-network/quorum:${QUORUM_VERSION}
+#    ports:
+#      - "22003:8545"
+#    environment:
+#      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+#      - NODE_ID=4
+#    entrypoint: >
+#      /bin/sh -c
+#      "
+#      geth --datadir /data init /config/genesis.json;
+#
+#      geth
+#      --nodekey=/config/keys/nodekey
+#      --identity node$${NODE_ID}-${QUORUM_CONSENSUS:-istanbul} \
+#      --datadir /data \
+#      --verbosity 5 \
+#      --networkid ${QUORUM_NETWORK_ID} \
+#      --rpc --rpccorsdomain "*" --rpcvhosts "*" --rpcaddr 0.0.0.0 --rpcport 8545 \
+#      --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONSENSUS:-istanbul} \
+#      --port 21000 \
+#      --unlock 0 --allow-insecure-unlock \
+#      --nousb \
+#      --emitcheckpoints --istanbul.blockperiod 1 --mine --minerthreads 1 --syncmode full "
+#
+#    volumes:
+#      -  vol3:/data
+#      - ./config/quorum/config.toml:/config/config.toml
+#      - ./logs/geth:/var/log/
+#      - ./config/quorum/${QUORUM_CONS_ALGO}Genesis.json:/config/genesis.json
+#      - ./config/quorum/networkFiles/validator4:/config/keys
+#    networks:
+#      quorum-examples-net:
+#        ipv4_address: 172.16.239.14
+
+#  rpcnode:
+#    << : *quorum-def
+#    hostname: node5
+#    ports:
+#      - "22004:8545"
+#    volumes:
+#      - vol5:/qdata
+#      - ./examples/7nodes:/examples:ro
+#    environment:
+#      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+#      - NODE_ID=5
+#    networks:
+#      quorum-examples-net:
+#        ipv4_address: 172.16.239.15
+#
+#  cakeshop:
+#    << : *cakeshop-def
+#    hostname: cakeshop
+#    ports:
+#      - "8999:8999"
+#    volumes:
+#      - cakeshopvol:/qdata
+#      - ./examples/7nodes:/examples:ro
+#    networks:
+#      quorum-examples-net:
+#        ipv4_address: 172.16.239.186
+
+networks:
+  quorum-examples-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.16.239.0/24
+
+volumes:
+  "vol1":
+  "vol2":
+  "vol3":
+  "vol4":
+  "vol5":
+  "vol6":
+  "vol7":
+  "cakeshopvol":

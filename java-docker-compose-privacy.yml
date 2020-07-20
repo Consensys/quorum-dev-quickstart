@@ -62,15 +62,15 @@ services:
       "--genesis-file=/config/genesis.json",
       "--node-private-key-file=/opt/besu/keys/key",
       "--min-gas-price=0",
-      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
-      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${BESU_CONS_API}",
+      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${BESU_CONS_API}",
       "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED}" ]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
     mem_limit: 2048m
 
@@ -85,7 +85,7 @@ services:
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator2/keys:/opt/besu/keys
     depends_on:
       - bootnode
@@ -102,7 +102,7 @@ services:
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator3/keys:/opt/besu/keys
     depends_on:
       - bootnode
@@ -119,7 +119,7 @@ services:
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator4/keys:/opt/besu/keys
     depends_on:
       - bootnode
@@ -136,7 +136,7 @@ services:
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
     depends_on:
       - bootnode
@@ -175,8 +175,8 @@ services:
       "--config-file=/config/config.toml",
       "--genesis-file=/config/genesis.json",
       "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
-      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${BESU_CONS_API}",
+      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${BESU_CONS_API}",
       "--min-gas-price=0",
       "--privacy-enabled",
       "--privacy-url=http://orion1:8888",
@@ -187,7 +187,7 @@ services:
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/node1/keys:/opt/besu/keys
       - ./config/orion/networkFiles/orion1/nodeKey.pub:/config/orion/orion.pub
     depends_on:
@@ -207,8 +207,8 @@ services:
       "--config-file=/config/config.toml",
       "--genesis-file=/config/genesis.json",
       "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
-      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${BESU_CONS_API}",
+      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${BESU_CONS_API}",
       "--min-gas-price=0",
       "--privacy-enabled",
       "--privacy-url=http://orion2:8888",
@@ -219,7 +219,7 @@ services:
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/node2/keys:/opt/besu/keys
       - ./config/orion/networkFiles/orion2/nodeKey.pub:/config/orion/orion.pub
     depends_on:
@@ -239,8 +239,8 @@ services:
       "--config-file=/config/config.toml",
       "--genesis-file=/config/genesis.json",
       "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
-      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${QS_BESU_CONS_API}",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${BESU_CONS_API}",
+      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${BESU_CONS_API}",
       "--min-gas-price=0",
       "--privacy-enabled",
       "--privacy-url=http://orion3:8888",
@@ -251,7 +251,7 @@ services:
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${QS_POA_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/node3/keys:/opt/besu/keys
       - ./config/orion/networkFiles/orion3/nodeKey.pub:/config/orion/orion.pub
     depends_on:
