@@ -1,8 +1,8 @@
-import { questions } from "./questions";
+import { rootQuestion } from "./questions";
 import { QuestionRenderer } from "./questionRenderer";
 
 async function main() {
-    const qr = new QuestionRenderer(questions);
+    const qr = new QuestionRenderer(rootQuestion);
     const answers = await qr.render();
     const write = console;
     write.log(JSON.stringify(answers, null, 2));

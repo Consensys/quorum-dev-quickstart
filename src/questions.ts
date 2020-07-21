@@ -58,33 +58,46 @@ export interface QuestionOption {
     nextQuestion?: QuestionTree;
 }
 
-const _tacoBoutIt: QuestionTree = {
-    name: "tacoBoutIt",
-    prompt: "Go ahead and taco 'bout it!",
-    transformerValidator: (rawInput: any, answers: AnswerMap) => {
-        if (typeof rawInput !== 'string' || rawInput.length === 0) {
-            return _tacoBoutIt;
-        }
-
-        answers.tacoBoutIt = rawInput;
-        return;
-    }
-};
-
-const _monster: QuestionTree = {
-    name: "tacos",
-    prompt: `What about tacos?`,
+const _permissioningQuestion: QuestionTree = {
+    name: "permissioning",
+    prompt: "Do you wish to enable permissioning?",
     options: [
-        { label: "Yes", value: true, nextQuestion: _tacoBoutIt },
+        // TODO: fix these to the correct names
+        { label: "Yes", value: true },
         { label: "No", value: false }
     ]
 };
 
-export const questions: QuestionTree = {
-    prompt: `Do you like pizza?`,
-    name: `pizza`,
+const _privacyQuestion: QuestionTree = {
+    name: "privacy",
+    prompt: "Do you wish to enable privacy?",
     options: [
-        { label: "Yes", value: true },
-        { label: "No", value: false, nextQuestion: _monster }
+        // TODO: fix these to the correct names
+        { label: "Yes", value: true, nextQuestion: _permissioningQuestion },
+        { label: "No", value: false, nextQuestion: _permissioningQuestion }
+    ]
+};
+
+const _nodeCountQuestion: QuestionTree = {
+    name: "nodeCount",
+    prompt: "How many validator nodes do you wish to run? Answer must be between 4 and 7.",
+    transformerValidator: (rawInput: any, answers: AnswerMap) => {
+        const result = parseInt(rawInput, 10);
+        if (result >= 4 && result <= 7) {
+            answers.nodeCount = result;
+            return _privacyQuestion;
+        } else {
+            return _nodeCountQuestion;
+        }
+    }
+};
+
+export const rootQuestion: QuestionTree = {
+    name: "clientType",
+    prompt: "Which type of client would you like to run?",
+    options: [
+        // TODO: fix these to the correct names
+        { label: "Go Quorum", value: "gquorum", nextQuestion: _nodeCountQuestion },
+        { label: "Java Quorum", value: "jquorum", nextQuestion: _nodeCountQuestion }
     ]
 };
