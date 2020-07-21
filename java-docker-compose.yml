@@ -1,23 +1,31 @@
 ---
-version: '3.4'
+version: '3.6'
+
+x-besu-def:
+  &besu-def
+  restart: "on-failure"
+  image: sample-network/besu:${BESU_VERSION}
+  entrypoint: /opt/besu/node_start.sh
+  command: [
+    "--config-file=/config/config.toml",
+    "--genesis-file=/config/genesis.json",
+    "--node-private-key-file=/opt/besu/keys/key",
+    "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,${BESU_CONS_API}",
+    "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,${BESU_CONS_API}"]
+
+
 services:
 
   bootnode:
+    << : *besu-def
     build:
       context: besu
       args:
         BESU_VERSION: ${BESU_VERSION}
-    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     entrypoint: /opt/besu/bootnode_start.sh
-    command: &base_options [
-      "--config-file=/config/config.toml",
-      "--genesis-file=/config/genesis.json",
-      "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,${BESU_CONS_API}",
-      "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,${BESU_CONS_API}"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
@@ -27,11 +35,10 @@ services:
       - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
 
   validator2:
-    image: sample-network/besu:${BESU_VERSION}
+    << : *besu-def
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    command: *base_options
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
@@ -43,11 +50,10 @@ services:
       - bootnode
 
   validator3:
-    image: sample-network/besu:${BESU_VERSION}
+    << : *besu-def
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    command: *base_options
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
@@ -59,11 +65,10 @@ services:
       - bootnode
 
   validator4:
-    image: sample-network/besu:${BESU_VERSION}
+    << : *besu-def
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    command: *base_options
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
@@ -75,11 +80,10 @@ services:
       - bootnode
 
   rpcnode:
-    image: sample-network/besu:${BESU_VERSION}
+    << : *besu-def
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    command: *base_options
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
@@ -141,67 +145,6 @@ services:
       - grafana:/var/lib/grafana
     ports:
       - 3000:3000/tcp
-
-  redis:
-    image: redis:alpine
-
-  elasticsearch:
-    build: ./elk/lasticsearch
-    environment:
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "http.host=0.0.0.0"
-      - "transport.host=127.0.0.1"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
-    cap_add:
-      - IPC_LOCK
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.8.0
-    environment:
-      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
-      XPACK_MONITORING_ENABLED: "true"
-      XPACK_MONITORING_COLLECTION_ENABLED: "true"
-      SERVER_NAME: "localhost"
-    depends_on:
-      - elasticsearch
-    links:
-      - elasticsearch
-    ports:
-      - 5601:5601/tcp
-
-  logstash:
-    build: ./elk/logstash
-    environment:
-      - ES_HOST=http://elasticsearch:9200
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    depends_on:
-      - redis
-      - elasticsearch
-    links:
-      - redis
-      - elasticsearch
-
-  filebeat:
-    build: ./elk/filebeat
-    environment:
-      - ENV_NAME=dev
-      - IP_ADDRESS=127.0.0.1
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    depends_on:
-      - redis
-    links:
-      - redis
-    volumes:
-      - ./logs/besu/:/var/log/besu/
 
 
 

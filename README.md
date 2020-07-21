@@ -25,7 +25,9 @@ To run these tutorials, you must have the following installed:
 `./run.sh -c clique` defaults to ibft2
 `./run.sh -p onchain` privacy
 
-
+### Geth based Quorum:
+source .env && PRIVATE_CONFIG=ignore docker-compose -f go-docker-compose.yml up
+source .env && PRIVATE_CONFIG=ignore docker-compose -f go-docker-compose-permissioning.yml up
 
 
 

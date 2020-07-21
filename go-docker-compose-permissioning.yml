@@ -14,7 +14,7 @@ x-quorum-def:
     /bin/sh -c
     "
     mkdir /data;
-    cp /quorum/disallowed-nodes.json /quorum/static-nodes.json /data/ ;
+    cp -r /quorum/* /data;
     geth --datadir=/data init /config/genesis.json;
     cp /config/keys/accountkey /data/keystore/key;
     cp /config/keys/nodekey /data/geth/nodekey;
@@ -22,6 +22,7 @@ x-quorum-def:
     geth
     --datadir /data
     --nodiscover
+    --permissioned
     --verbosity 5
     --istanbul.blockperiod 5 --mine --minerthreads 1 --emitcheckpoints
     --syncmode full --nousb
