@@ -1,6 +1,10 @@
 .idea/
 *.iml
 *.lock
+node_modules
+.vscode
+build
+yarn-error.log
 
 #ignore all the DB and temp files and folders created by besu
 /privacy/besu/data*/database
