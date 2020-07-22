@@ -58,14 +58,28 @@ export interface QuestionOption {
     nextQuestion?: QuestionTree;
 }
 
+const _outputDirQuestion: QuestionTree = {
+    name: "outputPath",
+    prompt: "Where should we create the config files for this network? Please choose either an empty directory, or a path to a new directory that does not yet exist. Default: ./quorum-test-network",
+    transformerValidator: (rawInput: string, answers: AnswerMap) => {
+        // TODO: add some more checks to make sure that the path is valid
+        if (rawInput) {
+            answers.outputPath = rawInput;
+            return undefined;
+        } else {
+            return _outputDirQuestion;
+        }
+    }
+};
+
 const _privacyQuestion: QuestionTree = {
     name: "privacy",
     prompt: "Do you wish to enable support for private transactions? [Y/n]",
 };
 // have to add this below the definition because of the self reference..
-_privacyQuestion.transformerValidator = _getYesNoValidator(_privacyQuestion, undefined, "y");
+_privacyQuestion.transformerValidator = _getYesNoValidator(_privacyQuestion, _outputDirQuestion, "y");
 
-const _nodeCountQuestion: QuestionTree = {
+/* const _nodeCountQuestion: QuestionTree = {
     name: "nodeCount",
     prompt: "How many nodes do you wish to run? Answer must be between 4 and 7.",
     transformerValidator: (rawInput: any, answers: AnswerMap) => {
@@ -77,15 +91,15 @@ const _nodeCountQuestion: QuestionTree = {
             return _nodeCountQuestion;
         }
     }
-};
+};*/
 
 export const rootQuestion: QuestionTree = {
     name: "clientType",
     prompt: "Which type of client would you like to run?",
     options: [
         // TODO: fix these to the correct names
-        { label: "Go-based Quorum", value: "gquorum", nextQuestion: _nodeCountQuestion },
-        { label: "Besu-based Quorum", value: "besu", nextQuestion: _nodeCountQuestion }
+        { label: "Go-based Quorum", value: "gquorum", nextQuestion: _privacyQuestion },
+        { label: "Besu-based Quorum", value: "besu", nextQuestion: _privacyQuestion }
     ]
 };
 

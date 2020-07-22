@@ -1,11 +1,11 @@
 import { rootQuestion } from "./questions";
 import { QuestionRenderer } from "./questionRenderer";
+import { buildNetwork, NetworkContext } from "./networkBuilder";
 
 async function main() {
     const qr = new QuestionRenderer(rootQuestion);
     const answers = await qr.render();
-    const write = console;
-    write.log(JSON.stringify(answers, null, 2));
+    buildNetwork(answers as NetworkContext);
 }
 
 if (require.main === module) {
