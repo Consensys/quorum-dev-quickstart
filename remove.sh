@@ -29,8 +29,8 @@ echo "Stop and remove network..."
 docker-compose ${composeFile} down -v
 docker-compose ${composeFile} rm -sfv
 
-docker image rm quorum-dev-quickstart/besu:${version}
-docker image rm quorum-dev-quickstart/block-explorer-light:${version}
+docker image rm quorum-dev-quickstart/besu:${BESU_VERSION}
+docker image rm quorum-dev-quickstart/block-explorer-light:develop
 docker image rm pegasyseng/orion:develop
 docker image rm hyperledger/besu:${BESU_VERSION}
 docker image rm quorumengineering/quorum:${QUORUM_VERSION}

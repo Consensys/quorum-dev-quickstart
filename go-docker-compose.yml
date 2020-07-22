@@ -4,7 +4,7 @@ version: '3.6'
 x-quorum-def:
   &quorum-def
   restart: "on-failure"
-  image: quorumengineering/quorum:${QUORUM_VERSION}
+  image: quorumengineering/quorum:${QUORUM_VERSION:-2.7.0}
   expose:
     - 30303
     - 8545
@@ -16,28 +16,53 @@ x-quorum-def:
     timeout: 3s
     retries: 10
     start_period: 5s
-  entrypoint: >
-    /bin/sh -c
-    "
-    mkdir /data;
-    cp -r /quorum/* /data;
-    geth --datadir=/data init /config/genesis.json;
-    cp /config/keys/accountkey /data/keystore/key;
-    cp /config/keys/nodekey /data/geth/nodekey;
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      mkdir /data;
+      cp -r /quorum/* /data;
+      geth --datadir=/data init /config/genesis.json;
+      cp /config/keys/accountkey /data/keystore/key;
+      cp /config/keys/nodekey /data/geth/nodekey;
+      geth \
+      --datadir /data \
+      --nodiscover \
+      --permissioned \
+      --verbosity 5 \
+      --istanbul.blockperiod 5 --mine --minerthreads 1 --emitcheckpoints \
+      --syncmode full --nousb \
+      --networkid ${QUORUM_NETWORK_ID:-10} \
+      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONS_ALGO:-istanbul} \
+      --port 30303 \
+      --identity node${NODE_ID}-${QUORUM_CONS_ALGO:-istanbul} \
+      --unlock 0 \
+      --allow-insecure-unlock \
+      --password /config/passwords.txt
+      ;
 
-    geth
-    --datadir /data
-    --nodiscover
-    --permissioned
-    --verbosity 5
-    --istanbul.blockperiod 5 --mine --minerthreads 1 --emitcheckpoints
-    --syncmode full --nousb
-    --networkid ${QUORUM_NETWORK_ID:-10}
-    --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONS_ALGO:-istanbul}
-    --port 30303
-    --identity node${NODE_ID}-${QUORUM_CONS_ALGO:-istanbul}
-    --password /config/passwords.txt ;
-    "
+x-cakeshop-def:
+  &cakeshop-def
+  image: quorumengineering/cakeshop:0.11.0
+  expose:
+    - 8999
+  restart: "no"
+  healthcheck:
+    test: ["CMD", "wget", "--spider", "--proxy=off", "http://localhost:8999/actuator/health"]
+    interval: 5s
+    timeout: 5s
+    retries: 20
+    start_period: 5s
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      rm -rf /data/cakeshop/local
+      mkdir -p /data/cakeshop/local
+      cp /quorum/application.properties /data/cakeshop/local/application.properties
+      cp /quorum/5nodes_quorum_docker.json /data/cakeshop/local/5nodes.json
+      java -Xms128M -Xmx128M -Dcakeshop.config.dir=/data/cakeshop -Dlogging.path=/data/logs/cakeshop -jar /opt/cakeshop/cakeshop.war
+      ;
 
 services:
 
@@ -133,7 +158,7 @@ services:
 
   explorer:
     build: block-explorer-light
-    image: quorum-dev-quickstart/block-explorer-light:${QUORUM_VERSION}
+    image: quorum-dev-quickstart/block-explorer-light:develop
     depends_on:
       - rpcnode
     ports:
@@ -141,6 +166,18 @@ services:
     networks:
       quorum-examples-net:
         ipv4_address: 172.16.239.30
+
+  cakeshop:
+    << : *cakeshop-def
+    hostname: cakeshop
+    ports:
+      - "8999:8999"
+    volumes:
+      - cakeshop:/data
+      - ./config/cakeshop:/quorum
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.34
 
 networks:
   quorum-examples-net:
@@ -152,4 +189,4 @@ networks:
 
 volumes:
 
-  "cakeshopvol":
+  cakeshop:

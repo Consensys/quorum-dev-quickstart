@@ -20,26 +20,15 @@ HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}
 
 # Displays links to exposed services
 echo "${bold}*************************************"
-echo "Sample Network for Besu at ${version}"
+echo "Quorum Dev Quickstart "
 echo "*************************************${normal}"
 echo "List endpoints and services"
 echo "----------------------------------"
-
-# Displays services list with port mapping
-composeFile=$(head -n 1 $LOCK_FILE)
-docker-compose $composeFile ps
-
+echo "JSON-RPC HTTP service endpoint      : http://${HOST}:8545"
+echo "JSON-RPC WebSocket service endpoint : ws://${HOST}:8546"
+echo "GraphQL HTTP service endpoint       : http://${HOST}:8547"
+echo "Web block explorer address          : http://${HOST}:25000/"
+echo "Prometheus address                  : http://${HOST}:9090/graph"
+echo "Grafana address                     : http://${HOST}:3000/d/XE4V0WGZz/besu-overview?orgId=1&refresh=10s&from=now-30m&to=now&var-system=All"
 echo "****************************************************************"
-if [ ${#dots} -gt ${maxRetryCount} ]; then
-  echo "ERROR: Web block explorer is not started at http://${HOST}:${explorerPort} !"
-  echo "****************************************************************"
-else
-  echo "JSON-RPC HTTP service endpoint      : http://${HOST}:8545"
-  echo "JSON-RPC WebSocket service endpoint : ws://${HOST}:8546"
-  echo "GraphQL HTTP service endpoint       : http://${HOST}:8547"
-  echo "Web block explorer address          : http://${HOST}:25000/"
-  echo "Prometheus address                  : http://${HOST}:9090/graph"
-  echo "Grafana address                     : http://${HOST}:3000/d/XE4V0WGZz/besu-overview?orgId=1&refresh=10s&from=now-30m&to=now&var-system=All"
-  echo "****************************************************************"
-fi
 

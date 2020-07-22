@@ -13,8 +13,32 @@ x-besu-def:
     "--genesis-file=/config/genesis.json",
     "--node-private-key-file=/opt/besu/keys/key",
     "--min-gas-price=0",
-    "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PERM,${BESU_CONS_API:-ibft}",
-    "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PERM,${BESU_CONS_API:-ibft}"]
+    "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PERM,TXPOOL,MINER,${BESU_CONS_API:-ibft}",
+    "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PERM,TXPOOL,MINER,${BESU_CONS_API:-ibft}"]
+
+x-cakeshop-def:
+  &cakeshop-def
+  image: quorumengineering/cakeshop:0.11.0
+  expose:
+    - 8999
+  restart: "no"
+  healthcheck:
+    test: ["CMD", "wget", "--spider", "--proxy=off", "http://localhost:8999/actuator/health"]
+    interval: 5s
+    timeout: 5s
+    retries: 20
+    start_period: 5s
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      rm -rf /data/cakeshop/local
+      mkdir -p /data/cakeshop/local
+      cp /quorum/application.properties /data/cakeshop/local/application.properties
+      cp /quorum/5nodes_besu_docker.json /data/cakeshop/local/5nodes.json
+      java -Xms128M -Xmx128M -Dcakeshop.config.dir=/data/cakeshop -Dlogging.path=/data/logs/cakeshop -jar /opt/cakeshop/cakeshop.war
+      ;;
+
 
 services:
 
@@ -34,7 +58,7 @@ services:
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
     networks:
-      sample:
+      quorum-examples-net:
         ipv4_address: 172.16.239.11
 
   validator2:
@@ -50,7 +74,7 @@ services:
     depends_on:
       - bootnode
     networks:
-      sample:
+      quorum-examples-net:
         ipv4_address: 172.16.239.12
 
   validator3:
@@ -66,7 +90,7 @@ services:
     depends_on:
       - bootnode
     networks:
-      sample:
+      quorum-examples-net:
         ipv4_address: 172.16.239.13
 
   validator4:
@@ -82,7 +106,7 @@ services:
     depends_on:
       - bootnode
     networks:
-      sample:
+      quorum-examples-net:
         ipv4_address: 172.16.239.14
 
   rpcnode:
@@ -100,7 +124,7 @@ services:
     ports:
       - 8545:8545/tcp
     networks:
-      sample:
+      quorum-examples-net:
         ipv4_address: 172.16.239.15
 
   ethsignerProxy:
@@ -125,18 +149,18 @@ services:
     ports:
       - 18545:8545/tcp
     networks:
-      sample:
+      quorum-examples-net:
         ipv4_address: 172.16.239.21
 
   explorer:
     build: block-explorer-light
-    image: quorum-dev-quickstart/block-explorer-light:${BESU_VERSION:-latest}
+    image: quorum-dev-quickstart/block-explorer-light:develop
     depends_on:
       - rpcnode
     ports:
       - 25000:80/tcp
     networks:
-      sample:
+      quorum-examples-net:
         ipv4_address: 172.16.239.31
 
   prometheus:
@@ -149,7 +173,7 @@ services:
     ports:
       - 9090:9090/tcp
     networks:
-      sample:
+      quorum-examples-net:
         ipv4_address: 172.16.239.32
 
   grafana:
@@ -162,9 +186,20 @@ services:
     ports:
       - 3000:3000/tcp
     networks:
-      sample:
+      quorum-examples-net:
         ipv4_address: 172.16.239.33
 
+  cakeshop:
+    << : *cakeshop-def
+    hostname: cakeshop
+    ports:
+      - "8999:8999"
+    volumes:
+      - cakeshop:/data
+      - ./config/cakeshop:/quorum
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.50
 
 volumes:
   public-keys:
@@ -173,8 +208,10 @@ volumes:
 
   grafana:
 
+  cakeshop:
+
 networks:
-  sample:
+  quorum-examples-net:
     driver: bridge
     ipam:
       config:

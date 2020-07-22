@@ -1,0 +1,42 @@
+[
+  {
+    "name": "validator1",
+    "rpcUrl": "http://validator1:8545",
+    "transactionManagerUrl": ""
+  },
+  {
+    "name": "validator2",
+    "rpcUrl": "http://validator2:8545",
+    "transactionManagerUrl": ""
+  },
+  {
+    "name": "validator3",
+    "rpcUrl": "http://validator3:8545",
+    "transactionManagerUrl": ""
+  },
+  {
+    "name": "validator4",
+    "rpcUrl": "http://validator4:8545",
+    "transactionManagerUrl": ""
+  },
+  {
+    "name": "rpcnode",
+    "rpcUrl": "http://rpcnode:8545",
+    "transactionManagerUrl": "http://tessera5:9080"
+  },
+  {
+    "name": "node1",
+    "rpcUrl": "http://node1:8545",
+    "transactionManagerUrl": "http://orion1:8080"
+  },
+  {
+    "name": "node2",
+    "rpcUrl": "http://node2:8545",
+    "transactionManagerUrl": "http://orion2:8080"
+  },
+  {
+  "name": "node3",
+  "rpcUrl": "http://node3:8545",
+  "transactionManagerUrl": "http://orion3:8080"
+  }
+]

@@ -282,7 +282,7 @@ services:
 
   explorer:
     build: block-explorer-light/.
-    image: quorum-dev-quickstart/block-explorer-light:${BESU_VERSION:-latest}
+    image: quorum-dev-quickstart/block-explorer-light:develop
     depends_on:
       - rpcnode
     ports:
@@ -317,12 +317,26 @@ services:
       sample:
         ipv4_address: 172.16.239.33
 
+  cakeshop:
+    << : *cakeshop-def
+    hostname: cakeshop
+    ports:
+      - "8999:8999"
+    volumes:
+      - cakeshop:/data
+      - ./config/cakeshop:/quorum
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.34
+
 volumes:
   public-keys:
 
   prometheus:
 
   grafana:
+
+  cakeshop:
 
 networks:
   sample:
