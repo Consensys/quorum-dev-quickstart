@@ -1,5 +1,5 @@
 ---
-version: '2.4'
+version: '3.6'
 
 x-besu-def:
   &besu-def
@@ -13,19 +13,44 @@ x-besu-def:
     "--genesis-file=/config/genesis.json",
     "--node-private-key-file=/opt/besu/keys/key",
     "--min-gas-price=0",
-    "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-ibft}",
-    "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-ibft}",
-    "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false}" ]
+    "--rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-ibft}",
+    "--rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-ibft}"{% if privacy %},
+    "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false}"{% endif %} ]
   mem_limit: 2048m
 
+x-cakeshop-def:
+  &cakeshop-def
+  image: quorumengineering/cakeshop:0.11.0
+  expose:
+    - 8999
+  restart: "no"
+  healthcheck:
+    test: ["CMD", "wget", "--spider", "--proxy=off", "http://localhost:8999/actuator/health"]
+    interval: 5s
+    timeout: 5s
+    retries: 20
+    start_period: 5s
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      rm -rf /data/cakeshop/local
+      mkdir -p /data/cakeshop/local
+      cp /quorum/application.properties /data/cakeshop/local/application.properties
+      cp /quorum/5nodes_besu_docker.json /data/cakeshop/local/5nodes.json
+      java -Xms128M -Xmx128M -Dcakeshop.config.dir=/data/cakeshop -Dlogging.path=/data/logs/cakeshop -jar /opt/cakeshop/cakeshop.war
+      ;;
+
+{% if privacy %}
 x-orion-def:
   &orion-def
   image: "pegasyseng/orion:develop"
   command: ["/config/orion.conf"]
   mem_limit: 1024m
-
+{% endif %}
 
 services:
+  {% if privacy %}
   orion1:
     << : *orion-def
     environment:
@@ -73,6 +98,7 @@ services:
     networks:
       sample:
         ipv4_address: 172.16.239.28
+{% endif %}
 
   bootnode:
     << : *besu-def
@@ -184,6 +210,7 @@ services:
       sample:
         ipv4_address: 172.16.239.20
 
+{% if privacy %}
   node1:
     << : *besu-def
     command: [
@@ -279,6 +306,7 @@ services:
     networks:
       sample:
         ipv4_address: 172.16.239.18
+{% endif %}
 
   explorer:
     build: block-explorer-light/.
