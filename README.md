@@ -27,7 +27,7 @@ To run these tutorials, you must have the following installed:
 
 ### Geth based Quorum:
 source .env && PRIVATE_CONFIG=ignore docker-compose -f go-docker-compose.yml up
-source .env && PRIVATE_CONFIG=ignore docker-compose -f go-docker-compose-permissioning.yml up
+source .env && PRIVATE_CONFIG=ignore docker-compose -f go-docker-compose-privacy.yml up
 
 
 

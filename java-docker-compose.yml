@@ -5,14 +5,17 @@ x-besu-def:
   &besu-def
   restart: "on-failure"
   image: sample-network/besu:${BESU_VERSION}
+  environment:
+    - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+    - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
   entrypoint: /opt/besu/node_start.sh
   command: [
     "--config-file=/config/config.toml",
     "--genesis-file=/config/genesis.json",
     "--node-private-key-file=/opt/besu/keys/key",
-    "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,${BESU_CONS_API}",
-    "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,${BESU_CONS_API}"]
-
+    "--min-gas-price=0",
+    "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PERM,${BESU_CONS_API}",
+    "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PERM,${BESU_CONS_API}"]
 
 services:
 
@@ -22,71 +25,73 @@ services:
       context: besu
       args:
         BESU_VERSION: ${BESU_VERSION}
-    environment:
-      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     entrypoint: /opt/besu/bootnode_start.sh
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
       - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
+    networks:
+      sample:
+        ipv4_address: 172.16.239.11
 
   validator2:
     << : *besu-def
-    environment:
-      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
       - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator2/keys:/opt/besu/keys
     depends_on:
       - bootnode
+    networks:
+      sample:
+        ipv4_address: 172.16.239.12
 
   validator3:
     << : *besu-def
-    environment:
-      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
       - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator3/keys:/opt/besu/keys
     depends_on:
       - bootnode
+    networks:
+      sample:
+        ipv4_address: 172.16.239.13
 
   validator4:
     << : *besu-def
-    environment:
-      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
       - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator4/keys:/opt/besu/keys
     depends_on:
       - bootnode
+    networks:
+      sample:
+        ipv4_address: 172.16.239.14
 
   rpcnode:
     << : *besu-def
-    environment:
-      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
       - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
@@ -95,6 +100,9 @@ services:
       - bootnode
     ports:
       - 8545:8545/tcp
+    networks:
+      sample:
+        ipv4_address: 172.16.239.15
 
   ethsignerProxy:
     image: pegasyseng/ethsigner:latest
@@ -117,6 +125,9 @@ services:
       - rpcnode
     ports:
       - 18545:8545/tcp
+    networks:
+      sample:
+        ipv4_address: 172.16.239.21
 
   explorer:
     build: block-explorer-light
@@ -125,6 +136,9 @@ services:
       - rpcnode
     ports:
       - 25000:80/tcp
+    networks:
+      sample:
+        ipv4_address: 172.16.239.31
 
   prometheus:
     image: "prom/prometheus"
@@ -135,6 +149,9 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
     ports:
       - 9090:9090/tcp
+    networks:
+      sample:
+        ipv4_address: 172.16.239.32
 
   grafana:
     image: "grafana/grafana"
@@ -145,7 +162,9 @@ services:
       - grafana:/var/lib/grafana
     ports:
       - 3000:3000/tcp
-
+    networks:
+      sample:
+        ipv4_address: 172.16.239.33
 
 
 volumes:
@@ -154,3 +173,10 @@ volumes:
   prometheus:
 
   grafana:
+
+networks:
+  sample:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.239.0/24
