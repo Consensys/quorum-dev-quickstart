@@ -309,7 +309,7 @@ services:
         ipv4_address: 172.16.239.15
 
   explorer:
-    build: block-explorer-light
+    build: images/block-explorer-light
     image: quorum-dev-quickstart/block-explorer-light:${QUORUM_VERSION}
     depends_on:
       - rpcnode

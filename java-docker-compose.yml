@@ -21,7 +21,7 @@ services:
   bootnode:
     << : *besu-def
     build:
-      context: besu
+      context: images/besu
       args:
         BESU_VERSION: ${BESU_VERSION}
     entrypoint: /opt/besu/bootnode_start.sh
@@ -129,7 +129,7 @@ services:
         ipv4_address: 172.16.239.21
 
   explorer:
-    build: block-explorer-light
+    build: images/block-explorer-light
     image: quorum-dev-quickstart/block-explorer-light:${BESU_VERSION:-latest}
     depends_on:
       - rpcnode

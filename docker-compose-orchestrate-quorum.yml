@@ -1,0 +1,58 @@
+version: '3.7'
+
+x-container-common: &container-common
+  restart: ${CONTAINER_RESTART-on-failure}
+  networks:
+    - orchestrate
+
+services:
+  geth:
+    <<: *container-common
+    image: quorumengineering/quorum:${QUORUM_VERSION:-2.7.0}
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        geth --datadir "/nodeData" init "/nodeData/genesis.json"
+        geth \
+        --rpc \
+        --rpcaddr "0.0.0.0" \
+        --rpcport "${GETH_RPC_PORT-8545}" \
+        --rpccorsdomain "*" \
+        --rpcvhosts "*" \
+        --datadir "/nodeData" \
+        --port "${GETH_PORT-30303}" \
+        --rpcapi "admin,eth,net,web3,personal,txpool" \
+        --networkid ${GETH_NETWORKID-888} \
+        --nodiscover \
+        --unlock "0" \
+        --password "/nodeData/password" \
+        --allow-insecure-unlock \
+        --mine \
+        --debug \
+        --ipcdisable \
+        --syncmode "full"
+    volumes:
+      - ./config/quorum/networkFiles/orchestrate/genesis.json:/nodeData/genesis.json
+      - ./config/quorum/networkFiles/orchestrate/keystore:/nodeData/keystore
+      - ./config/quorum/networkFiles/orchestrate/password:/nodeData/password
+      - chain-data:/nodeData/geth
+    ports:
+      - 8546:8545
+    networks:
+      - orchestrate
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--proxy", "off", "http://localhost:8545"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+volumes:
+  chain-data:
+    driver: local
+
+networks:
+  orchestrate:
+    external:
+      name: deps_orchestrate
