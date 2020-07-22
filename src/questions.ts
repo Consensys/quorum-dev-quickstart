@@ -65,10 +65,12 @@ const _outputDirQuestion: QuestionTree = {
         // TODO: add some more checks to make sure that the path is valid
         if (rawInput) {
             answers.outputPath = rawInput;
-            return undefined;
         } else {
-            return _outputDirQuestion;
+            answers.outputPath = "./quorum-test-network";
         }
+
+        // this is a no-op, but it makes the TS compiler happy :-/
+        return undefined;
     }
 };
 
