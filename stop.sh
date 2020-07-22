@@ -24,6 +24,3 @@ echo "----------------------------------"
 
 composeFile=$(head -n 1 $LOCK_FILE)
 docker-compose ${composeFile} stop
-if [[ ! -z `docker ps -a | grep besu-sample-network_pet_shop` ]]; then
-  docker stop besu-sample-network_pet_shop
-fi

@@ -133,7 +133,7 @@ services:
 
   explorer:
     build: block-explorer-light
-    image: sample-network/block-explorer-light:${QUORUM_VERSION}
+    image: quorum-dev-quickstart/block-explorer-light:${QUORUM_VERSION}
     depends_on:
       - rpcnode
     ports:

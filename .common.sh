@@ -59,13 +59,10 @@ if [ "${NO_LOCK_REQUIRED}" = "true" ];then
     exit 1
   fi
 else
-  version=$QS_VERSION
   composeFile=""
   if [ -f ${LOCK_FILE} ]; then
     #read the first line of the lock file and store the value as it's the compose file option
     composeFile=`sed '1q;d' ${LOCK_FILE}`
-    #read the second line of the lock file and store the value as it's images version
-    version=`sed '2q;d' ${LOCK_FILE}`
   else
     echo "Network is not running (${LOCK_FILE} not present)." >&2
     echo "Run it with ./run.sh first" >&2

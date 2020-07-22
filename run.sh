@@ -16,74 +16,53 @@ NO_LOCK_REQUIRED=true
 . ./.env
 . ./.common.sh
 
-
 PARAMS=""
 
 displayUsage()
 {
-  echo "This script creates and start a local private Besu network using Docker."
-  echo "You can select the consensus mechanism to use.\n"
+  echo "This script creates and start a local private Ethereum network using Docker."
+  echo "You can select ONE of the quorum mechanism to use ie. java or go.\n"
   echo "Usage: ${me} [OPTIONS]"
-  echo "    -c <ibft2|clique>        : the consensus mechanism that you want to run
-                                       on your network, default is ethash"
-  echo "    -p <offchain|onchain>    : the privacy group mode that you want to run
-                                       on your network, default is offchain"
+  echo "    -j                       : java based quorum with Hyperledger Besu"
+  echo "    -g                       : go based quorum with goQuorum"
+  echo "    -p                       : with private transaction management support"
   exit 0
 }
 
 composeFile="java-docker-compose"
+quorum=""
+quorumErrorMessage="${bold}Only ONE of j or g quorum options is allowed${normal}"
 
-while getopts "hc:p:" o; do
+while getopts "hpjgc:" o; do
   case "${o}" in
     h)
       displayUsage
       ;;
-    c)
-      algo=${OPTARG}
-      case "${algo}" in
-        ibft2)
-          export BESU_CONS_API="IBFT"
-          ;;
-        clique)
-          export BESU_CONS_API="CLIQUE"
-          ;;
-        *)
-          echo "Error: Unsupported consensus value." >&2
-          displayUsage
-      esac
-      export BESU_CONS_ALGO="${algo}"
-      LOCK_FILE=.sampleNetworks.lock
-      QS_VERSION=$BESU_VERSION
+    j)
+      if [[ $quorum = "" ]] ; then quorum=java  ; else  echo $quorumErrorMessage && displayUsage ; exit 1 ; fi
+      composeFile="java-docker-compose"
+      ;;
+    g)
+      if [[ $quorum = "" ]] ; then quorum=go  ; else  echo $quorumErrorMessage && displayUsage ; exit 1 ; fi
+      composeFile="go-docker-compose"
       ;;
     p)
-      privmode=${OPTARG}
-      case "${privmode}" in
-        onchain)
-          export PRIVACY_ONCHAIN_GROUPS_ENABLED=true
-          ;;
-        offchain)
-          export PRIVACY_ONCHAIN_GROUPS_ENABLED=false
-          ;;
-        *)
-          echo -e "Error: Unsupported privacy group mode (must be offchain or onchain).\n" >&2
-          displayUsage
-        esac
-        composeFile="${composeFile}-privacy"
-        ;;
+      composeFile="${composeFile}-privacy"
+      ;;
     *)
       displayUsage
     ;;
   esac
 done
 
+if [[ $quorum = "" ]] ; then quorum=java  ; fi
 composeFile="-f ${composeFile}.yml"
 
 # Build and run containers and network
 echo "${composeFile}" > ${LOCK_FILE}
-echo "${QS_VERSION}" >> ${LOCK_FILE}
 
 echo "${bold}*************************************"
-echo "Sample Network for Besu at ${QS_VERSION}"
+echo "Quorum Dev Quickstart with $quorum based quorum"
 echo "*************************************${normal}"
 echo "Start network"
 echo "--------------------"

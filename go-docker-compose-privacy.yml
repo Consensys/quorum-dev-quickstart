@@ -21,15 +21,14 @@ x-quorum-def:
     - -c
     - |
 
-      UDS_WAIT=10
       for i in $$(seq 1 100)
       do
         set -e
-        if [ "I'm up!" == "$$(wget --timeout $${UDS_WAIT} -qO- --proxy off 172.16.239.2$${NODE_ID}:9000/upcheck)" ];
+        if [ "I'm up!" == "$$(wget --timeout 10 -qO- --proxy off 172.16.239.2$${NODE_ID}:9000/upcheck)" ];
           then break
         else
-          echo "Sleep $${UDS_WAIT} seconds. Waiting for TxManager."
-          sleep $${UDS_WAIT}
+          echo "Waiting for Tessera..."
+          sleep 10
         fi
       done
       mkdir /data;
@@ -311,7 +310,7 @@ services:
 
   explorer:
     build: block-explorer-light
-    image: sample-network/block-explorer-light:${QUORUM_VERSION}
+    image: quorum-dev-quickstart/block-explorer-light:${QUORUM_VERSION}
     depends_on:
       - rpcnode
     ports:

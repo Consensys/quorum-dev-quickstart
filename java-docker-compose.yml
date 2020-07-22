@@ -4,9 +4,8 @@ version: '3.6'
 x-besu-def:
   &besu-def
   restart: "on-failure"
-  image: sample-network/besu:${BESU_VERSION}
+  image: quorum-dev-quickstart/besu:${BESU_VERSION:-latest}
   environment:
-    - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
     - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
   entrypoint: /opt/besu/node_start.sh
   command: [
@@ -14,8 +13,8 @@ x-besu-def:
     "--genesis-file=/config/genesis.json",
     "--node-private-key-file=/opt/besu/keys/key",
     "--min-gas-price=0",
-    "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PERM,${BESU_CONS_API}",
-    "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PERM,${BESU_CONS_API}"]
+    "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PERM,${BESU_CONS_API:-ibft}",
+    "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PERM,${BESU_CONS_API:-ibft}"]
 
 services:
 
@@ -27,12 +26,12 @@ services:
         BESU_VERSION: ${BESU_VERSION}
     entrypoint: /opt/besu/bootnode_start.sh
     volumes:
-      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - public-keys:/opt/besu/public-keys/
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
     networks:
       sample:
@@ -41,12 +40,12 @@ services:
   validator2:
     << : *besu-def
     volumes:
-      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - public-keys:/opt/besu/public-keys/
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator2/keys:/opt/besu/keys
     depends_on:
       - bootnode
@@ -57,12 +56,12 @@ services:
   validator3:
     << : *besu-def
     volumes:
-      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - public-keys:/opt/besu/public-keys/
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator3/keys:/opt/besu/keys
     depends_on:
       - bootnode
@@ -73,12 +72,12 @@ services:
   validator4:
     << : *besu-def
     volumes:
-      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - public-keys:/opt/besu/public-keys/
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator4/keys:/opt/besu/keys
     depends_on:
       - bootnode
@@ -89,12 +88,12 @@ services:
   rpcnode:
     << : *besu-def
     volumes:
-      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - public-keys:/opt/besu/public-keys/
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-      - ./config/besu/${BESU_CONS_ALGO}Genesis.json:/config/genesis.json
+      - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
     depends_on:
       - bootnode
@@ -131,7 +130,7 @@ services:
 
   explorer:
     build: block-explorer-light
-    image: sample-network/block-explorer-light:${BESU_VERSION}
+    image: quorum-dev-quickstart/block-explorer-light:${BESU_VERSION:-latest}
     depends_on:
       - rpcnode
     ports:

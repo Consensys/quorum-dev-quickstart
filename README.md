@@ -20,15 +20,14 @@ To run these tutorials, you must have the following installed:
 
 ## Description
 
-### Java based Quorum:
-`./run.sh` 
-`./run.sh -c clique` defaults to ibft2
-`./run.sh -p onchain` privacy
-
-### Geth based Quorum:
-source .env && PRIVATE_CONFIG=ignore docker-compose -f go-docker-compose.yml up
-source .env && docker-compose -f go-docker-compose-privacy.yml up
-
+Besu with permissioning
+`./run.sh -j` 
+Besu with permissioning and privacy via orion
+`./run.sh -j -p`
+Go with permissioning
+`./run.sh -g` 
+Go with permissioning and privacy via tessera
+`./run.sh -g -p`
 
 
 
@@ -38,4 +37,10 @@ source .env && docker-compose -f go-docker-compose-privacy.yml up
 ### Remove stopped containers and volumes
 `./remove.sh` stops and removes all the containers and volumes.
 
-geth --identity node1-istanbul --datadir /qdata/dd --permissioned --nodiscover --verbosity 5 --networkid 10 --rpc --rpccorsdomain '*' --rpcvhosts '*' --rpcaddr 0.0.0.0 --rpcport 8545 --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --port 21000 --unlock 0 --allow-insecure-unlock --nousb --password /examples/passwords.txt --emitcheckpoints --istanbul.blockperiod 1 --mine --minerthreads 1 --syncmode full
+
+##TODO:
+- orchestrate with java
+- orchestrate with quorum
+- fix list.sh
+- fix images & readme
+- add monitoring for go
