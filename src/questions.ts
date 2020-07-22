@@ -84,8 +84,8 @@ export const rootQuestion: QuestionTree = {
     prompt: "Which type of client would you like to run?",
     options: [
         // TODO: fix these to the correct names
-        { label: "Go Quorum", value: "gquorum", nextQuestion: _nodeCountQuestion },
-        { label: "Java Quorum", value: "jquorum", nextQuestion: _nodeCountQuestion }
+        { label: "Go-based Quorum", value: "gquorum", nextQuestion: _nodeCountQuestion },
+        { label: "Besu-based Quorum", value: "besu", nextQuestion: _nodeCountQuestion }
     ]
 };
 

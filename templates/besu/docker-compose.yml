@@ -211,7 +211,7 @@ services:
         ipv4_address: 172.16.239.20
 
 {% if privacy %}
-  node1:
+  private_node1:
     << : *besu-def
     command: [
       "--config-file=/config/config.toml",
@@ -243,7 +243,7 @@ services:
       sample:
         ipv4_address: 172.16.239.16
 
-  node2:
+  private_node2:
     << : *besu-def
     command: [
       "--config-file=/config/config.toml",
@@ -275,7 +275,7 @@ services:
       sample:
         ipv4_address: 172.16.239.17
 
-  node3:
+  private_node3:
     << : *besu-def
     command: [
       "--config-file=/config/config.toml",
