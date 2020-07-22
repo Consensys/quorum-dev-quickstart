@@ -10,6 +10,12 @@ x-quorum-def:
     - 8545
   labels:
     com.quorum.consensus: ${QUORUM_CONSENSUS:-istanbul}
+  healthcheck:
+    test: ["CMD", "wget", "--spider", "--proxy", "off", "http://localhost:8545"]
+    interval: 3s
+    timeout: 3s
+    retries: 10
+    start_period: 5s
   entrypoint: >
     /bin/sh -c
     "

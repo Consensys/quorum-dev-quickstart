@@ -10,6 +10,12 @@ x-quorum-def:
     - 8545
   labels:
     com.quorum.consensus: ${QUORUM_CONSENSUS:-istanbul}
+  healthcheck:
+    test: ["CMD", "wget", "--spider", "--proxy", "off", "http://localhost:8545"]
+    interval: 3s
+    timeout: 3s
+    retries: 10
+    start_period: 5s
   entrypoint:
     - /bin/sh
     - -c
@@ -39,9 +45,11 @@ x-quorum-def:
       --istanbul.blockperiod 5 --mine --minerthreads 1 --emitcheckpoints \
       --syncmode full --nousb \
       --networkid ${QUORUM_NETWORK_ID:-10} \
-      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONS_ALGO:-istanbul} \
+      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONS_ALGO:-istanbul} \
       --port 30303 \
       --identity node${NODE_ID}-${QUORUM_CONS_ALGO:-istanbul} \
+      --unlock 0 \
+      --allow-insecure-unlock \
       --password /config/passwords.txt ;
 
 x-tessera-def:
@@ -51,6 +59,13 @@ x-tessera-def:
     - 9000
     - 9080
   restart: "no"
+  restart: "no"
+  healthcheck:
+    test: ["CMD-SHELL", "[ -S /data/tm.ipc ] || exit 1"]
+    interval: 3s
+    timeout: 3s
+    retries: 20
+    start_period: 5s
   entrypoint:
     - /bin/sh
     - -c
@@ -129,7 +144,7 @@ services:
     ports:
       - 9081:9080
     environment:
-      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/data/tm.ipc}
       - TESSERA_CONFIG_TYPE="-09"
       - NODE_ID=1
     volumes:
@@ -163,7 +178,7 @@ services:
     ports:
       - 9082:9080
     environment:
-      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/data/tm.ipc}
       - TESSERA_CONFIG_TYPE="-09"
       - NODE_ID=2
     volumes:
@@ -197,7 +212,7 @@ services:
     ports:
       - 9083:9080
     environment:
-      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/data/tm.ipc}
       - TESSERA_CONFIG_TYPE="-09"
       - NODE_ID=3
     volumes:
@@ -231,7 +246,7 @@ services:
     ports:
       - 9084:9080
     environment:
-      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/data/tm.ipc}
       - TESSERA_CONFIG_TYPE="-09"
       - NODE_ID=4
     volumes:
@@ -265,7 +280,7 @@ services:
     ports:
       - 9085:9080
     environment:
-      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/data/tm.ipc}
       - TESSERA_CONFIG_TYPE="-09"
       - NODE_ID=5
     volumes:
