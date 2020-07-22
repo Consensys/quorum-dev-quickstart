@@ -77,7 +77,7 @@ export class QuestionRenderer {
 
         const rawInput = await _askQuestion(rl, prompt);
 
-        return this._handleTransformerAnswer(question, rawInput, answers);
+        return this._handleTransformerAnswer(question, rawInput.trim(), answers);
     }
 
     async _handleTransformerAnswer(

@@ -58,29 +58,16 @@ export interface QuestionOption {
     nextQuestion?: QuestionTree;
 }
 
-const _permissioningQuestion: QuestionTree = {
-    name: "permissioning",
-    prompt: "Do you wish to enable permissioning?",
-    options: [
-        // TODO: fix these to the correct names
-        { label: "Yes", value: true },
-        { label: "No", value: false }
-    ]
-};
-
 const _privacyQuestion: QuestionTree = {
     name: "privacy",
-    prompt: "Do you wish to enable privacy?",
-    options: [
-        // TODO: fix these to the correct names
-        { label: "Yes", value: true, nextQuestion: _permissioningQuestion },
-        { label: "No", value: false, nextQuestion: _permissioningQuestion }
-    ]
+    prompt: "Do you wish to enable support for private transactions? [Y/n]",
 };
+// have to add this below the definition because of the self reference..
+_privacyQuestion.transformerValidator = _getYesNoValidator(_privacyQuestion, undefined, "y");
 
 const _nodeCountQuestion: QuestionTree = {
     name: "nodeCount",
-    prompt: "How many validator nodes do you wish to run? Answer must be between 4 and 7.",
+    prompt: "How many nodes do you wish to run? Answer must be between 4 and 7.",
     transformerValidator: (rawInput: any, answers: AnswerMap) => {
         const result = parseInt(rawInput, 10);
         if (result >= 4 && result <= 7) {
@@ -101,3 +88,19 @@ export const rootQuestion: QuestionTree = {
         { label: "Java Quorum", value: "jquorum", nextQuestion: _nodeCountQuestion }
     ]
 };
+
+function _getYesNoValidator(question: QuestionTree, nextQuestion?: QuestionTree, defaultResponse?: "y" | "n" ) {
+    return (rawInput: string, answers: AnswerMap) => {
+        const normalizedInput = rawInput.toLowerCase();
+
+        if (defaultResponse && !normalizedInput) {
+            answers[question.name] = defaultResponse === "y";
+            return nextQuestion;
+        } else if (normalizedInput === "y" || normalizedInput === "n") {
+            answers[question.name] = normalizedInput === "y";
+            return nextQuestion;
+        } else {
+            return question;
+        }
+    };
+}
