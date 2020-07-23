@@ -20,16 +20,8 @@ To run these tutorials, you must have the following installed:
 
 ## Description
 
-Besu with permissioning
-`./run.sh -j` 
-Besu with permissioning and privacy via orion
-`./run.sh -j -p`
-Go with permissioning
-`./run.sh -g` 
-Go with permissioning and privacy via tessera
-`./run.sh -g -p`
-
-
+npm install
+npm start
 
 ### Stop Services and Network
 `./stop.sh` stops all the docker containers created.
