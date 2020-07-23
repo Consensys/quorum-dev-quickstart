@@ -20,6 +20,47 @@ x-quorum-def:
     - /bin/sh
     - -c
     - |
+      mkdir /data;
+      cp -r /quorum/* /data;
+      geth --datadir=/data init /config/genesis.json;
+      cp /config/keys/accountkey /data/keystore/key;
+      cp /config/keys/nodekey /data/geth/nodekey;
+      geth \
+      --datadir /data \
+      --nodiscover \
+      --permissioned \
+      --verbosity 5 \
+      --istanbul.blockperiod 5 --mine --minerthreads 1 --emitcheckpoints \
+      --syncmode full --nousb \
+      --networkid ${QUORUM_NETWORK_ID:-10} \
+      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONS_ALGO:-istanbul} \
+      --port 30303 \
+      --identity node${NODE_ID}-${QUORUM_CONS_ALGO:-istanbul} \
+      --unlock 0 \
+      --allow-insecure-unlock \
+      --password /config/passwords.txt
+      ;
+
+
+x-quorum-member-def:
+  &quorum-member-def
+  restart: "on-failure"
+  image: quorumengineering/quorum:${QUORUM_VERSION:-2.7.0}
+  expose:
+    - 30303
+    - 8545
+  labels:
+    com.quorum.consensus: ${QUORUM_CONSENSUS:-istanbul}
+  healthcheck:
+    test: ["CMD", "wget", "--spider", "--proxy", "off", "http://localhost:8545"]
+    interval: 3s
+    timeout: 3s
+    retries: 10
+    start_period: 5s
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
 
       {%if privacy %}
       for i in $$(seq 1 100)
@@ -54,6 +95,7 @@ x-quorum-def:
       --allow-insecure-unlock \
       --password /config/passwords.txt
       ;
+
 
 {% if privacy %}
 x-tessera-def:
@@ -110,19 +152,13 @@ x-tessera-def:
             ],
             "peer": [
                {
-                   "url": "http://tessera1:9000"
+                   "url": "http://member1tessera:9000"
                },
                {
-                   "url": "http://tessera2:9000"
+                   "url": "http://member2tessera:9000"
                },
                {
-                   "url": "http://tessera3:9000"
-               },
-               {
-                   "url": "http://tessera4:9000"
-               },
-               {
-                   "url": "http://tessera5:9000"
+                   "url": "http://member3tessera:9000"
                }
             ],
             "keys": {
@@ -168,6 +204,24 @@ x-cakeshop-def:
       java -Xms128M -Xmx128M -Dcakeshop.config.dir=/data/cakeshop -Dlogging.path=/data/logs/cakeshop -jar /opt/cakeshop/cakeshop.war
       ;;
 
+x-ethsignerProxy-def:
+  &ethsignerProxy-def
+  image: pegasyseng/ethsigner:latest
+  command: [
+    "--chain-id=2018",
+    "--http-listen-host=0.0.0.0",
+    "--downstream-http-port=8545",
+    "--downstream-http-host=rpcnode",
+    "file-based-signer",
+    "-k",
+    "/opt/ethsigner/keyfile",
+    "-p",
+    "/opt/ethsigner/passwordfile"
+  ]
+  ports:
+    - 8545
+
+
 services:
 
   validator1:
@@ -185,8 +239,8 @@ services:
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/validator1:/config/keys
     networks:
-      quorum-examples-net:
-        ipv4_address: 172.16.239.5
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.11
 
   validator2:
     << : *quorum-def
@@ -203,8 +257,8 @@ services:
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/validator2:/config/keys
     networks:
-      quorum-examples-net:
-        ipv4_address: 172.16.239.6
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.12
 
   validator3:
     << : *quorum-def
@@ -221,8 +275,8 @@ services:
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/validator3:/config/keys
     networks:
-      quorum-examples-net:
-        ipv4_address: 172.16.239.7
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.13
 
   validator4:
     << : *quorum-def
@@ -239,8 +293,8 @@ services:
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/validator4:/config/keys
     networks:
-      quorum-examples-net:
-        ipv4_address: 172.16.239.8
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.14
 
   rpcnode:
     << : *quorum-def
@@ -255,10 +309,23 @@ services:
       - ./config/quorum/passwords.txt:/config/passwords.txt
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
-      - ./config/quorum/networkFiles/member5:/config/keys
+      - ./config/quorum/networkFiles/rpcnode:/config/keys
     networks:
-      quorum-examples-net:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.15
+
+  ethsignerProxy:
+    << : *ethsignerProxy-def
+    volumes:
+      - ./config/ethsigner/password:/opt/ethsigner/passwordfile
+      - ./config/ethsigner/key:/opt/ethsigner/keyfile
+    depends_on:
+      - rpcnode
+    ports:
+      - 18545:8545/tcp
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.40
 
 {% if privacy %}
   member1tessera:
@@ -272,11 +339,11 @@ services:
     volumes:
       - ./config/quorum/networkFiles/member1:/config/keys
     networks:
-      quorum-examples-net:
-        ipv4_address: 172.16.239.21
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.26
 
   member1quorum:
-    << : *quorum-def
+    << : *quorum-member-def
     ports:
       - 22000:8545/tcp
       - 30303
@@ -292,8 +359,8 @@ services:
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/member1:/config/keys
     networks:
-      quorum-examples-net:
-        ipv4_address: 172.16.239.11
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.16
 
   member2tessera:
     << : *tessera-def
@@ -306,18 +373,16 @@ services:
     volumes:
       - ./config/quorum/networkFiles/member2:/config/keys
     networks:
-      quorum-examples-net:
-        ipv4_address: 172.16.239.22
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.27
 
   member2quorum:
-    << : *quorum-def
+    << : *quorum-member-def
     ports:
       - 22001:8545/tcp
       - 30303
-{% if privacy %}
     depends_on:
       - member2tessera
-{% endif %}
     environment:
       - NODE_ID=7
       - PRIVATE_CONFIG=ignore
@@ -326,10 +391,10 @@ services:
       - ./config/quorum/passwords.txt:/config/passwords.txt
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
-      - ./config/quorum/networkFiles/member3:/config/keys
+      - ./config/quorum/networkFiles/member2:/config/keys
     networks:
-      quorum-examples-net:
-        ipv4_address: 172.16.239.12
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.17
 
   member3tessera:
     << : *tessera-def
@@ -340,13 +405,13 @@ services:
       - TESSERA_CONFIG_TYPE="-09"
       - NODE_ID=8
     volumes:
-      - ./config/quorum/networkFiles/validator3:/config/keys
+      - ./config/quorum/networkFiles/member3:/config/keys
     networks:
-      quorum-examples-net:
-        ipv4_address: 172.16.239.23
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.28
 
   member3quorum:
-    << : *quorum-def
+    << : *quorum-member-def
     ports:
       - 22002:8545/tcp
       - 30303
@@ -360,10 +425,10 @@ services:
       - ./config/quorum/passwords.txt:/config/passwords.txt
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
-      - ./config/quorum/networkFiles/validator3:/config/keys
+      - ./config/quorum/networkFiles/member3:/config/keys
     networks:
-      quorum-examples-net:
-        ipv4_address: 172.16.239.13
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.18
 
 {% endif %}
 
@@ -375,8 +440,8 @@ services:
     ports:
       - 25000:80/tcp
     networks:
-      quorum-examples-net:
-        ipv4_address: 172.16.239.30
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.31
 
   cakeshop:
     << : *cakeshop-def
@@ -387,11 +452,11 @@ services:
       - cakeshop:/data
       - ./config/cakeshop:/quorum
     networks:
-      quorum-examples-net:
-        ipv4_address: 172.16.239.50
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.34
 
 networks:
-  quorum-examples-net:
+  quorum-dev-quickstart:
     driver: bridge
     ipam:
       driver: default

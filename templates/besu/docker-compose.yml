@@ -61,7 +61,7 @@ services:
       - ./logs/orion:/var/log/
       - ./config/orion/log-config.xml:/config/log-config.xml
     networks:
-      sample:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.26
 
   orion2:
@@ -77,7 +77,7 @@ services:
       - ./logs/orion:/var/log/
       - ./config/orion/log-config.xml:/config/log-config.xml
     networks:
-      sample:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.27
 
   orion3:
@@ -93,7 +93,7 @@ services:
       - ./logs/orion:/var/log/
       - ./config/orion/log-config.xml:/config/log-config.xml
     networks:
-      sample:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.28
 {% endif %}
 
@@ -113,7 +113,7 @@ services:
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator1/keys:/opt/besu/keys
     networks:
-      sample:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.11
 
   validator2:
@@ -129,7 +129,7 @@ services:
     depends_on:
       - validator1
     networks:
-      sample:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.12
 
   validator3:
@@ -145,7 +145,7 @@ services:
     depends_on:
       - validator1
     networks:
-      sample:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.13
 
   validator4:
@@ -161,7 +161,7 @@ services:
     depends_on:
       - validator1
     networks:
-      sample:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.14
 
   rpcnode:
@@ -179,7 +179,7 @@ services:
     ports:
       - 8545:8545/tcp
     networks:
-      sample:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.15
 
   ethsignerProxy:
@@ -193,8 +193,8 @@ services:
     ports:
       - 18545:8545/tcp
     networks:
-      sample:
-        ipv4_address: 172.16.239.20
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.40
 
 {% if privacy %}
   private_node1:
@@ -226,7 +226,7 @@ services:
       - 20000:8545/tcp
       - 20001:8546/tcp
     networks:
-      sample:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.16
 
   private_node2:
@@ -258,7 +258,7 @@ services:
       - 20002:8545/tcp
       - 20003:8546/tcp
     networks:
-      sample:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.17
 
   private_node3:
@@ -290,7 +290,7 @@ services:
       - 20004:8545/tcp
       - 20005:8546/tcp
     networks:
-      sample:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.18
 {% endif %}
 
@@ -302,7 +302,7 @@ services:
     ports:
       - 25000:80/tcp
     networks:
-      sample:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.31
 
   prometheus:
@@ -315,7 +315,7 @@ services:
     ports:
       - 9090:9090/tcp
     networks:
-      sample:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.32
 
   grafana:
@@ -328,7 +328,7 @@ services:
     ports:
       - 3000:3000/tcp
     networks:
-      sample:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.33
 
 volumes:
@@ -341,7 +341,7 @@ volumes:
   cakeshop:
 
 networks:
-  sample:
+  quorum-dev-quickstart:
     driver: bridge
     ipam:
       config:
