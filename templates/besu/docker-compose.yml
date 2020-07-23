@@ -1,29 +1,51 @@
 ---
-version: '2.4'
+version: '3.6'
+
+x-besu-bootnode-def:
+  &besu-bootnode-def
+  restart: "on-failure"
+  image: hyperledger/besu:${BESU_VERSION:-latest}
+  environment:
+    - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+  entrypoint:
+    - /bin/bash
+    - -c
+    - |
+      /opt/besu/bin/besu public-key export --to=/tmp/bootnode_pubkey;
+      /opt/besu/bin/besu \
+      --config-file=/config/config.toml \
+      --p2p-host=$$(hostname -i) \
+      --genesis-file=/config/genesis.json \
+      --node-private-key-file=/opt/besu/keys/key \
+      --min-gas-price=0 \
+      --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} \
+      --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} ;
 
 x-besu-def:
   &besu-def
   restart: "on-failure"
-  image: quorum-dev-quickstart/besu:${BESU_VERSION:-latest}
+  image: hyperledger/besu:${BESU_VERSION:-latest}
   environment:
     - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-  entrypoint: /opt/besu/node_start.sh
-  command: [
-    "--config-file=/config/config.toml",
-    "--genesis-file=/config/genesis.json",
-    "--node-private-key-file=/opt/besu/keys/key",
-    "--min-gas-price=0",
-    "--rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-ibft}",
-    "--rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-ibft}"{% if privacy %},
-    "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false}"{% endif %} ]
-  mem_limit: 2048m
+  entrypoint:
+    - /bin/bash
+    - -c
+    - |
+      while [ ! -f "/opt/besu/public-keys/bootnode_pubkey" ]; do sleep 5; done ;
+      /opt/besu/bin/besu \
+      --config-file=/config/config.toml \
+      --p2p-host=$$(hostname -i) \
+      --genesis-file=/config/genesis.json \
+      --node-private-key-file=/opt/besu/keys/key \
+      --min-gas-price=0 \
+      --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} \
+      --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} ;
 
 {% if privacy %}
 x-orion-def:
   &orion-def
-  image: "pegasyseng/orion:develop"
+  image: "pegasyseng/orion:latest"
   command: ["/config/orion.conf"]
-  mem_limit: 1024m
 {% endif %}
 
 x-ethsignerProxy-def:
@@ -42,70 +64,13 @@ x-ethsignerProxy-def:
   ]
   ports:
     - 8545
-  mem_limit: 1024m
-
 
 services:
 
-  {% if privacy %}
-  orion1:
-    << : *orion-def
-    environment:
-      - ORION_OTHERNODES=http://orion2:8080/,http://orion3:8080/
-      - ORION_NODEURL=http://orion1:8080
-      - ORION_CLIENTURL=http://orion1:8888
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    volumes:
-      - ./config/orion/orion.conf:/config/orion.conf
-      - ./config/orion/networkFiles/orion1:/keys/
-      - ./logs/orion:/var/log/
-      - ./config/orion/log-config.xml:/config/log-config.xml
-    networks:
-      quorum-dev-quickstart:
-        ipv4_address: 172.16.239.26
-
-  orion2:
-    << : *orion-def
-    environment:
-      - ORION_OTHERNODES=http://orion1:8080/,http://orion3:8080/
-      - ORION_NODEURL=http://orion2:8080
-      - ORION_CLIENTURL=http://orion2:8888
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    volumes:
-      - ./config/orion/orion.conf:/config/orion.conf
-      - ./config/orion/networkFiles/orion2:/keys/
-      - ./logs/orion:/var/log/
-      - ./config/orion/log-config.xml:/config/log-config.xml
-    networks:
-      quorum-dev-quickstart:
-        ipv4_address: 172.16.239.27
-
-  orion3:
-    << : *orion-def
-    environment:
-      - ORION_OTHERNODES=http://orion2:8080/,http://orion1:8080/
-      - ORION_NODEURL=http://orion3:8080
-      - ORION_CLIENTURL=http://orion3:8888
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    volumes:
-      - ./config/orion/orion.conf:/config/orion.conf
-      - ./config/orion/networkFiles/orion3:/keys/
-      - ./logs/orion:/var/log/
-      - ./config/orion/log-config.xml:/config/log-config.xml
-    networks:
-      quorum-dev-quickstart:
-        ipv4_address: 172.16.239.28
-{% endif %}
-
   validator1:
-    << : *besu-def
-    build:
-      context: besu/.
-      args:
-        BESU_VERSION: ${BESU_VERSION:-latest}
-    entrypoint: /opt/besu/bootnode_start.sh
+    << : *besu-bootnode-def
     volumes:
-      - public-keys:/opt/besu/public-keys/
+      - public-keys:/tmp/
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
@@ -196,8 +161,25 @@ services:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.40
 
+
 {% if privacy %}
-  private_node1:
+  member1orion:
+    << : *orion-def
+    environment:
+      - ORION_OTHERNODES=http://member2orion:8080/,http://member3orion:8080/
+      - ORION_NODEURL=http://member1orion:8080
+      - ORION_CLIENTURL=http://member1orion:8888
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    volumes:
+      - ./config/orion/orion.conf:/config/orion.conf
+      - ./config/orion/networkFiles/orion1:/keys/
+      - ./logs/orion:/var/log/
+      - ./config/orion/log-config.xml:/config/log-config.xml
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.26
+
+  member1besu:
     << : *besu-def
     command: [
       "--config-file=/config/config.toml",
@@ -207,7 +189,7 @@ services:
       "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-ibft}",
       "--min-gas-price=0",
       "--privacy-enabled",
-      "--privacy-url=http://orion1:8888",
+      "--privacy-url=http://member1orion:8888",
       "--privacy-public-key-file=/config/orion/orion.pub",
       "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false}"]
     volumes:
@@ -217,11 +199,11 @@ services:
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/node1/keys:/opt/besu/keys
+      - ./config/besu/networkFiles/member1/keys:/opt/besu/keys
       - ./config/orion/networkFiles/orion1/nodeKey.pub:/config/orion/orion.pub
     depends_on:
-      - bootnode
-      - orion1
+      - validator1
+      - member1orion
     ports:
       - 20000:8545/tcp
       - 20001:8546/tcp
@@ -229,7 +211,23 @@ services:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.16
 
-  private_node2:
+  member2orion:
+    << : *orion-def
+    environment:
+      - ORION_OTHERNODES=http://member1orion:8080/,http://member3orion:8080/
+      - ORION_NODEURL=http://member2orion:8080
+      - ORION_CLIENTURL=http://member2orion:8888
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    volumes:
+      - ./config/orion/orion.conf:/config/orion.conf
+      - ./config/orion/networkFiles/orion2:/keys/
+      - ./logs/orion:/var/log/
+      - ./config/orion/log-config.xml:/config/log-config.xml
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.27
+
+  member2besu:
     << : *besu-def
     command: [
       "--config-file=/config/config.toml",
@@ -239,7 +237,7 @@ services:
       "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-ibft}",
       "--min-gas-price=0",
       "--privacy-enabled",
-      "--privacy-url=http://orion2:8888",
+      "--privacy-url=http://member2orion:8888",
       "--privacy-public-key-file=/config/orion/orion.pub",
       "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false}"]
     volumes:
@@ -249,11 +247,11 @@ services:
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/node2/keys:/opt/besu/keys
+      - ./config/besu/networkFiles/member2/keys:/opt/besu/keys
       - ./config/orion/networkFiles/orion2/nodeKey.pub:/config/orion/orion.pub
     depends_on:
-      - bootnode
-      - orion2
+      - validator1
+      - member2orion
     ports:
       - 20002:8545/tcp
       - 20003:8546/tcp
@@ -261,7 +259,23 @@ services:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.17
 
-  private_node3:
+  member3orion:
+    << : *orion-def
+    environment:
+      - ORION_OTHERNODES=http://member1orion:8080/,http://member2orion:8080/
+      - ORION_NODEURL=http://member3orion:8080
+      - ORION_CLIENTURL=http://member3orion:8888
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    volumes:
+      - ./config/orion/orion.conf:/config/orion.conf
+      - ./config/orion/networkFiles/orion3:/keys/
+      - ./logs/orion:/var/log/
+      - ./config/orion/log-config.xml:/config/log-config.xml
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.28
+
+  member3besu:
     << : *besu-def
     command: [
       "--config-file=/config/config.toml",
@@ -271,7 +285,7 @@ services:
       "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-ibft}",
       "--min-gas-price=0",
       "--privacy-enabled",
-      "--privacy-url=http://orion3:8888",
+      "--privacy-url=http://member3orion:8888",
       "--privacy-public-key-file=/config/orion/orion.pub",
       "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false}"]
     volumes:
@@ -281,11 +295,11 @@ services:
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/node3/keys:/opt/besu/keys
+      - ./config/besu/networkFiles/member3/keys:/opt/besu/keys
       - ./config/orion/networkFiles/orion3/nodeKey.pub:/config/orion/orion.pub
     depends_on:
-      - bootnode
-      - orion3
+      - validator1
+      - member3orion
     ports:
       - 20004:8545/tcp
       - 20005:8546/tcp

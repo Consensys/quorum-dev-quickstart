@@ -19,7 +19,7 @@ rule_files:
 # A scrape configuration containing exactly one endpoint to scrape:
 # Here it's Prometheus itself.
 scrape_configs:
-    - job_name: bootnode
+    - job_name: validator1
       scrape_interval: 15s
       scrape_timeout: 10s
       metrics_path: /metrics
@@ -51,14 +51,6 @@ scrape_configs:
       static_configs:
         - targets: [ validator4:9545 ]
 
-    - job_name: minernode
-      scrape_interval: 15s
-      scrape_timeout: 10s
-      metrics_path: /metrics
-      scheme: http
-      static_configs:
-      - targets: [ minernode:9545 ]
-
     - job_name: rpcnode
       scrape_interval: 15s
       scrape_timeout: 10s
@@ -67,45 +59,29 @@ scrape_configs:
       static_configs:
         - targets: [ rpcnode:9545 ]
 
-    - job_name: node1
+    - job_name: member1besu
       scrape_interval: 15s
       scrape_timeout: 10s
       metrics_path: /metrics
       scheme: http
       static_configs:
-        - targets: [ node1:9545 ]
+        - targets: [ member1besu:9545 ]
 
-    - job_name: node2
+    - job_name: member2besu
       scrape_interval: 15s
       scrape_timeout: 10s
       metrics_path: /metrics
       scheme: http
       static_configs:
-        - targets: [ node2:9545 ]
+        - targets: [ member2besu:9545 ]
 
-    - job_name: node3
+    - job_name: member3besu
       scrape_interval: 15s
       scrape_timeout: 10s
       metrics_path: /metrics
       scheme: http
       static_configs:
-        - targets: [ node3:9545 ]
-
-    - job_name: node4
-      scrape_interval: 15s
-      scrape_timeout: 10s
-      metrics_path: /metrics
-      scheme: http
-      static_configs:
-        - targets: [ node4:9545 ]
-
-    - job_name: node5
-      scrape_interval: 15s
-      scrape_timeout: 10s
-      metrics_path: /metrics
-      scheme: http
-      static_configs:
-        - targets: [ node5:9545 ]
+        - targets: [ member3besu:9545 ]
 
     # all the nodes override themselves if given the same name
     # so we use dns based lookup and, replace labels to
