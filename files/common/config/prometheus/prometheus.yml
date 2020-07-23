@@ -25,7 +25,7 @@ scrape_configs:
       metrics_path: /metrics
       scheme: http
       static_configs:
-        - targets: [ bootnode:9545 ]
+        - targets: [ validator1:9545 ]
 
     - job_name: validator2
       scrape_interval: 15s
@@ -82,6 +82,30 @@ scrape_configs:
       scheme: http
       static_configs:
         - targets: [ member3besu:9545 ]
+
+    - job_name: member1tessera
+      scrape_interval: 15s
+      scrape_timeout: 10s
+      metrics_path: /metrics
+      scheme: http
+      static_configs:
+        - targets: [ member1tessera:9545 ]
+
+    - job_name: member2tessera
+      scrape_interval: 15s
+      scrape_timeout: 10s
+      metrics_path: /metrics
+      scheme: http
+      static_configs:
+        - targets: [ member2tessera:9545 ]
+
+    - job_name: member3tessera
+      scrape_interval: 15s
+      scrape_timeout: 10s
+      metrics_path: /metrics
+      scheme: http
+      static_configs:
+        - targets: [ member3tessera:9545 ]
 
     # all the nodes override themselves if given the same name
     # so we use dns based lookup and, replace labels to
