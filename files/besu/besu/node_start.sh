@@ -21,7 +21,7 @@ done
 rm -rf /opt/besu/database
 
 bootnode_pubkey=`sed 's/^0x//' /opt/besu/public-keys/bootnode_pubkey`
-boonode_ip=`getent hosts bootnode | awk '{ print $1 }'`
+boonode_ip=`getent hosts validator1 | awk '{ print $1 }'`
 bootnode_enode_address="enode://${bootnode_pubkey}@${boonode_ip}:30303"
 
 p2pip=`awk 'END{print $1}' /etc/hosts`

@@ -26,8 +26,8 @@ echo "${bold}*************************************"
 echo "Quorum Dev Quickstart "
 echo "*************************************${normal}"
 echo "Stop and remove network..."
-docker-compose ${composeFile} down -v
-docker-compose ${composeFile} rm -sfv
+docker-compose down -v
+docker-compose rm -sfv
 
 docker image rm quorum-dev-quickstart/besu:${BESU_VERSION}
 docker image rm quorum-dev-quickstart/block-explorer-light:develop

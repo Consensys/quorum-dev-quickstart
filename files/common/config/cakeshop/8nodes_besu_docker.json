@@ -22,21 +22,21 @@
   {
     "name": "rpcnode",
     "rpcUrl": "http://rpcnode:8545",
-    "transactionManagerUrl": "http://tessera5:9080"
+    "transactionManagerUrl": ""
   },
   {
-    "name": "node1",
-    "rpcUrl": "http://node1:8545",
-    "transactionManagerUrl": "http://orion1:8080"
+    "name": "member1",
+    "rpcUrl": "http://member1besu:8545",
+    "transactionManagerUrl": "http://member1orion:8080"
   },
   {
-    "name": "node2",
-    "rpcUrl": "http://node2:8545",
-    "transactionManagerUrl": "http://orion2:8080"
+    "name": "member2",
+    "rpcUrl": "http://member2besu:8545",
+    "transactionManagerUrl": "http://member2orion:8080"
   },
   {
-  "name": "node3",
-  "rpcUrl": "http://node3:8545",
-  "transactionManagerUrl": "http://orion3:8080"
+  "name": "member3",
+  "rpcUrl": "http://member3besu:8545",
+  "transactionManagerUrl": "http://member3orion:8080"
   }
 ]

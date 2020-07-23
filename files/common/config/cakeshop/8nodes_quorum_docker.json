@@ -1,7 +1,7 @@
 [
   {
-    "name": "bootnode",
-    "rpcUrl": "http://bootnode:8545",
+    "name": "validator1",
+    "rpcUrl": "http://validator1:8545",
     "transactionManagerUrl": ""
   },
   {
@@ -23,5 +23,20 @@
     "name": "rpcnode",
     "rpcUrl": "http://rpcnode:8545",
     "transactionManagerUrl": ""
+  },
+  {
+    "name": "member1",
+    "rpcUrl": "http://member1quorum:8545",
+    "transactionManagerUrl": "http://member1tessera:9080"
+  },
+  {
+    "name": "member2",
+    "rpcUrl": "http://member1quorum:8545",
+    "transactionManagerUrl": "http://member2tessera:9080"
+  },
+  {
+    "name": "member3",
+    "rpcUrl": "http://member3quorum:8545",
+    "transactionManagerUrl": "http://member3tessera:9080"
   }
 ]
