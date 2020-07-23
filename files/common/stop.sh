@@ -22,5 +22,4 @@ echo "*************************************${normal}"
 echo "Stopping network"
 echo "----------------------------------"
 
-composeFile=$(head -n 1 $LOCK_FILE)
-docker-compose ${composeFile} stop
+docker-compose stop

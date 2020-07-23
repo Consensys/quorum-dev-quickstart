@@ -22,5 +22,4 @@ echo "*************************************${normal}"
 echo "Resuming network..."
 echo "----------------------------------"
 
-composeFile=$(head -n 1 $LOCK_FILE)
-docker-compose ${composeFile} start
+docker-compose start

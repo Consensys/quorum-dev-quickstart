@@ -1,5 +1,5 @@
 ---
-version: '3.6'
+version: '2.4'
 
 x-besu-def:
   &besu-def
@@ -18,29 +18,6 @@ x-besu-def:
     "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false}"{% endif %} ]
   mem_limit: 2048m
 
-x-cakeshop-def:
-  &cakeshop-def
-  image: quorumengineering/cakeshop:0.11.0
-  expose:
-    - 8999
-  restart: "no"
-  healthcheck:
-    test: ["CMD", "wget", "--spider", "--proxy=off", "http://localhost:8999/actuator/health"]
-    interval: 5s
-    timeout: 5s
-    retries: 20
-    start_period: 5s
-  entrypoint:
-    - /bin/sh
-    - -c
-    - |
-      rm -rf /data/cakeshop/local
-      mkdir -p /data/cakeshop/local
-      cp /quorum/application.properties /data/cakeshop/local/application.properties
-      cp /quorum/5nodes_besu_docker.json /data/cakeshop/local/5nodes.json
-      java -Xms128M -Xmx128M -Dcakeshop.config.dir=/data/cakeshop -Dlogging.path=/data/logs/cakeshop -jar /opt/cakeshop/cakeshop.war
-      ;;
-
 {% if privacy %}
 x-orion-def:
   &orion-def
@@ -49,7 +26,27 @@ x-orion-def:
   mem_limit: 1024m
 {% endif %}
 
+x-ethsignerProxy-def:
+  &ethsignerProxy-def
+  image: pegasyseng/ethsigner:latest
+  command: [
+    "--chain-id=2018",
+    "--http-listen-host=0.0.0.0",
+    "--downstream-http-port=8545",
+    "--downstream-http-host=rpcnode",
+    "file-based-signer",
+    "-k",
+    "/opt/ethsigner/keyfile",
+    "-p",
+    "/opt/ethsigner/passwordfile"
+  ]
+  ports:
+    - 8545
+  mem_limit: 1024m
+
+
 services:
+
   {% if privacy %}
   orion1:
     << : *orion-def
@@ -100,7 +97,7 @@ services:
         ipv4_address: 172.16.239.28
 {% endif %}
 
-  bootnode:
+  validator1:
     << : *besu-def
     build:
       context: besu/.
@@ -114,7 +111,7 @@ services:
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
+      - ./config/besu/networkFiles/validator1/keys:/opt/besu/keys
     networks:
       sample:
         ipv4_address: 172.16.239.11
@@ -130,7 +127,7 @@ services:
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator2/keys:/opt/besu/keys
     depends_on:
-      - bootnode
+      - validator1
     networks:
       sample:
         ipv4_address: 172.16.239.12
@@ -146,7 +143,7 @@ services:
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator3/keys:/opt/besu/keys
     depends_on:
-      - bootnode
+      - validator1
     networks:
       sample:
         ipv4_address: 172.16.239.13
@@ -162,7 +159,7 @@ services:
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator4/keys:/opt/besu/keys
     depends_on:
-      - bootnode
+      - validator1
     networks:
       sample:
         ipv4_address: 172.16.239.14
@@ -178,7 +175,7 @@ services:
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
     depends_on:
-      - bootnode
+      - validator1
     ports:
       - 8545:8545/tcp
     networks:
@@ -186,23 +183,12 @@ services:
         ipv4_address: 172.16.239.15
 
   ethsignerProxy:
-    image: pegasyseng/ethsigner:latest
-    command: [
-      "--chain-id=2018",
-      "--http-listen-host=0.0.0.0",
-      "--downstream-http-port=8545",
-      "--downstream-http-host=rpcnode",
-      "file-based-signer",
-      "-k",
-      "/opt/ethsigner/keyfile",
-      "-p",
-      "/opt/ethsigner/passwordfile"
-    ]
+    << : *ethsignerProxy-def
     volumes:
       - ./config/ethsigner/password:/opt/ethsigner/passwordfile
       - ./config/ethsigner/key:/opt/ethsigner/keyfile
     depends_on:
-      - bootnode
+      - validator1
       - rpcnode
     ports:
       - 18545:8545/tcp
@@ -344,18 +330,6 @@ services:
     networks:
       sample:
         ipv4_address: 172.16.239.33
-
-  cakeshop:
-    << : *cakeshop-def
-    hostname: cakeshop
-    ports:
-      - "8999:8999"
-    volumes:
-      - cakeshop:/data
-      - ./config/cakeshop:/quorum
-    networks:
-      quorum-examples-net:
-        ipv4_address: 172.16.239.34
 
 volumes:
   public-keys:
