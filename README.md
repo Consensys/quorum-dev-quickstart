@@ -21,7 +21,7 @@ To run these tutorials, you must have the following installed:
 ## Description
 
 npm install
-npm start
+npm startstat
 
 ### Stop Services and Network
 `./stop.sh` stops all the docker containers created.
