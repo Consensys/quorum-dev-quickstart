@@ -1,0 +1,97 @@
+{
+  "name": "pegasys-orchestrate-quick-start",
+  "version": "2.3.0",
+  "description": "PegaSys Orchestrate Quick start",
+  "config": {
+    "services": "tx-crafter tx-signer tx-sender tx-listener contract-registry chain-registry transaction-scheduler"
+  },
+  "scripts": {
+    "lint": "tslint -p . -c tslint.json",
+    "lint:fix": "npm run lint -- --fix",
+    "format": "prettier --write 'src/**/*.{ts,js,json}'",
+    "check-formatting": "prettier --list-different 'src/**/*.{ts,js,json}'",
+    "clean": "rimraf ./dist ./build",
+    "compile": "truffle compile",
+    "generate-account": "dotenv ts-node src/generate-account",
+    "register-chain": "dotenv ts-node src/register-chain",
+    "get-latest-block": "dotenv -- cross-var curl -X POST -H 'Authorization: Bearer %AUTH_TOKEN%' --data '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\", false],\"id\":1}' %CHAIN_REGISTRY_HOST%/%CHAIN_UUID%",
+    "create-faucet": "dotenv ts-node src/create-faucet",
+    "register-contract": "dotenv ts-node src/register-contract",
+    "get-catalog": "dotenv ts-node src/get-catalog",
+    "consume": "dotenv ts-node src/consume",
+    "deploy": "dotenv ts-node src/deploy-contract",
+    "send-tx": "dotenv ts-node src/send-tx",
+    "orchestrate": "orchestrate",
+    "generate-jwt": "docker-compose run generate-jwt",
+    "up-deps": "docker-compose -f scripts/deps/docker-compose.yml up -d",
+    "up-besu": "docker-compose -f scripts/deps/docker-compose-besu.yml up -d",
+    "up-orchestrate": "docker-compose up -d ${npm_package_config_services}",
+    "stop-orchestrate": "docker-compose stop ${npm_package_config_services}",
+    "down-orchestrate": "docker-compose down --volumes --timeout 0",
+    "down-deps": "docker-compose -f scripts/deps/docker-compose.yml down --volumes --timeout 0",
+    "down-besu": "docker-compose -f scripts/deps/docker-compose-besu.yml down --volumes --timeout 0",
+    "up": "npm run up-deps && npm run up-orchestrate",
+    "down": "npm run down-orchestrate ; npm run down-besu ; npm run down-deps",
+    "hashicorp-accounts": "bash scripts/deps/config/hashicorp/vault.sh kv list secret/default",
+    "hashicorp-token-lookup": "bash scripts/deps/config/hashicorp/vault.sh token lookup",
+    "hashicorp-vault": "bash -x scripts/deps/config/hashicorp/vault.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/ConsenSys/client/fr/core-stack/quick-start.git"
+  },
+  "keywords": [
+    "Blockchain",
+    "Ethereum",
+    "Pegasys",
+    "Orchestrate",
+    "Transaction"
+  ],
+  "author": "ConsenSys PegaSys Engineering",
+  "contributors": [
+    "Dario Anongba Varela <dario.varela@consensys.net>",
+    "Nicolas Maurice <nicolas.maurice@consensys.net>",
+    "Gabriel Garrido Calvo <gabriel.garrido@consensys.net>"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://gitlab.com/ConsenSys/client/fr/core-stack/quick-start/issues"
+  },
+  "homepage": "https://gitlab.com/ConsenSys/client/fr/core-stack/quick-start",
+  "devDependencies": {
+    "@types/uuid": "^8.0.0",
+    "axios": "~0.19.2",
+    "cross-var": "~1.1.0",
+    "dotenv": "~8.2.0",
+    "dotenv-cli": "~3.1.0",
+    "ethers": "~4.0.47",
+    "husky": "~4.2.5",
+    "lint-staged": "~10.2.2",
+    "pegasys-orchestrate": "~2.3.0",
+    "prettier": "~2.0.5",
+    "rimraf": "~3.0.2",
+    "truffle": "~5.1.24",
+    "ts-node": "~8.10.1",
+    "tslint": "~6.1.2",
+    "tslint-config-prettier": "~1.18.0",
+    "typescript": "~3.8.3",
+    "uuid": "^8.2.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{json,md}": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.{ts,tsx}": [
+      "prettier --write",
+      "tslint",
+      "git add"
+    ]
+  },
+  "dependencies": {}
+}

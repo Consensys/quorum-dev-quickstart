@@ -1,0 +1,35 @@
+{
+  "extends": ["tslint:recommended", "tslint-config-prettier"],
+  "linterOptions": {
+    "exclude": ["**/node_modules/**/*", "./src/stubs/*"]
+  },
+  "jsRules": {},
+  "rules": {
+    "indent": [true, "spaces"],
+    "quotemark": [true, "single"],
+    "object-literal-sort-keys": false,
+    "trailing-comma": false,
+    "class-name": true,
+    "semicolon": false,
+    "no-submodule-imports": [true],
+    "no-implicit-dependencies": [true, "dev"],
+    "triple-equals": [true, "allow-null-check"],
+    "eofline": true,
+    "jsdoc-format": true,
+    "member-access": false,
+    "whitespace": [true, "check-decl", "check-operator", "check-separator", "check-type"],
+    "curly": true,
+    "only-arrow-functions": false,
+    "no-empty-interface": false,
+    "ordered-imports": [
+      true,
+      {
+        "grouped-imports": true
+      }
+    ],
+    "no-trailing-whitespace": true,
+    "no-floating-promises": { "severity": "warning" },
+    "no-console": false
+  },
+  "rulesDirectory": []
+}

@@ -21,7 +21,21 @@ To run these tutorials, you must have the following installed:
 ## Description
 
 npm install
-npm startstat
+npm start
+
+
+Orchestrate:
+```
+docker-compose -f docker-compose-orchestrate-deps.yml up -d
+# not sure why this is on a seperate network
+docker network create deps_orchestrate
+docker-compose -f docker-compose-orchestrate-besu.yml up -d
+# can we create this as part of the main compose?
+docker volume create --name=deps_vault-token
+docker-compose -f docker-compose-orchestrate.yml up -d
+
+
+```
 
 ### Stop Services and Network
 `./stop.sh` stops all the docker containers created.
