@@ -1,10 +1,10 @@
 .idea/
 *.iml
 *.lock
+*.log
 node_modules
 .vscode
 build
-yarn-error.log
 logs/
 /volumes/
 .DS_Store

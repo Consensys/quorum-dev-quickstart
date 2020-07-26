@@ -1,17 +1,19 @@
 import { render } from "nunjucks";
 import { resolve as resolvePath, join as joinPath, dirname } from "path";
 import fs from "fs";
-import { AnswerMap } from "./questions";
+import { NetworkContext } from "./networkBuilder";
 
-export function renderTemplateDir(templateBasePath: string, destinationBasePath: string, context: AnswerMap): void {
-    for (const filePath of _walkDir(templateBasePath)) {
-        renderFileToDir(templateBasePath, destinationBasePath, filePath, context);
+export function renderTemplateDir(templateBasePath: string, context: NetworkContext): void {
+    const skipDirName = context.clientType === "besu" ? "gquorum" : "besu";
+    for (const filePath of _walkDir(templateBasePath, skipDirName)) {
+        renderFileToDir(templateBasePath, filePath, context);
     }
 }
 
-export function copyFilesDir(filesBasePath: string, destinationBasePath: string): void {
-    for (const filePath of _walkDir(filesBasePath)) {
-        const outputPath = resolvePath(destinationBasePath, filePath);
+export function copyFilesDir(filesBasePath: string, context: NetworkContext): void {
+    const skipDirName = context.clientType === "besu" ? "gquorum" : "besu";
+    for (const filePath of _walkDir(filesBasePath, skipDirName)) {
+        const outputPath = resolvePath(context.outputPath, filePath);
         const outputDirname = dirname(outputPath);
 
         if (!validateDirectoryExists(outputDirname)) {
@@ -21,13 +23,13 @@ export function copyFilesDir(filesBasePath: string, destinationBasePath: string)
     }
 }
 
-export function renderFileToDir(basePath: string, destinationBasePath: string, filePath: string, context: AnswerMap): void {
+export function renderFileToDir(basePath: string, filePath: string, context: NetworkContext): void {
     if (!validateDirectoryExists(resolvePath(basePath))) {
         throw new Error(`The template base path '${basePath}' does not exist.`);
     }
 
     const templatePath = resolvePath(basePath, filePath);
-    const outputPath = resolvePath(destinationBasePath, filePath);
+    const outputPath = resolvePath(context.outputPath, filePath);
 
     if (!_validateFileExists(templatePath)) {
         throw new Error(`The template does not exist at '${templatePath}'.`);
@@ -89,13 +91,13 @@ function _validateFileExists(path: string): boolean {
     return true;
 }
 
-function* _walkDir(dir: string, basePath = ""): Iterable<string> {
+function* _walkDir(dir: string, skipDirName?: string, basePath = ""): Iterable<string> {
     const files = fs.readdirSync(resolvePath(dir));
     for (const f of files) {
         const dirPath = resolvePath(dir, f);
         const isDirectory = fs.statSync(dirPath).isDirectory();
         if (isDirectory) {
-            yield *_walkDir(dirPath, joinPath(basePath, f));
+            yield *_walkDir(dirPath, skipDirName, joinPath(basePath, f));
         } else {
             yield joinPath(basePath, f);
         }

@@ -56,11 +56,19 @@ export interface QuestionOption {
      * if applicable.
      */
     nextQuestion?: QuestionTree;
+
+    /**
+     * Whether or not this option should be the default if no other option is
+     * selected.
+     */
+    default?: boolean;
 }
 
 const _outputDirQuestion: QuestionTree = {
     name: "outputPath",
-    prompt: "Where should we create the config files for this network? Please choose either an empty directory, or a path to a new directory that does not yet exist. Default: ./quorum-test-network",
+    prompt: "Where should we create the config files for this network? Please\n" +
+    "choose either an empty directory, or a path to a new directory that does\n" +
+    "not yet exist. Default: ./quorum-test-network",
     transformerValidator: (rawInput: string, answers: AnswerMap) => {
         // TODO: add some more checks to make sure that the path is valid
         if (rawInput) {
@@ -74,34 +82,27 @@ const _outputDirQuestion: QuestionTree = {
     }
 };
 
+const _orchestrateQuestion: QuestionTree = {
+    name: "orchestrate",
+    prompt: "Do you want to include support for Orchestrate? [Y/n]",
+};
+// have to add this below the definition because of the self reference..
+_orchestrateQuestion.transformerValidator = _getYesNoValidator(_orchestrateQuestion, _outputDirQuestion, "y");
+
 const _privacyQuestion: QuestionTree = {
     name: "privacy",
     prompt: "Do you wish to enable support for private transactions? [Y/n]",
 };
 // have to add this below the definition because of the self reference..
-_privacyQuestion.transformerValidator = _getYesNoValidator(_privacyQuestion, _outputDirQuestion, "y");
-
-/* const _nodeCountQuestion: QuestionTree = {
-    name: "nodeCount",
-    prompt: "How many nodes do you wish to run? Answer must be between 4 and 7.",
-    transformerValidator: (rawInput: any, answers: AnswerMap) => {
-        const result = parseInt(rawInput, 10);
-        if (result >= 4 && result <= 7) {
-            answers.nodeCount = result;
-            return _privacyQuestion;
-        } else {
-            return _nodeCountQuestion;
-        }
-    }
-};*/
+_privacyQuestion.transformerValidator = _getYesNoValidator(_privacyQuestion, _orchestrateQuestion, "y");
 
 export const rootQuestion: QuestionTree = {
     name: "clientType",
-    prompt: "Which type of client would you like to run?",
+    prompt: "Which type of client would you like to run? Default: Besu",
     options: [
         // TODO: fix these to the correct names
-        { label: "Go-based Quorum", value: "gquorum", nextQuestion: _privacyQuestion },
-        { label: "Besu-based Quorum", value: "besu", nextQuestion: _privacyQuestion }
+        { label: "Besu-based Quorum", value: "besu", nextQuestion: _privacyQuestion, default: true },
+        { label: "Go-based Quorum", value: "gquorum", nextQuestion: _privacyQuestion }
     ]
 };
 

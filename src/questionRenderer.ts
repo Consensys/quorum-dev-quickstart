@@ -1,4 +1,4 @@
-import { QuestionTree, AnswerMap } from "./questions";
+import { QuestionTree, AnswerMap, QuestionOption } from "./questions";
 import readline, { ReadLine } from "readline";
 
 export class QuestionRenderer {
@@ -39,8 +39,13 @@ export class QuestionRenderer {
             throw new Error(`BUG! Question '${question.name}' does not include any options from which to select`);
         }
 
+        let defaultOption: QuestionOption | null = null;
+
         for (let i = 1; i < question.options.length + 1; i++) {
             const option = question.options[i - 1];
+            if (option.default && !defaultOption) {
+                defaultOption = option;
+            }
             prompt += `\t${i}. ${option.label}\n`;
         }
 
@@ -63,6 +68,10 @@ export class QuestionRenderer {
 
                 return selectedOption.nextQuestion;
             }
+        } else if (rawInput === "" && defaultOption !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            answers[question.name] = defaultOption.value;
+            return defaultOption.nextQuestion;
         } else {
             return question;
         }
