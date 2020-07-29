@@ -17,7 +17,7 @@ NO_LOCK_REQUIRED=false
 . ./.common.sh
 
 echo "${bold}*************************************"
-echo "Sample Network for Besu at ${version}"
+echo "Sample Network for Besu at ${BESU_VERSION}"
 echo "*************************************${normal}"
 echo "Resuming network..."
 echo "----------------------------------"
