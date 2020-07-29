@@ -90,7 +90,7 @@ Go based Quorum deploys the Cakeshop toolkit available on `http://localhost:8999
 
 Essentially you get everything in the architecture diagram above.
 
-### ii. Orchestrate Network <a name="orchestrate-network"></a>
+### iii. Orchestrate Network <a name="orchestrate-network"></a>
 Orchestrate is a platform that enables enterprises to easily build secure and reliable applications on Ethereum blockchains. 
 It provides advanced features when connected to blockchain networks like:
 - Transaction management (transaction crafting, gas management, nonce management, and transaction listening)
@@ -108,75 +108,165 @@ For more information, refer to the PegaSys Orchestrate official Documentation.
 The quickstart connects to an Ethereum client, in this dev setup we use only one node, however if your system has enough resources 
 you are welcome to spin a full multi node network instead. All you need is an RPC endpoint that you connect Orchestrate to
 
-Change directory to the artifacts folder: 
+This tutorial will ....
+## TODO: specify what the outcome is here
 
-`cd quorum-test-network` default folder location 
+Change directory to the `orchestrate` directory in the artifacts folder: 
+
+`cd quorum-test-network\orchestrate` default folder location 
  
-**To start services and the network:**
-
-`./run.sh` starts all the docker containers
-
-
-#### Orchestate Tutorial
-
 ##### Install the Orchestrate cli
 ```
-cd orchestrate/orchestrate
 npm install && npm run orchestrate help 
 ```
 
-##### 0. Edit the .env file with details that match your account
+##### Start the network up
+This starts the Orchestrate services, as well as other services including Kafka, Redis, Postgres and Hashicorp Vault, and an Ethereum Client node.
+```
+npm run up
+```
+```
+## TODO: issues with //    "up-orchestrate": "docker-compose up -d ${npm_package_config_services}",
+ERROR: No such service: tx-crafter
+npm ERR! code ELIFECYCLE
+npm ERR! errno 1
+npm ERR! pegasys-orchestrate-quick-start@2.3.0 up-orchestrate: `docker-compose up -d ${npm_package_config_services}`
+npm ERR! Exit status 1
+```
+
+##### Edit the .env file with details that match your account
 ## TODO: specify which vars or can we give em some of our test accounts so it works right away?
 ```
 vim .env
 ```
 
-##### 1. Create an Ethereum account that serves as your **Network Faucet**
+##### Create an Ethereum account that serves as your **Network Faucet**
 ```
 npm run generate-account
 ```
+which returns (please note the account value will be different in your case)
+```
+> pegasys-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> dotenv ts-node src/generate-account
 
+0x90494000f242D9e41Cd635939536Aa7aA869CfCF
+```
 Copy the output of this command and add it to the `.env` file as the value for the `FAUCET_ACCOUNT` variable:
-
-Example: `FAUCET_ACCOUNT=0x6230592812dE2E256D1512504c3E8A3C49975f07`
+like so: `FAUCET_ACCOUNT=0x90494000f242D9e41Cd635939536Aa7aA869CfCF`
                                                              
 
-
-
-**To stop services :**
-
-`./stop.sh` stops the entire network, and you can resume where it left off with `./resume.sh` 
-
-`./remove.sh ` will first stop and then remove all containers and images
-
-
-
-
-
-## TODO:
+##### List accounts stored in Hashicorp Vault
+## TODO: specify whats the connection between create an eth account and vault..
 
 ```
-docker-compose -f docker-compose-deps.yml up -d
-docker-compose -f docker-compose.yml up -d
+npm run hashicorp-accounts
+```
 
-# change the external deps with the name of the folder you deploy to at the bottom of docker-compose.yml
+which returns (please note the key value will be different in your case)
+```
+> pegasys-orchestrate-quick-start@2.3.0 hashicorp-accounts /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> bash scripts/deps/config/hashicorp/vault.sh kv list secret/default
 
-# to install the orchestrate cli
-cd orchestrate/orchestrate
-npm install && npm run orchestrate help 
+Keys
+----
+_0x90494000f242D9e41Cd635939536Aa7aA869CfCF
 
 ```
 
-
-### Stop Services and Network
-`./stop.sh` stops all the docker containers created.
-
-### Remove stopped containers and volumes
-`./remove.sh` stops and removes all the containers and volumes.
+Please note you can also run any other Hashicorp Vault CLI commands by running `npm run hashicorp-vault -- <command>`:
+For example, to display the vault token:
+`npm run hashicorp-vault -- token lookup`
 
 
-##TODO:
-- fix list.sh
-- fix images & readme
-- add monitoring for go
-- cakeshop
+##### Connect to the blockchain network
+Now that you have Orchestrate up and running and an account created, it's time to connect Orchestrate to a blockchain network, by using the REST APIs
+
+```
+npm run register-chain
+```
+
+
+which returns (please note the key value will be different in your case)
+```
+> pegasys-orchestrate-quick-start@2.3.0 register-chain /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> dotenv ts-node src/register-chain
+
+{
+  uuid: '35e2a951-1f9f-4ad0-9d14-199f5b330dc2',
+  name: 'besu',
+  tenantID: '_',
+  urls: [ 'http://deps_besu_1:8545' ],
+  chainID: '2029',
+  listenerDepth: 0,
+  listenerCurrentBlock: '329',
+  listenerStartingBlock: '329',
+  listenerBackOffDuration: '1s',
+  listenerExternalTxEnabled: false,
+  createdAt: '2020-07-29T03:57:59.698503Z',
+  updatedAt: '2020-07-29T03:57:59.698503Z'
+}
+
+```
+The Chain Unique Identifier (uuid) is displayed in the JSON result. Copy this value and add it to the `.env` file as the value for the `CHAIN_UUID` variable:
+like so: `CHAIN_UUID=35e2a951-1f9f-4ad0-9d14-199f5b330dc2`
+                                                                                                                                 
+Once done, verify that the chain JSON-RPC is being proxied by Orchestrate
+```
+npm run get-latest-block
+```
+and the response should be details about the latest mined block on your chain
+
+
+##### Configure a [Faucet](https://docs.orchestrate.pegasys.tech)
+Note: On paid gas networks (for example, public networks such as Ethereum mainnet or Rinkeby and also some private networks, 
+such as the Ethereum one used in this quickstart), an Ethereum account must have a positive ETH balance to pay transactions 
+fees for mining. Orchestrate provides a faucet to automatically provide the required ETH to accounts managed by Orchestrate
+
+A faucet is defined using a name, a creditor account used to credit other accounts, and a chain identified by its UUID.
+
+The following command uses the CHAIN, CHAIN_UUID and FAUCET_ACCOUNT values from the .env file to create a faucet. 
+Here the faucet is named using the chain name suffixed by -faucet.
+
+```
+npm run create-faucet
+```
+which returns
+```
+> pegasys-orchestrate-quick-start@2.3.0 create-faucet /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> dotenv ts-node src/create-faucet
+
+{
+  uuid: '47afcb8c-e8bf-4275-a21d-ae29968e10d8',
+  name: 'besu-faucet',
+  tenantID: '_',
+  createdAt: '2020-07-29T03:59:52.783253Z',
+  updatedAt: '2020-07-29T03:59:52.783253Z',
+  chainRule: '35e2a951-1f9f-4ad0-9d14-199f5b330dc2',
+  creditorAccountAddress: '0x90494000f242D9e41Cd635939536Aa7aA869CfCF',
+  maxBalance: '100000000000000000',
+  amount: '60000000000000000',
+  cooldown: '10s'
+}
+```
+
+
+The next thing to do is to add some ETH to your faucet account - this is done by connect Metamask to your Ethereum cleints RPC endpoint ie. 
+`http://localhost:8545`. Then import one of the genesis account's private keys and transfer 1 or 2 ETH from one of the test accounts to
+your `FAUCET_ACCOUNT` address.
+
+
+
+
+
+
+
+##### Stop the network 
+
+`npm run down`
+
+
+
+
+
+
+
