@@ -110,7 +110,7 @@ services:
       - 14268:14268
       - 9411:9411
 
-  besu:
+  eth-client:
     restart: ${CONTAINER_RESTART-on-failure}
     networks:
       - orchestrate
@@ -124,7 +124,7 @@ services:
       - ./config/besu/key:/config/key
 
 
-#  geth:
+#  eth-client:
 #    <<: *container-common
 #    image: quorumengineering/quorum:${QUORUM_VERSION:-2.7.0}
 #    entrypoint:
@@ -151,9 +151,9 @@ services:
 #        --ipcdisable \
 #        --syncmode "full"
 #    volumes:
-#      - ./config/quorum/networkFiles/orchestrate/genesis.json:/nodeData/genesis.json
-#      - ./config/quorum/networkFiles/orchestrate/keystore:/nodeData/keystore
-#      - ./config/quorum/networkFiles/orchestrate/password:/nodeData/password
+#      - ./config/gquorum/genesis.json:/nodeData/genesis.json
+#      - ./config/gquorum/keystore:/nodeData/keystore
+#      - ./config/gquorum/password:/nodeData/password
 #      - chain-data:/nodeData/geth
 #    ports:
 #      - 8546:8545
