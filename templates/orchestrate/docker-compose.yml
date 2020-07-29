@@ -187,9 +187,9 @@ services:
 volumes:
   vault-token:
     external:
-      name: deps_vault-token
+      name: quorum-test-network_vault-token
 
 networks:
   orchestrate:
     external:
-      name: deps_orchestrate
+      name: quorum-test-network_orchestrate

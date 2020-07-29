@@ -300,6 +300,7 @@ services:
     << : *quorum-def
     ports:
       - 8545:8545/tcp
+      - 8546:8546/tcp
       - 30303
     environment:
       - NODE_ID=5

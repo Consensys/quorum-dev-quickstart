@@ -91,26 +91,92 @@ Go based Quorum deploys the Cakeshop toolkit available on `http://localhost:8999
 Essentially you get everything in the architecture diagram above.
 
 ### ii. Orchestrate Network <a name="orchestrate-network"></a>
+Orchestrate is a platform that enables enterprises to easily build secure and reliable applications on Ethereum blockchains. 
+It provides advanced features when connected to blockchain networks like:
+- Transaction management (transaction crafting, gas management, nonce management, and transaction listening)
+- Account management with private key storage in Hashicorp Vault
+- Smart contract registry
+- Public and private transactions
+- Multi-chain.
+
+For more information, refer to the PegaSys Orchestrate official Documentation.
+
+| ⚠️ **Note**: Orchestate is available free of charge for a trial period. To get access to the artifacts and continue, please create a free account HERE    |
+| ---      
+
+
+The quickstart connects to an Ethereum client, in this dev setup we use only one node, however if your system has enough resources 
+you are welcome to spin a full multi node network instead. All you need is an RPC endpoint that you connect Orchestrate to
+
+Change directory to the artifacts folder: 
+
+`cd quorum-test-network` default folder location 
+ 
+**To start services and the network:**
+
+`./run.sh` starts all the docker containers
+
+
+#### Orchestate Tutorial
+
+##### Install the Orchestrate cli
+```
+cd orchestrate/orchestrate
+npm install && npm run orchestrate help 
+```
+
+##### 0. Edit the .env file with details that match your account
+## TODO: specify which vars or can we give em some of our test accounts so it works right away?
+```
+vim .env
+```
+
+##### 1. Create an Ethereum account that serves as your **Network Faucet**
+```
+npm run generate-account
+```
+
+Copy the output of this command and add it to the `.env` file as the value for the `FAUCET_ACCOUNT` variable:
+
+Example: `FAUCET_ACCOUNT=0x6230592812dE2E256D1512504c3E8A3C49975f07`
+                                                             
+
+
+
+**To stop services :**
+
+`./stop.sh` stops the entire network, and you can resume where it left off with `./resume.sh` 
+
+`./remove.sh ` will first stop and then remove all containers and images
+
+
+
 
 
 ## TODO:
-Orchestrate:
-```
-docker-compose -f docker-compose-orchestrate-deps.yml up -d
-# not sure why this is on a seperate network
-docker network create deps_orchestrate
-docker-compose -f docker-compose-orchestrate-besu.yml up -d
-# can we create this as part of the main compose?
-docker volume create --name=deps_vault-token
-docker-compose -f docker-compose-orchestrate.yml up -d
-
 
 ```
+docker-compose -f docker-compose-deps.yml up -d
+docker-compose -f docker-compose.yml up -d
+
+# change the external deps with the name of the folder you deploy to at the bottom of docker-compose.yml
+
+# to install the orchestrate cli
+cd orchestrate/orchestrate
+npm install && npm run orchestrate help 
+
+```
+
+
+### Stop Services and Network
+`./stop.sh` stops all the docker containers created.
+
+### Remove stopped containers and volumes
+`./remove.sh` stops and removes all the containers and volumes.
 
 
 ##TODO:
-- txns for tessera
+- fix list.sh
 - fix images & readme
-
-
-
+- add monitoring for go
+- cakeshop
