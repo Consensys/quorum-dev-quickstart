@@ -29,6 +29,12 @@ echo "Stop and remove network..."
 docker-compose down -v
 docker-compose rm -sfv
 
+if [ -f "docker-compose-deps.yml" ]; then
+    echo "Stopping dependencies..."
+    docker-compose -f docker-compose-deps.yml down -v
+    docker-compose rm -sfv
+fi
+
 docker image rm quorum-dev-quickstart/block-explorer-light:develop
 docker image rm pegasyseng/orion:latest
 docker image rm pegasyseng/ethsigner:latest

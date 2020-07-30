@@ -110,6 +110,63 @@ services:
       - 14268:14268
       - 9411:9411
 
+  eth-client:
+    restart: ${CONTAINER_RESTART-on-failure}
+    networks:
+      - orchestrate
+    image: hyperledger/besu:latest
+    command: "--config-file=/config/config.toml"
+    ports:
+      - 8545:8545
+    volumes:
+      - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/genesis.json:/config/genesis.json
+      - ./config/besu/key:/config/key
+
+
+#  eth-client:
+#    <<: *container-common
+#    image: quorumengineering/quorum:${QUORUM_VERSION:-2.7.0}
+#    entrypoint:
+#      - /bin/sh
+#      - -c
+#      - |
+#        geth --datadir "/nodeData" init "/nodeData/genesis.json"
+#        geth \
+#        --rpc \
+#        --rpcaddr "0.0.0.0" \
+#        --rpcport "${GETH_RPC_PORT-8545}" \
+#        --rpccorsdomain "*" \
+#        --rpcvhosts "*" \
+#        --datadir "/nodeData" \
+#        --port "${GETH_PORT-30303}" \
+#        --rpcapi "admin,eth,net,web3,personal,txpool" \
+#        --networkid ${GETH_NETWORKID-888} \
+#        --nodiscover \
+#        --unlock "0" \
+#        --password "/nodeData/password" \
+#        --allow-insecure-unlock \
+#        --mine \
+#        --debug \
+#        --ipcdisable \
+#        --syncmode "full"
+#    volumes:
+#      - ./config/gquorum/genesis.json:/nodeData/genesis.json
+#      - ./config/gquorum/keystore:/nodeData/keystore
+#      - ./config/gquorum/password:/nodeData/password
+#      - chain-data:/nodeData/geth
+#    ports:
+#      - 8546:8545
+#    networks:
+#      - orchestrate
+#    healthcheck:
+#      test: ["CMD", "wget", "--spider", "--proxy", "off", "http://localhost:8545"]
+#      interval: 3s
+#      timeout: 3s
+#      retries: 10
+#      start_period: 5s
+
+
 volumes:
   db-data-contract-registry:
     driver: local
