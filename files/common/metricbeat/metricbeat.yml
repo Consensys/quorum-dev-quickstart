@@ -1,0 +1,34 @@
+
+metricbeat.modules:
+- module: prometheus
+  period: 15s
+  hosts:
+  - bootnode:9545
+  - validator2:9545
+  - validator3:9545
+  - validator4:9545
+  - rpcnode:9545
+  - minernode:9545
+  - node1:9545
+  - node2:9545
+  - node3:9545
+  - node4:9545
+  - node:9545
+  metrics_path: /metrics
+
+output.redis:
+  enabled: true
+  hosts: ["${REDIS_HOST}:${REDIS_PORT}"]
+  key: metricbeat
+
+
+logging:
+  level: error
+  to_files: false
+  json: true
+  files:
+    path: /var/log/metricbeat
+    name: metricbeat-all.log
+    keepfiles: 0
+    #rotateonstartup: true
+

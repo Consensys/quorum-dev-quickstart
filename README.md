@@ -102,11 +102,19 @@ Essentially you get everything in the architecture diagram above.
 ### iii. Smart Contracts & DApps <a name="poa-network-dapps"></a>
 - Once you have a network up and running from above, install [metamask](https://metamask.io/) as an extension in your browser
 - Once you have setup your own private account, select 'My Accounts' by clicking on the avatar pic and then 'Import Account' and enter the valid private_key
-- You can now deploy contracts and connect DApps to the network. Here is a [video tutorial](https://www.youtube.com/watch?v=_3E9FRJldj8) you can follow of the Truffle Pet-Shop Dapp that has been deployed to a network
-
+- You can now deploy contracts and connect DApps to the network. 
 ![Image dapp](./static/qs-dapp.png)
 
 As seen in the architecture overview diagram you can extend the network with monitoring, logging, smart contracts, DApps and so on
+
+As an example we've included the Truffle Pet-Shop Dapp in the `dapps` folder and here is a [video tutorial](https://www.youtube.com/watch?v=_3E9FRJldj8) you 
+can follow of deployment to the network and using it. Please import the private key `0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3` to
+Metmask before proceeding to build and run the DApp with `build-dapp.sh`.
+
+When that completes open a new tab in your browser and go to `http://localhost:3001` which opens the Truffle pet-shop box app 
+and you can adopt a pet from there. NOTE: Once you have adopted a pet, you can also go to the block explorer `http://localhost:25000` 
+and search for the transaction where you can see its details recorded. Metamask will also have a record of any transactions.
+
 
 ### iv. Orchestrate Network <a name="orchestrate-network"></a>
 Orchestrate is a platform that enables enterprises to easily build secure and reliable applications on Ethereum blockchains. 
