@@ -27,11 +27,11 @@ echo "----------------------------------"
 echo "JSON-RPC HTTP service endpoint      : http://${HOST}:8545"
 echo "JSON-RPC WebSocket service endpoint : ws://${HOST}:8546"
 echo "Web block explorer address          : http://${HOST}:25000/"
-if [ -z `docker-compose -f docker-compose.yml ps -q prometheus` ]; then
+if [ ! -z `docker-compose -f docker-compose.yml ps -q prometheus 2> /dev/null` ]; then
 echo "Prometheus address                  : http://${HOST}:9090/graph"
 echo "Grafana address                     : http://${HOST}:3000/d/XE4V0WGZz/besu-overview?orgId=1&refresh=10s&from=now-30m&to=now&var-system=All"
 fi
-if [ -z `docker-compose -f docker-compose.yml ps -q cakeshop` ]; then
+if [ ! -z `docker-compose -f docker-compose.yml ps -q cakeshop 2> /dev/null` ]; then
 echo "Cakeshop toolkit address            : http://${HOST}:8999"
 fi
 echo "****************************************************************"

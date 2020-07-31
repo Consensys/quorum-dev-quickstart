@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 hash truffle 2>/dev/null || {
   echo >&2 "This script requires truffle but it's not installed."
@@ -6,13 +7,16 @@ hash truffle 2>/dev/null || {
   exit 1
 }
 
-git clone https://github.com/truffle-box/pet-shop-box.git ./
-mv custom_config/* ./
+rm -rf pet-shop-box
+git clone https://github.com/truffle-box/pet-shop-box.git
+cp -r custom_config/* ./pet-shop-box/
 
+cd pet-shop-box/
 npm install
 npm install truffle
 npm install @truffle/hdwallet-provider
 
+truffle compile
 truffle migrate --network quickstartWallet
 truffle test --network quickstartWallet
 

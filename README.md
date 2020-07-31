@@ -109,7 +109,7 @@ As seen in the architecture overview diagram you can extend the network with mon
 
 As an example we've included the Truffle Pet-Shop Dapp in the `dapps` folder and here is a [video tutorial](https://www.youtube.com/watch?v=_3E9FRJldj8) you 
 can follow of deployment to the network and using it. Please import the private key `0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3` to
-Metmask before proceeding to build and run the DApp with `build-dapp.sh`.
+Metmask **before** proceeding to build and run the DApp with `run-dapp.sh`.
 
 When that completes open a new tab in your browser and go to `http://localhost:3001` which opens the Truffle pet-shop box app 
 and you can adopt a pet from there. NOTE: Once you have adopted a pet, you can also go to the block explorer `http://localhost:25000` 
@@ -131,9 +131,9 @@ For more information, refer to the PegaSys Orchestrate official Documentation.
 | ---      
 
 
-The quickstart connects to an Ethereum client, in this dev setup we use only one node, however if your system has enough 
-resources you are welcome to spin a full multi node network instead. All you need is an RPC endpoint that you connect 
-Orchestrate to
+| ⚠️ **Note**: If you have an existing Quorum quickstart running, please stop it before proceeding. The Orchestrate quickstart spins up an Ethereum client which serves as an RPC endpoint. If you have an existing RPC endpoint, please update the `NETWORK_ENDPOINT` in the `.env` file and comment out the eth_client container in the file `<output_folder>/orchestrate/scripts/deps/docker-compose.yml` |
+| ---      
+
 
 This tutorial will show you how to connect Orchestate to a blockchain network and use the Contract Registry to deploy 
 smart contracts, send transactions etc 
