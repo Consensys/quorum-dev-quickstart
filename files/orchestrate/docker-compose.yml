@@ -24,7 +24,7 @@ x-default-variables: &default-variables
 
 x-container-common: &container-common
   restart: ${CONTAINER_RESTART-on-failure}
-  image: registry.gitlab.com/consensys/client/fr/core-stack/orchestrate:f763b724
+  image: orchestrate:v2.2.0
   networks:
     - orchestrate
 

@@ -98,11 +98,11 @@ _privacyQuestion.transformerValidator = _getYesNoValidator(_privacyQuestion, _or
 
 export const rootQuestion: QuestionTree = {
     name: "clientType",
-    prompt: "Which type of client would you like to run? Default: Besu",
+    prompt: "Which Ethereum client would you like to run? Default: [1]",
     options: [
         // TODO: fix these to the correct names
-        { label: "Besu-based Quorum", value: "besu", nextQuestion: _privacyQuestion, default: true },
-        { label: "Go-based Quorum", value: "gquorum", nextQuestion: _privacyQuestion }
+        { label: "Hyperledger Besu", value: "besu", nextQuestion: _privacyQuestion, default: true },
+        { label: "GoQuorum", value: "gquorum", nextQuestion: _privacyQuestion }
     ]
 };
 

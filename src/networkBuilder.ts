@@ -1,3 +1,4 @@
+import { installOrchestrateImages } from "./service/orchestrate";
 import { renderTemplateDir, validateDirectoryExists, copyFilesDir } from "./fileRendering";
 import path from "path";
 
@@ -9,48 +10,48 @@ export interface NetworkContext {
     orchestrate: boolean;
 }
 
-export function buildNetwork(context: NetworkContext): void {
+export async function buildNetwork(context: NetworkContext): Promise<void> {
     const templatesDirPath = path.resolve(__dirname, "..", "templates");
     const filesDirPath = path.resolve(__dirname, "..", "files");
 
-    const commonTemplatePath = path.resolve(templatesDirPath, "common");
-    const clientTemplatePath = path.resolve(templatesDirPath, context.clientType);
-    const orchestrateTemplatePath = path.resolve(templatesDirPath, "orchestrate");
-
-    const commonFilesPath = path.resolve(filesDirPath, "common");
-    const clientFilesPath = path.resolve(filesDirPath, context.clientType);
-    const orchestrateFilesPath = path.resolve(filesDirPath, "orchestrate");
-
-    if (validateDirectoryExists(commonTemplatePath)) {
-        renderTemplateDir(commonTemplatePath, context);
-    }
-
-    if (validateDirectoryExists(clientTemplatePath)) {
-        renderTemplateDir(clientTemplatePath, context);
-    }
-
-    if (validateDirectoryExists(commonFilesPath)) {
-        copyFilesDir(commonFilesPath, context);
-    }
-
-    if (validateDirectoryExists(clientFilesPath)) {
-        copyFilesDir(clientFilesPath, context);
-    }
-
     if (context.orchestrate) {
-        // update the output dir to be a subdirectory of the one given by the user
-        const orchestrateContext = {
-            ...context,
-            outputPath: path.resolve(context.outputPath, "orchestrate")
-        };
+        console.log(`Installing ${context.clientType === "besu" ? "Besu" : "GoQuorum"}/Orchestrate quickstart to ${context.outputPath}`);
+        await installOrchestrateImages();
+        const orchestrateTemplatePath = path.resolve(templatesDirPath, "orchestrate");
+        const orchestrateFilesPath = path.resolve(filesDirPath, "orchestrate");
 
         if (validateDirectoryExists(orchestrateTemplatePath)) {
-            renderTemplateDir(orchestrateTemplatePath, orchestrateContext);
+            renderTemplateDir(orchestrateTemplatePath, context);
         }
 
         if (validateDirectoryExists(orchestrateFilesPath)) {
-            copyFilesDir(orchestrateFilesPath, orchestrateContext);
+            copyFilesDir(orchestrateFilesPath, context);
+        }
+    } else {
+        console.log(`Installing ${context.clientType === "besu" ? "Besu" : "GoQuorum"} quickstart to ${context.outputPath}`);
+
+        const commonTemplatePath = path.resolve(templatesDirPath, "common");
+        const clientTemplatePath = path.resolve(templatesDirPath, context.clientType);
+
+        const commonFilesPath = path.resolve(filesDirPath, "common");
+        const clientFilesPath = path.resolve(filesDirPath, context.clientType);
+
+        if (validateDirectoryExists(commonTemplatePath)) {
+            renderTemplateDir(commonTemplatePath, context);
+        }
+
+        if (validateDirectoryExists(clientTemplatePath)) {
+            renderTemplateDir(clientTemplatePath, context);
+        }
+
+        if (validateDirectoryExists(commonFilesPath)) {
+            copyFilesDir(commonFilesPath, context);
+        }
+
+        if (validateDirectoryExists(clientFilesPath)) {
+            copyFilesDir(clientFilesPath, context);
         }
     }
+    console.log(`Installation complete. To start your test network, run 'run.sh' in the installation directory.`);
 }
 
