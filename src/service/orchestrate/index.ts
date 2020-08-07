@@ -1,4 +1,4 @@
-import { createWriteStream } from "fs";
+import { createWriteStream, unlinkSync } from "fs";
 import { resolve as resolvePath } from "path";
 import got, { HTTPError } from "got";
 import { promisify } from "util";
@@ -16,6 +16,7 @@ export async function installOrchestrateImages(): Promise<void> {
     const token = await _fetchAuthToken();
 
     if (!token.token) {
+        console.error("No access token returned.");
         throw new Error("No access token returned. Please try again in a few minutes.");
     }
 
@@ -25,37 +26,31 @@ export async function installOrchestrateImages(): Promise<void> {
 
     const tmpDirDesc = tmp.dirSync({ prefix: "quorum-dev-quickstart" });
 
-    try {
-        const tmpDir = tmpDirDesc.name;
+    const tmpDir = tmpDirDesc.name;
 
-        const downloadPromises: Promise<string>[] = [];
+    const downloadPromises: Promise<string>[] = [];
 
-        for (const entry of manifest.images) {
-            if (!await hasImageTag(entry.tag)) {
-                console.log(`Downloading docker image ${entry.tag}`);
-                const downloadPromise = _downloadImage(accessToken, entry, tmpDir).then(
-                    (result: string) => {
-                        console.log(`Docker image ${entry.tag} download complete.`);
-                        return result;
-                    }
-                );
-                downloadPromises.push(downloadPromise);
-            } else {
-                console.log(`Docker image ${entry.tag} is already installed, skipping image download.`);
-            }
+    for (const entry of manifest.images) {
+        if (!await hasImageTag(entry.tag)) {
+            console.log(`Downloading docker image ${entry.tag}`);
+            const downloadPromise = _downloadImage(accessToken, entry, tmpDir).then(
+                (result: string) => {
+                    console.log(`Docker image ${entry.tag} download complete.`);
+                    return result;
+                }
+            );
+            downloadPromises.push(downloadPromise);
+        } else {
+            console.log(`Docker image ${entry.tag} is already installed, skipping image download.`);
         }
-
-        const imagePaths = await Promise.all(downloadPromises);
-
-        for (const imagePath of imagePaths) {
-            await loadImage(imagePath);
-        }
-
-    } finally {
-        // clean up the temp dir
-        tmpDirDesc.removeCallback();
     }
 
+    const imagePaths = await Promise.all(downloadPromises);
+
+    for (const imagePath of imagePaths) {
+        await loadImage(imagePath);
+        unlinkSync(imagePath);
+    }
 }
 
 async function _fetchAuthToken(): Promise<ExtendedToken> {
@@ -78,7 +73,8 @@ async function _fetchManifest(token: string): Promise<ImageManifest> {
         "https://relay.quorum.consensys.net";
 
     try {
-        return await got(`${relayUrlBase}/quorum-dev-quickstart/manifest`, {
+        const manifestUrl = `${relayUrlBase}/quorum-dev-quickstart/manifest`;
+        return await got(manifestUrl, {
             headers
         }).json<ImageManifest>();
 
