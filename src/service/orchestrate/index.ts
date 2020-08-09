@@ -13,6 +13,7 @@ const pipeline = promisify(callbackPipeline);
 
 
 export async function installOrchestrateImages(): Promise<void> {
+    console.log("fetching auth token");
     const token = await _fetchAuthToken();
 
     if (!token.token) {
@@ -23,6 +24,7 @@ export async function installOrchestrateImages(): Promise<void> {
     const accessToken = token.token;
 
     const manifest = await _fetchManifest(accessToken);
+    console.log(`received manifest`);
 
     const tmpDirDesc = tmp.dirSync({ prefix: "quorum-dev-quickstart" });
 
@@ -73,6 +75,7 @@ async function _fetchManifest(token: string): Promise<ImageManifest> {
         "https://relay.quorum.consensys.net";
 
     try {
+        console.log(`fetching manifest from ${relayUrlBase}/quorum-dev-quickstart/manifest`);
         const manifestUrl = `${relayUrlBase}/quorum-dev-quickstart/manifest`;
         return await got(manifestUrl, {
             headers
