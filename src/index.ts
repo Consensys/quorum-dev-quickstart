@@ -5,7 +5,8 @@ import { buildNetwork, NetworkContext } from "./networkBuilder";
 async function main() {
     const qr = new QuestionRenderer(rootQuestion);
     const answers = await qr.render();
-    buildNetwork(answers as NetworkContext);
+    await buildNetwork(answers as NetworkContext);
+    process.exit(0);
 }
 
 if (require.main === module) {
@@ -16,19 +17,18 @@ if (require.main === module) {
         void main();
     } catch (err) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        if (err && err.stack) {
-            // eslint-disable-next-line no-console, @typescript-eslint/no-unsafe-member-access
-            console.error(`Unhandled promise rejection: ${err.stack as string}`);
+        if (err && err.stack && process.argv.length >= 3 && process.argv[2] === "--stackTraceOnError") {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            console.error(`Fatal error: ${err.stack as string}`);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         } else if (err && err.message) {
-            // eslint-disable-next-line no-console, @typescript-eslint/no-unsafe-member-access
-            console.error(`Unhandled promise rejection: ${err.message as string}`);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            console.error(`Fatal error: ${err.message as string}`);
         } else if (err) {
-            // eslint-disable-next-line no-console
-            console.error(`Unhandled promise rejection: ${err as string}`);
+            console.error(`Fatal error: ${err as string}`);
         } else {
-            // eslint-disable-next-line no-console
-            console.error(`Unhandled promise rejection: unknown error`);
+            console.error(`Fatal error: unknown`);
         }
+        process.exit(1);
     }
 }
