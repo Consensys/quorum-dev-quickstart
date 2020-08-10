@@ -82,27 +82,69 @@ const _outputDirQuestion: QuestionTree = {
     }
 };
 
-const _orchestrateQuestion: QuestionTree = {
-    name: "orchestrate",
-    prompt: "Do you want to include support for Orchestrate? [Y/n]",
-};
-// have to add this below the definition because of the self reference..
-_orchestrateQuestion.transformerValidator = _getYesNoValidator(_orchestrateQuestion, _outputDirQuestion, "y");
-
 const _privacyQuestion: QuestionTree = {
     name: "privacy",
     prompt: "Do you wish to enable support for private transactions? [Y/n]",
 };
 // have to add this below the definition because of the self reference..
-_privacyQuestion.transformerValidator = _getYesNoValidator(_privacyQuestion, _orchestrateQuestion, "y");
+_privacyQuestion.transformerValidator = _getYesNoValidator(_privacyQuestion, _outputDirQuestion, "y");
+
+const _orchestrateQuestion: QuestionTree = {
+    name: "orchestrate",
+    prompt: "Do you want to try out Orchestrate? Note: choosing yes will direct you to a login/registration page. [Y/n]",
+
+    transformerValidator: (rawInput: string, answers: AnswerMap) => {
+        const normalizedInput = rawInput.toLowerCase();
+
+        if (!normalizedInput) {
+            answers.orchestrate = true;
+            return _outputDirQuestion;
+        } else if (normalizedInput === "y" || normalizedInput === "n") {
+            answers.orchestrate = normalizedInput === "y";
+            if (answers.orchestrate) {
+                return _outputDirQuestion;
+            } else {
+                return _privacyQuestion;
+            }
+        } else {
+            return _orchestrateQuestion;
+        }
+    }
+};
+
+const bannerText = String.raw`
+              ___
+             / _ \   _   _    ___    _ __   _   _   _ __ ___
+            | | | | | | | |  / _ \  | '__| | | | | | '_ ' _ \
+            | |_| | | |_| | | (_) | | |    | |_| | | | | | | |
+             \__\_\  \__,_|  \___/  |_|     \__,_| |_| |_| |_|
+     
+        ____                          _
+       |  _ \    ___  __   __   ___  | |   ___    _ __     ___   _ __
+       | | | |  / _ \ \ \ / /  / _ \ | |  / _ \  | '_ \   / _ \ | '__|
+       | |_| | |  __/  \ V /  |  __/ | | | (_) | | |_) | |  __/ | |
+       |____/   \___|   \_/    \___| |_|  \___/  | .__/   \___| |_|
+                                                 |_|
+       ___            _          _            _                    _
+      / _ \   _   _  (_)   ___  | | __  ___  | |_    __ _   _ __  | |_
+     | | | | | | | | | |  / __| | |/ / / __| | __|  / _' | | '__| | __|
+     | |_| | | |_| | | | | (__  |   <  \__ \ | |_  | (_| | | |    | |_ 
+      \__\_\  \__,_| |_|  \___| |_|\_\ |___/  \__|  \__,_| |_|     \__|
+`;
+
+const leadInText = `
+\nWelcome to the Quorum Developer Quickstart utility. This tool can be used to
+rapidly generate local Quorum blockchain networks for development purposes.
+To get started, be sure that you have both Docker and Docker Compose
+installed, then answer the following questions.\n\n`;
 
 export const rootQuestion: QuestionTree = {
     name: "clientType",
-    prompt: "Which Ethereum client would you like to run? Default: [1]",
+    prompt: `${bannerText}${leadInText}Which Ethereum client would you like to run? Default: [1]`,
     options: [
         // TODO: fix these to the correct names
-        { label: "Hyperledger Besu", value: "besu", nextQuestion: _privacyQuestion, default: true },
-        { label: "GoQuorum", value: "gquorum", nextQuestion: _privacyQuestion }
+        { label: "Hyperledger Besu", value: "besu", nextQuestion: _orchestrateQuestion, default: true },
+        { label: "GoQuorum", value: "gquorum", nextQuestion: _orchestrateQuestion }
     ]
 };
 

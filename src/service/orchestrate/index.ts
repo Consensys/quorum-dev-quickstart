@@ -9,6 +9,8 @@ import { ImageManifest, ImageManifestEntry } from "./types";
 import { hasImageTag, loadImage } from "../docker";
 import tmp from "tmp";
 
+import { Spinner } from "../../spinner";
+
 const pipeline = promisify(callbackPipeline);
 
 
@@ -22,6 +24,7 @@ export async function installOrchestrateImages(): Promise<void> {
 
     const accessToken = token.token;
 
+    const spinner = new Spinner("Fetching manifest").start();
     const manifest = await _fetchManifest(accessToken);
 
     const tmpDirDesc = tmp.dirSync({ prefix: "quorum-dev-quickstart" });
@@ -30,27 +33,35 @@ export async function installOrchestrateImages(): Promise<void> {
 
     const downloadPromises: Promise<string>[] = [];
 
-    for (const entry of manifest.images) {
-        if (!await hasImageTag(entry.tag)) {
-            console.log(`Downloading docker image ${entry.tag}`);
-            const downloadPromise = _downloadImage(accessToken, entry, tmpDir).then(
-                (result: string) => {
-                    console.log(`Docker image ${entry.tag} download complete.`);
-                    return result;
-                }
-            );
-            downloadPromises.push(downloadPromise);
-        } else {
-            console.log(`Docker image ${entry.tag} is already installed, skipping image download.`);
+    try {
+        for (const entry of manifest.images) {
+            if (!await hasImageTag(entry.tag)) {
+                const downloadPromise = _downloadImage(accessToken, entry, tmpDir).then(
+                    (result: string) => {
+                        return result;
+                    }
+                );
+                downloadPromises.push(downloadPromise);
+            }
         }
+
+        if (downloadPromises.length > 0) {
+            spinner.text = `Importing ${downloadPromises.length} docker image${downloadPromises.length === 1 ? "" : "s"}. This may take a few minutes.`;
+            const imagePaths = await Promise.all(downloadPromises);
+
+            for (const imagePath of imagePaths) {
+                await loadImage(imagePath);
+                unlinkSync(imagePath);
+            }
+            await spinner.succeed(`Image${downloadPromises.length > 1 ? "s" : ""} imported successfully.`);
+        } else {
+            await spinner.succeed(`Image${manifest.images.length > 1 ? "s" : ""} already installed, skipped import step.`);
+        }
+    } catch (err) {
+        await spinner.fail(`Error: ${(err as Error).message}`);
+        process.exit(1);
     }
 
-    const imagePaths = await Promise.all(downloadPromises);
-
-    for (const imagePath of imagePaths) {
-        await loadImage(imagePath);
-        unlinkSync(imagePath);
-    }
 }
 
 async function _fetchAuthToken(): Promise<ExtendedToken> {

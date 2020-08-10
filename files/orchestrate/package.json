@@ -30,6 +30,8 @@
     "down-deps": "docker-compose -f scripts/deps/docker-compose.yml down --volumes --timeout 0",
     "up": "npm run up-deps && npm run up-orchestrate",
     "down": "npm run down-orchestrate ; npm run down-deps",
+    "start": "npm run up",
+    "stop": "npm run down",
     "hashicorp-accounts": "bash scripts/deps/config/hashicorp/vault.sh kv list secret/default",
     "hashicorp-token-lookup": "bash scripts/deps/config/hashicorp/vault.sh token lookup",
     "hashicorp-vault": "bash -x scripts/deps/config/hashicorp/vault.sh"
@@ -65,7 +67,7 @@
     "ethers": "~4.0.47",
     "husky": "~4.2.5",
     "lint-staged": "~10.2.2",
-    "pegasys-orchestrate": "~2.3.0",
+    "pegasys-orchestrate": "~3.0.0",
     "prettier": "~2.0.5",
     "rimraf": "~3.0.2",
     "truffle": "~5.1.24",
