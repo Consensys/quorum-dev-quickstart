@@ -24,7 +24,7 @@ x-default-variables: &default-variables
 
 x-container-common: &container-common
   restart: ${CONTAINER_RESTART-on-failure}
-  image: orchestrate:v2.2.0
+  image: orchestrate:v2.3.0-rc2
   networks:
     - orchestrate
 

@@ -392,14 +392,30 @@ which returns
 > pegasys-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > dotenv ts-node src/deploy-contract
 
-Transaction request sent with id:  2b8bcb4c-d1fa-11ea-87d0-0242ac130003
+
+Transaction request sent successfully {
+  uuid: 'b98f148c-0c83-4e8f-9d75-8ac3aabb3355',
+  idempotencyKey: '699833c9-e9d3-4d69-8590-4467ccea5a28',
+  params: {
+    from: '0xF0156f5949e4667E5396D41ff22616EDc21f0150',
+    contractName: 'Counter',
+    contractTag: 'latest'
+  },
+  schedule: {
+    uuid: '7a2fcc31-4410-4510-9af4-2a27c7e2c21f',
+    jobs: [ [Object] ],
+    createdAt: '2020-08-10T00:26:33.311468Z'
+  },
+  createdAt: '2020-08-10T00:26:33.311468Z'
+}
+
 ```
 and the consumer window will have a transaction receipt
 ``` 
 > pegasys-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > dotenv ts-node src/consume
 
-Transaction ID:  2b8bcb4c-d1fa-11ea-87d0-0242ac130003
+Transaction ID:  b98f148c-0c83-4e8f-9d75-8ac3aabb3355
 Transaction receipt: {
   "blockHash": "0xef95f2f1ed3ca60b048b4bf67cde2195961e0bba6f70bcbea9a2c4e133e34b46",
   "blockNumber": 312,
