@@ -4,7 +4,7 @@ import Keycloak from "keycloak-connect";
 import { KeycloakAuth, ExtendedKeycloakConfig, ExtendedToken } from "./types";
 import { createServer } from "http";
 
-import ora from "ora";
+import { Spinner } from "../../spinner";
 
 import open from "open";
 
@@ -57,22 +57,21 @@ export async function getAccessToken(kcConfig: ExtendedKeycloakConfig = defaultK
     const server = createServer(app);
     server.listen(53098, "0.0.0.0");
 
-    const spinner = ora("Opening login page. Please click the 'Register' link if you don't have an account.").start();
+    const spinner = new Spinner("Opening login page.");
+    spinner.start();
+
     await _delay(2000);
 
     try {
         const subprocess = await open("http://localhost:53098/authenticate");
         subprocess.unref();
-    } catch {
-        console.log("Couldn't open browser window. Please visit http://localhost:53098/authenticate in your browser to continue.");
-    }
+    } catch { } // eslint-disable-line no-empty
 
-    spinner.text = "Waiting for successful login";
+    spinner.text = "Waiting for successful login. If no browser window opened, please visit http://localhost:53098/authenticate to log in.";
+
     const result = await tokenPromise;
     server.close();
-    spinner.text = "Authentication successful!";
-    await _delay(2000);
-    spinner.succeed("Authentication successful!");
+    await spinner.succeed("Authentication successful!");
     return result;
 }
 
