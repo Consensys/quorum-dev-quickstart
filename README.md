@@ -415,19 +415,31 @@ and the consumer window will have a transaction receipt
 > pegasys-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > dotenv ts-node src/consume
 
-Transaction ID:  b98f148c-0c83-4e8f-9d75-8ac3aabb3355
-Transaction receipt: {
+Message received ! {
+  envelopeId: 'b98f148c-0c83-4e8f-9d75-8ac3aabb3355',
+  offset: '1',
+  topic: 'topic-tx-decoded',
+  chain: 'dev'
+}
+RequestId: b98f148c-0c83-4e8f-9d75-8ac3aabb3355
+Receipt: {
   "blockHash": "0xef95f2f1ed3ca60b048b4bf67cde2195961e0bba6f70bcbea9a2c4e133e34b46",
   "blockNumber": 312,
-  "txIndex": 2,
+  "txIndex": 0,
   "txHash": "0x9fc76417374aa880d4449a1f7f31ec597f00b1f6f3dd2d66f4c9c6c445836d8b",
   "status": true,
   "contractAddress": "0xA94F5374fCE5EDBC8E2A8697C15331677D6EBF0B",
-  "cumulativeGasUsed": 153925,
-  "gasUsed": 110813,
-  "postState": "0x",
-  "bloom": "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-  "logs": undefined
+  "cumulativeGasUsed": 125733,
+  "gasUsed": 125733,
+  "postState": undefined,
+  "bloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "revertReason": undefined,
+  "output": undefined,
+  "privateFrom": undefined,
+  "privateFor": [],
+  "privacyGroupId": undefined
+}
+
 }
 ```
 Copy the contractAddress in the receipt and set the TO_ACCOUNT value with this address in .env file, like so: 
@@ -447,7 +459,23 @@ first terminal as before
 > pegasys-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > dotenv ts-node src/send-tx
 
-Transaction request sent with id:  ccd86e78-d1fb-11ea-87d0-0242ac130003
+Transaction request sent successfully {
+  uuid: '12431cba-5719-4a69-912d-d8713bc4a8ad',
+  idempotencyKey: '792de89e-226e-4fe2-bad8-511a997d9bbd',
+  chain: 'dev',
+  params: {
+    from: '0xF0156f5949e4667E5396D41ff22616EDc21f0150',
+    to: '0xA94F5374fCE5EDBC8E2A8697C15331677D6EBF0B',
+    methodSignature: 'increment(uint256)',
+    args: [ 1 ]
+  },
+  schedule: {
+    uuid: '188b8aa9-4343-4772-b390-7021dee7d82b',
+    tenantID: '_',
+    jobs: [ [Object] ],
+    createdAt: '2020-08-11T00:11:56.743088Z'
+  },
+  createdAt: '2020-08-11T00:11:
 ```
 
 This concludes the first tutorial on how to deploy contracts and send transactions.
