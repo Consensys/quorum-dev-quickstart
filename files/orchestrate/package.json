@@ -1,7 +1,7 @@
 {
-  "name": "pegasys-orchestrate-quick-start",
+  "name": "codefi-orchestrate-quick-start",
   "version": "2.3.0",
-  "description": "PegaSys Orchestrate Quick start",
+  "description": "Codefi Orchestrate Quick start",
   "config": {
     "services": "tx-crafter tx-signer tx-sender tx-listener contract-registry chain-registry transaction-scheduler"
   },
@@ -43,11 +43,11 @@
   "keywords": [
     "Blockchain",
     "Ethereum",
-    "Pegasys",
+    "Consensys",
     "Orchestrate",
     "Transaction"
   ],
-  "author": "ConsenSys PegaSys Engineering",
+  "author": "ConsenSys Engineering",
   "contributors": [
     "Dario Anongba Varela <dario.varela@consensys.net>",
     "Nicolas Maurice <nicolas.maurice@consensys.net>",

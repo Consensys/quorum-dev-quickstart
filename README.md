@@ -167,7 +167,7 @@ npm run generate-account
 ```
 which returns (please note the account value will be different in your case)
 ```
-> pegasys-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> codefi-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > dotenv ts-node src/generate-account
 
 0x90494000f242D9e41Cd635939536Aa7aA869CfCF
@@ -184,7 +184,7 @@ npm run hashicorp-accounts
 
 which returns (please note the key value will be different in your case)
 ```
-> pegasys-orchestrate-quick-start@2.3.0 hashicorp-accounts /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> codefi-orchestrate-quick-start@2.3.0 hashicorp-accounts /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > bash scripts/deps/config/hashicorp/vault.sh kv list secret/default
 
 Keys
@@ -210,7 +210,7 @@ npm run register-chain
 
 which returns (please note the key value will be different in your case)
 ```
-> pegasys-orchestrate-quick-start@2.3.0 register-chain /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> codefi-orchestrate-quick-start@2.3.0 register-chain /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > dotenv ts-node src/register-chain
 
 {
@@ -254,7 +254,7 @@ npm run create-faucet
 ```
 which returns
 ```
-> pegasys-orchestrate-quick-start@2.3.0 create-faucet /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> codefi-orchestrate-quick-start@2.3.0 create-faucet /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > dotenv ts-node src/create-faucet
 
 {
@@ -287,7 +287,7 @@ npm run compile
 ```
 which returns
 ```
-> pegasys-orchestrate-quick-start@2.3.0 compile /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> codefi-orchestrate-quick-start@2.3.0 compile /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > truffle compile
 
 
@@ -305,7 +305,7 @@ npm run register-contract
 ```
 which returns
 ``` 
-> pegasys-orchestrate-quick-start@2.3.0 register-contract /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> codefi-orchestrate-quick-start@2.3.0 register-contract /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > dotenv ts-node src/register-contract
 
 {
@@ -340,7 +340,7 @@ npm run get-catalog
 ```
 which returns
 ``` 
-> pegasys-orchestrate-quick-start@2.3.0 get-catalog /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> codefi-orchestrate-quick-start@2.3.0 get-catalog /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > dotenv ts-node src/get-catalog
 
 [ 'Counter' ]
@@ -355,7 +355,7 @@ npm run  generate-account
 ```
 which returns
 ``` 
-> pegasys-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> codefi-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > dotenv ts-node src/generate-account
 
 0xF0156f5949e4667E5396D41ff22616EDc21f0150
@@ -389,7 +389,7 @@ npm run  deploy
 After a few seconds (depending on block time), you see the receipt related to the contract creation transaction in the consumer terminal.
 which returns
 ``` 
-> pegasys-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> codefi-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > dotenv ts-node src/deploy-contract
 
 
@@ -412,7 +412,7 @@ Transaction request sent successfully {
 ```
 and the consumer window will have a transaction receipt
 ``` 
-> pegasys-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> codefi-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > dotenv ts-node src/consume
 
 Message received ! {
@@ -456,7 +456,7 @@ npm run send-tx
 After a few seconds you will see the transaction request id, and the transaction receipt in the consumer output on the 
 first terminal as before
 ``` 
-> pegasys-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> codefi-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > dotenv ts-node src/send-tx
 
 Transaction request sent successfully {
