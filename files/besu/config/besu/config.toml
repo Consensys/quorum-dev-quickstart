@@ -26,7 +26,7 @@ metrics-host="0.0.0.0"
 metrics-port=9545
 
 # permissions
-permissions-nodes-config-file-enabled=false
+permissions-nodes-config-file-enabled=true
 permissions-nodes-config-file="/config/permissions_config.toml"
 
 # bootnodes
