@@ -1,0 +1,17 @@
+{
+  "name": "quorum-dev-quickstart-smart-contracts",
+  "version": "0.0.1-beta.1",
+  "description": "A utility that lets developers try out the new suite of Quorum tools from ConsenSys!",
+  "main": "index.js",
+  "repository": "git@github.com:PegaSysEng/quorum-dev-quickstart.git",
+  "author": "Joshua Fernandes <joshua.fernandes@consensys.net>",
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "solc": "^0.7.0",
+    "truffle": "^5.1.39",
+    "web3": "^1.2.11"
+  }
+}
