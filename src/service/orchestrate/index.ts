@@ -6,6 +6,8 @@ import { pipeline as callbackPipeline } from "stream";
 
 import { getAccessToken, ExtendedToken } from "../auth";
 import { ImageManifest, ImageManifestEntry } from "./types";
+import { AuthenticationError } from "./authenticationError";
+import { AuthorizationError } from "./authorizationError";
 import { hasImageTag, loadImage } from "../docker";
 import tmp from "tmp";
 
@@ -17,7 +19,7 @@ const pipeline = promisify(callbackPipeline);
 export async function installOrchestrateImages(): Promise<void> {
     const token = await _fetchAuthToken();
 
-    if (!token.token) {
+    if (!token || !token.token) {
         console.error("No access token returned.");
         throw new Error("No access token returned. Please try again in a few minutes.");
     }
@@ -92,9 +94,42 @@ async function _fetchManifest(token: string): Promise<ImageManifest> {
 
     } catch (err) {
         if (err instanceof HTTPError) {
-            if (err.response.statusCode === 403) {
-                throw new Error(`There was a problem authenticating your account. Please try again.`);
+            if (err.response.statusCode === 401) {
+                throw new AuthenticationError(
+                    `There was a problem authenticating your account. Please check your username and password and try again.`
+                );
             }
+
+            if (err.response.statusCode === 403) {
+                const authZFailureHeaderName = "X-Authorization-Failure-Reason";
+                const authZFailureReason = err.response.headers[authZFailureHeaderName];
+                if (authZFailureReason) {
+                    if (authZFailureReason === "trial-not-started") {
+                        throw new AuthorizationError(
+                            `Authenticated successfully, but no trial entitlement can be found for this account.`,
+                            authZFailureReason
+                        );
+                    } else if (authZFailureReason === "malformed-trial-expiration") {
+                        throw new AuthorizationError(
+                            `Authenticated successfully, but the trial entitlement for this account is malformed. If the problem persists, please file a GitHub issue.`,
+                            authZFailureReason
+                        );
+                    } else if (authZFailureReason === "trial-expired") {
+                        throw new AuthorizationError(
+                            `Authenticated successfully, but the trial entitlement for this account is malformed. If the problem persists, please file a GitHub issue.`,
+                            authZFailureReason
+                        );
+                    } else {
+                        throw new AuthorizationError(
+                            `There was a permissions issue with your account. Please try again. If the problem persists, please file a GitHub issue.`,
+                            Array.isArray(authZFailureReason) ? authZFailureReason.join(", ") : authZFailureReason
+                        );
+                    }
+                }
+
+                throw new Error(`There was a permissions issue with your account. Please try again. If the problem persists, please file a GitHub issue.`);
+            }
+
             if (err.response.statusCode === 404) {
                 throw new Error(
                     `The image manifest cannot be found. ` +
