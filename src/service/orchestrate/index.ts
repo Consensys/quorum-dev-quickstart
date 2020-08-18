@@ -27,15 +27,16 @@ export async function installOrchestrateImages(): Promise<void> {
     const accessToken = token.token;
 
     const spinner = new Spinner("Fetching manifest").start();
-    const manifest = await _fetchManifest(accessToken);
-
-    const tmpDirDesc = tmp.dirSync({ prefix: "quorum-dev-quickstart" });
-
-    const tmpDir = tmpDirDesc.name;
-
-    const downloadPromises: Promise<string>[] = [];
 
     try {
+        const manifest = await _fetchManifest(accessToken);
+
+        const tmpDirDesc = tmp.dirSync({ prefix: "quorum-dev-quickstart" });
+
+        const tmpDir = tmpDirDesc.name;
+
+        const downloadPromises: Promise<string>[] = [];
+
         for (const entry of manifest.images) {
             if (!await hasImageTag(entry.tag)) {
                 const downloadPromise = _downloadImage(accessToken, entry, tmpDir).then(
@@ -61,7 +62,7 @@ export async function installOrchestrateImages(): Promise<void> {
         }
     } catch (err) {
         await spinner.fail(`Error: ${(err as Error).message}`);
-        process.exit(1);
+        throw err;
     }
 
 }
@@ -101,7 +102,7 @@ async function _fetchManifest(token: string): Promise<ImageManifest> {
             }
 
             if (err.response.statusCode === 403) {
-                const authZFailureHeaderName = "X-Authorization-Failure-Reason";
+                const authZFailureHeaderName = "x-authorization-failure-reason";
                 const authZFailureReason = err.response.headers[authZFailureHeaderName];
                 if (authZFailureReason) {
                     if (authZFailureReason === "trial-not-started") {
@@ -116,7 +117,7 @@ async function _fetchManifest(token: string): Promise<ImageManifest> {
                         );
                     } else if (authZFailureReason === "trial-expired") {
                         throw new AuthorizationError(
-                            `Authenticated successfully, but the trial entitlement for this account is malformed. If the problem persists, please file a GitHub issue.`,
+                            `Authenticated successfully, but your trial period for CoDefi Orchestrate has expired.`,
                             authZFailureReason
                         );
                     } else {

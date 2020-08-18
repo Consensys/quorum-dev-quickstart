@@ -18,6 +18,10 @@ export class Spinner {
     this._intervalHandle = null;
   }
 
+  get isRunning(): boolean {
+    return this._intervalHandle !== null;
+  }
+
   start(): Spinner {
     if (this._intervalHandle !== null) {
       return this;
@@ -39,17 +43,18 @@ export class Spinner {
       return Promise.resolve();
     }
 
-    clearInterval(this._intervalHandle);
+    const handle = this._intervalHandle;
+    this._intervalHandle = null;
+    clearInterval(handle);
 
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         try {
-          this._intervalHandle = null;
           logUpdate.clear();
           if (finalText) {
             logUpdate(finalText);
           }
-          console.log();
+          logUpdate.done();
           resolve();
         } catch (err) {
           reject(err);

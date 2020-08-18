@@ -3,9 +3,11 @@ import readline, { ReadLine } from "readline";
 
 export class QuestionRenderer {
     private _questions: QuestionTree;
+    private _forceDefaults: boolean;
 
-    constructor(questions: QuestionTree) {
+    constructor(questions: QuestionTree, forceDefaults?: boolean) {
         this._questions = questions;
+        this._forceDefaults = !!forceDefaults;
     }
 
     async render(): Promise<AnswerMap> {
@@ -49,7 +51,7 @@ export class QuestionRenderer {
             prompt += `\t${i}. ${option.label}\n`;
         }
 
-        const rawInput = await _askQuestion(rl, prompt);
+        const rawInput = await this._askQuestion(rl, prompt);
         const choice = parseInt(rawInput, 10);
 
         if (choice >= 1 && choice <= question.options.length) {
@@ -84,7 +86,7 @@ export class QuestionRenderer {
             throw new Error(`BUG! Question '${question.name}' does not include a transformer to handle free form entry.`);
         }
 
-        const rawInput = await _askQuestion(rl, prompt);
+        const rawInput = await this._askQuestion(rl, prompt);
 
         return this._handleTransformerAnswer(question, rawInput.trim(), answers);
     }
@@ -113,18 +115,24 @@ export class QuestionRenderer {
             return question;
         }
     }
-}
 
-function _askQuestion(rl: ReadLine, prompt: string): Promise<string> {
-    if (!prompt.endsWith("\n")) {
-        prompt += "\n";
-    }
+    _askQuestion(rl: ReadLine, prompt: string): Promise<string> {
+        const forceDefaults = this._forceDefaults;
 
-    return new Promise((resolve, reject) => {
-        try {
-            rl.question(prompt, resolve);
-        } catch (err) {
-            reject(err);
+        if (!prompt.endsWith("\n")) {
+            prompt += "\n";
         }
-    });
+
+        return new Promise((resolve, reject) => {
+            try {
+                if (forceDefaults) {
+                    rl.question(prompt, resolve);
+                } else {
+                    resolve("");
+                }
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
 }
