@@ -126,9 +126,9 @@ export class QuestionRenderer {
         return new Promise((resolve, reject) => {
             try {
                 if (forceDefaults) {
-                    rl.question(prompt, resolve);
-                } else {
                     resolve("");
+                } else {
+                    rl.question(prompt, resolve);
                 }
             } catch (err) {
                 reject(err);
