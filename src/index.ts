@@ -2,7 +2,7 @@ import { rootQuestion } from "./questions";
 import { QuestionRenderer } from "./questionRenderer";
 import { buildNetwork, NetworkContext } from "./networkBuilder";
 
-async function main() {
+export async function main(): Promise<void> {
     const qr = new QuestionRenderer(rootQuestion);
     const answers = await qr.render();
     await buildNetwork(answers as NetworkContext);
