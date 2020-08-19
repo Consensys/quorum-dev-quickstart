@@ -91,7 +91,7 @@ _privacyQuestion.transformerValidator = _getYesNoValidator(_privacyQuestion, _ou
 
 const _orchestrateQuestion: QuestionTree = {
     name: "orchestrate",
-    prompt: "Do you want to try out Orchestrate? Note: choosing yes will direct you to a login/registration page. [Y/n]",
+    prompt: "Do you want to try out Codefi Orchestrate? Note: choosing yes will direct you to a login/registration page. [Y/n]",
 
     transformerValidator: (rawInput: string, answers: AnswerMap) => {
         const normalizedInput = rawInput.toLowerCase();

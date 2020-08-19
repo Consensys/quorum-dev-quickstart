@@ -3,6 +3,7 @@ import { resolve as resolvePath } from "path";
 import got, { HTTPError } from "got";
 import { promisify } from "util";
 import { pipeline as callbackPipeline } from "stream";
+import open from "open";
 
 import { getAccessToken, ExtendedToken } from "../auth";
 import { ImageManifest, ImageManifestEntry } from "./types";
@@ -116,10 +117,30 @@ async function _fetchManifest(token: string): Promise<ImageManifest> {
                             authZFailureReason
                         );
                     } else if (authZFailureReason === "trial-expired") {
-                        throw new AuthorizationError(
-                            `Authenticated successfully, but your trial period for CoDefi Orchestrate has expired.`,
-                            authZFailureReason
-                        );
+                        let browserOpened = true;
+                        try {
+                            const subprocess = await open("https://codefi.consensys.net/orchestrate-get-in-touch");
+                            subprocess.unref();
+                        } catch {
+                            browserOpened = false;
+                        }
+
+                        if (browserOpened) {
+                            throw new AuthorizationError(
+                                "Authenticated successfully, but your trial period for Codefi Orchestrate has " +
+                                "expired.",
+                                authZFailureReason
+                            );
+                        } else {
+                            throw new AuthorizationError(
+                                "Authenticated successfully, but your trial period for Codefi Orchestrate has " +
+                                "expired. For other licensing options you can use the form on the following page to " +
+                                "discuss your options with a member of our sales team:\n" +
+                                "http://codefi.consensys.net/orchestrate-get-in-touch",
+                                authZFailureReason
+                            );
+
+                        }
                     } else {
                         throw new AuthorizationError(
                             `There was a permissions issue with your account. Please try again. If the problem persists, please file a GitHub issue.`,
