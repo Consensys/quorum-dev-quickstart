@@ -38,7 +38,8 @@ Create the docker-compose file and artifacts with
 
 `npm install && npm start` 
 
-This prompts you to pick a quorum variant, whether you would like to try Privacy and the location for the artifacts
+This prompts you to pick a quorum variant, whether you would like to try Privacy and the location for the artifacts.
+
 Change directory to the artifacts folder: 
 
 `cd quorum-test-network` default folder location 
@@ -58,27 +59,27 @@ Change directory to the artifacts folder:
 All our documentation can be found on the [Besu documentation site](https://besu.hyperledger.org/Tutorials/Examples/Private-Network-Example/).
 
 There are multiple examples in this repo, and you can pick either Go Quorum or Hyperledger Besu as the Ethereum client. 
-Each setup comprises 4 validators, one RPC node and some monitoring tools like:
+Each setup is comprised of 4 validators, one RPC node and some monitoring tools like:
 - [Alethio Lite Explorer](https://besu.hyperledger.org/en/stable/HowTo/Deploy/Lite-Block-Explorer/) to explore blockchain data at the block, transaction, and account level
-- [Metrics monitoring](https://besu.hyperledger.org/en/stable/HowTo/Monitor/Metrics/) via prometheus and grafana to give you insights into how the chain is progressing (only with Besu based quorum)
-- [Cakeshop](https://github.com/jpmorganchase/cakeshop) which gives you an integrated development environment and SDK (only with Go based quorum)
+- [Metrics monitoring](https://besu.hyperledger.org/en/stable/HowTo/Monitor/Metrics/) via Prometheus and Grafana to give you insights into how the chain is progressing (only with Besu based Quorum)
+- [Cakeshop](https://github.com/jpmorganchase/cakeshop) which gives you an integrated development environment and SDK (only with Go based Quorum)
 - Optional [logs monitoring](https://besu.hyperledger.org/en/latest/HowTo/Monitor/Elastic-Stack/) to give you real time logs of the nodes. This feature is enabled with a `-e` flag when starting the sample network
 
 The overall architecture diagrams to visually show components of the blockchain networks is shown below. 
-**Consensus Algorithm**: The Go based quorum variant uses the `IBFT` consensus mechanism and the Besu based quorum 
+**Consensus Algorithm**: The Go based Quorum variant uses the `IBFT` consensus mechanism and the Besu based Quorum 
 variant uses the `IBFT2` consensus mechanism.
-**Private TX Manager**: The Go based quorum variant uses [Tessera](https://github.com/jpmorganchase/tessera) and the 
-Besu based quorum variant uses [Orion](https://github.com/PegaSysEng/orion)
+**Private TX Manager**: The Go based Quorum variant uses [Tessera](https://github.com/jpmorganchase/tessera) and the 
+Besu based Quorum variant uses [Orion](https://github.com/PegaSysEng/orion)
 
 ![Image blockchain](./static/blockchain-network.png)
  
 
 ### i. POA Network <a name="poa-network"></a>
 
-This is the simplest of the networks avialable and will spin up a blockchain network comprising 4 validators, 1 RPC 
-node which has an EthSinger proxy container linked to it so you can optionally sign transactions. To view the progress 
+This is the simplest of the networks available and will spin up a blockchain network comprising 4 validators, 1 RPC 
+node which has an [EthSinger](http://docs.ethsigner.consensys.net/) proxy container linked to it so you can optionally sign transactions. To view the progress 
 of the network, the Alethio block explorer can be used and is available on `http://localhost:25000`. 
-Hyperledger Besu based quorum also deploys metrics monitoring via Prometheus available on `http://localhost:9090`, 
+Hyperledger Besu based Quorum also deploys metrics monitoring via Prometheus available on `http://localhost:9090`, 
 paired with Grafana with custom dashboards available on `http://localhost:3000`. Go based Quorum deploys the Cakeshop 
 toolkit available on `http://localhost:8999`
 
@@ -93,11 +94,11 @@ Use cases:
 ### ii. POA Network with Privacy <a name="poa-network-privacy"></a>
 
 This network is slightly more advanced than the former and you get everything from the POA network above and a few 
-Ethereum clients each paired with a Private Transaction Mananger. The Go based quorum variant uses [Tessera](https://github.com/jpmorganchase/tessera) 
-and the Besu based quorum variant uses [Orion](https://github.com/PegaSysEng/orion) for it's Private Transaction Mananger.
+Ethereum clients each paired with a Private Transaction Mananger. The Go based Quorum variant uses [Tessera](https://github.com/jpmorganchase/tessera) 
+and the Besu based Quorum variant uses [Orion](https://github.com/PegaSysEng/orion) for it's Private Transaction Mananger.
 
 As before, to view the progress of the network, the Alethio block explorer can be used and is available on `http://localhost:25000`. 
-Hyperledger Besu based quorum also deploys metrics monitoring via Prometheus available on `http://localhost:9090`, 
+Hyperledger Besu based Quorum also deploys metrics monitoring via Prometheus available on `http://localhost:9090`, 
 paired with Grafana with custom dashboards available on `http://localhost:3000`. Go based Quorum deploys the Cakeshop 
 toolkit available on `http://localhost:8999`
 
@@ -109,7 +110,7 @@ Use cases:
 - you are looking to create a private Ethereum network with private transactions between two or more parties.
 
 Once the network is up and running you can follow the [eeajs-multinode-example](https://besu.hyperledger.org/en/stable/Tutorials/Privacy/eeajs-Multinode-example/) which deploys 
-an `EventEmitter` contract and then sends a couple of Private Transaction from Node1 -> Node2 (& vice versa) with an arbitrary value (1000). This is a [video tutorial](https://www.youtube.com/watch?v=Menekt6-TEQ) of 
+an `EventEmitter` contract followed by a number of Private Transaction from Node1 -> Node2 (& vice versa) with an arbitrary value (1000). This is a [video tutorial](https://www.youtube.com/watch?v=Menekt6-TEQ) of 
 what the privacy example does where the node details are as follows:
 
 Name  | Besu Node address                      | Orion node key | Node URL
@@ -119,10 +120,10 @@ node2 | 0xa46f0935de4176ffeccdeecaf3c6e3ca03e31b22 | qVDsbJh2UluZOePxbXAL49g0S0s
 node3 | 0x998c8bc11c28b667e4b1930c3fe3c9ab1cde3c52 | T1ItOQxwgY1pTW6YXb2EbKXYkK4saBEys3CfJ2OIKHs= | http://localhost:20004
 
 At the end of both transactions, it then reads all three Orion nodes to check the value at an address, and you should observe 
-that only Node1 & Node2 have this information becuase they were involved in the transaction and that Orion3 responds with a `0x` 
-value for reads at those addresses
+that only Node1 & Node2 have this information as they were involved in the transaction and that Node3 responds with a `0x` 
+value for reads at those addresses and therefore unaware of the details of the private transactions.
 
-There is an additional erc20 token example that you can also test with: executing `node example/erc20.js` deploys a `HumanStandardToken` contract and transfers 1 token to node2.
+There is an additional erc20 token example that you can also test with: executing `node example/erc20.js` deploys a `HumanStandardToken` contract and transfers 1 token to Node2.
 
 This can be verified from the `data` field of the `logs` which is `1`.
 
@@ -153,9 +154,9 @@ It provides advanced features when connected to blockchain networks like:
 - Public and private transactions
 - Multi-chain.
 
-For more information, refer to the PegaSys Orchestrate official Documentation.
+For more information, refer to the Codefi Orchestrate official [Documentation](http://docs.orchestrate.consensys.net).
 
-| ⚠️ **Note**: Orchestate is available free of charge for a trial period. To get access to the artifacts and continue, please create a free account HERE    |
+| ⚠️ **Note**: Orchestate is available free of charge for a trial period. To get access to the artifacts and continue, please create a free account [HERE](https://accounts.quorum.consensys.net/auth/realms/quorum/account)    |
 | ---      
 
 
@@ -166,9 +167,9 @@ For more information, refer to the PegaSys Orchestrate official Documentation.
 This tutorial will show you how to connect Orchestate to a blockchain network and use the Contract Registry to deploy 
 smart contracts, send transactions etc 
 
-Change directory to the `orchestrate` directory in the artifacts folder: 
+Change directory to the artifacts folder: 
 
-`cd quorum-test-network\orchestrate` default folder location 
+`cd quorum-test-network` default folder location 
  
 ##### Install the Orchestrate cli
 ```
