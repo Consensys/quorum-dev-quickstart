@@ -133,8 +133,10 @@ const bannerText = String.raw`
 `;
 
 const leadInText = `
-\nWelcome to the Quorum Developer Quickstart utility. This tool can be used to
-rapidly generate local Quorum blockchain networks for development purposes.
+\nWelcome to the Quorum Developer Quickstart utility. This tool can be used
+to rapidly generate local Quorum blockchain networks for development purposes
+using tools like GoQuorum, Besu, and Codefi Orchestrate.
+
 To get started, be sure that you have both Docker and Docker Compose
 installed, then answer the following questions.\n\n`;
 
