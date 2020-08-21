@@ -75,13 +75,14 @@ x-quorum-member-def:
       done
       {% endif %}
 
-      mkdir /data;
-      cp -r /quorum/* /data;
-      geth --datadir=/data init /config/genesis.json;
-      cp /config/keys/accountkey /data/keystore/key;
-      cp /config/keys/nodekey /data/geth/nodekey;
+
+      mkdir /data/dd;
+      cp -r /quorum/* /data/dd/;
+      geth --datadir=/data/dd init /config/genesis.json;
+      cp /config/keys/accountkey /data/dd/keystore/key;
+      cp /config/keys/nodekey /data/dd/geth/nodekey;
       geth \
-      --datadir /data \
+      --datadir /data/dd \
       --nodiscover \
       --permissioned \
       --verbosity 5 \
@@ -89,6 +90,7 @@ x-quorum-member-def:
       --syncmode full --nousb \
       --networkid ${QUORUM_NETWORK_ID:-10} \
       --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONS_ALGO:-istanbul} \
+      --ws --wsaddr 0.0.0.0 --wsport 8546 --wsorigins "*" --wsapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONS_ALGO:-istanbul} \
       --port 30303 \
       --identity node${NODE_ID}-${QUORUM_CONS_ALGO:-istanbul} \
       --unlock 0 \
@@ -106,7 +108,7 @@ x-tessera-def:
     - 9080
   restart: "no"
   healthcheck:
-    test: ["CMD-SHELL", "[ -S /data/tm.ipc ] || exit 1"]
+    test: ["CMD-SHELL", "[ -S /data/tm/tm.ipc ] || exit 1"]
     interval: 3s
     timeout: 3s
     retries: 20
@@ -115,16 +117,16 @@ x-tessera-def:
     - /bin/sh
     - -c
     - |
-      mkdir /data;
-      cp /config/keys/tm.* /data ;
+      mkdir /data/tm/;
+      cp /config/keys/tm.* /data/tm/ ;
 
-          cat <<EOF > /data/tessera-config-09.json
+          cat <<EOF > /data/tm/tessera-config-09.json
           {
             "useWhiteList": false,
             "jdbc": {
               "username": "sa",
               "password": "",
-              "url": "jdbc:h2:./data/db;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0",
+              "url": "jdbc:h2:./data/tm/db;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0",
               "autoCreateTables": true
             },
             "serverConfigs":[
@@ -137,7 +139,7 @@ x-tessera-def:
             {
               "app":"Q2T",
               "enabled": true,
-              "serverAddress": "unix:/data/tm.ipc",
+              "serverAddress": "unix:/data/tm/tm.ipc",
               "communicationType" : "REST"
             },
             {
@@ -165,16 +167,16 @@ x-tessera-def:
               "passwords": [],
               "keyData": [
                 {
-                  "config": $$(cat /data/tm.key),
-                  "publicKey": "$$(cat /data/tm.pub)"
+                  "config": $$(cat /data/tm/tm.key),
+                  "publicKey": "$$(cat /data/tm/tm.pub)"
                 }
               ]
             },
             "alwaysSendTo": []
           }
       EOF
-          cat /data/tessera-config-09.json
-          java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile /data/tessera-config-09.json
+          cat /data/tm/tessera-config-09.json
+          java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile /data/tm/tessera-config-09.json
 {% endif %}
 
 x-cakeshop-def:
@@ -334,11 +336,12 @@ services:
     ports:
       - 9081:9080
     environment:
-      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/data/tm.ipc}
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/data/tm/tm.ipc}
       - TESSERA_CONFIG_TYPE="-09"
       - NODE_ID=6
     volumes:
       - ./config/quorum/networkFiles/member1:/config/keys
+      - member1volume:/data
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.26
@@ -346,19 +349,21 @@ services:
   member1quorum:
     << : *quorum-member-def
     ports:
-      - 22000:8545/tcp
+      - 20000:8545/tcp
+      - 20001:8546/tcp
       - 30303
     depends_on:
       - member1tessera
     environment:
       - NODE_ID=6
-      - PRIVATE_CONFIG=ignore
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/data/tm/tm.ipc}
       - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
     volumes:
       - ./config/quorum/passwords.txt:/config/passwords.txt
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/member1:/config/keys
+      - member1volume:/data
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.16
@@ -368,11 +373,12 @@ services:
     ports:
       - 9082:9080
     environment:
-      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/data/tm.ipc}
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/data/tm/tm.ipc}
       - TESSERA_CONFIG_TYPE="-09"
       - NODE_ID=7
     volumes:
       - ./config/quorum/networkFiles/member2:/config/keys
+      - member2volume:/data
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.27
@@ -380,19 +386,21 @@ services:
   member2quorum:
     << : *quorum-member-def
     ports:
-      - 22001:8545/tcp
+      - 20002:8545/tcp
+      - 20003:8546/tcp
       - 30303
     depends_on:
       - member2tessera
     environment:
       - NODE_ID=7
-      - PRIVATE_CONFIG=ignore
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/data/tm/tm.ipc}
       - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
     volumes:
       - ./config/quorum/passwords.txt:/config/passwords.txt
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/member2:/config/keys
+      - member2volume:/data
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.17
@@ -402,11 +410,12 @@ services:
     ports:
       - 9083:9080
     environment:
-      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/data/tm.ipc}
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/data/tm/tm.ipc}
       - TESSERA_CONFIG_TYPE="-09"
       - NODE_ID=8
     volumes:
       - ./config/quorum/networkFiles/member3:/config/keys
+      - member3volume:/data
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.28
@@ -414,19 +423,21 @@ services:
   member3quorum:
     << : *quorum-member-def
     ports:
-      - 22002:8545/tcp
+      - 20004:8545/tcp
+      - 20005:8546/tcp
       - 30303
     depends_on:
       - member3tessera
     environment:
       - NODE_ID=8
-      - PRIVATE_CONFIG=ignore
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/data/tm/tm.ipc}
       - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
     volumes:
       - ./config/quorum/passwords.txt:/config/passwords.txt
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/member3:/config/keys
+      - member3volume:/data
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.18
@@ -466,3 +477,6 @@ networks:
 
 volumes:
   cakeshop:
+  member1volume:
+  member2volume:
+  member3volume:
