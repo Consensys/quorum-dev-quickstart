@@ -31,7 +31,7 @@
   },
   {
     "name": "member2",
-    "rpcUrl": "http://member1quorum:8545",
+    "rpcUrl": "http://member2quorum:8545",
     "transactionManagerUrl": "http://member2tessera:9080"
   },
   {
