@@ -1,4 +1,4 @@
-import { QuestionTree, AnswerMap, QuestionOption } from "./questions";
+import { QuestionTree, AnswerMap, QuestionOption } from "./questions/types";
 import readline, { ReadLine } from "readline";
 
 export class QuestionRenderer {

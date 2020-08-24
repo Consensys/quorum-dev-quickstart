@@ -1,73 +1,12 @@
-export interface AnswerMap {
-    [index: string]: any;
-}
-
-/**
- * Represents a tree of questions that can be used to build up a template context
- */
-export interface QuestionTree {
-    /**
-     * The text that the user is shown before waiting for answer input
-     */
-    prompt: string;
-
-    /**
-     * The name of the question, also used as a variable name in the resulting
-     * template context
-     */
-    name: string;
-
-    /**
-     * An optional list of options for multiple-choice questions.
-     */
-    options?: QuestionOption[];
-
-    /**
-     * Transformation and validation function that can be used for both free
-     * form and multiple choice question types.
-     *
-     * @param transformerValidator a function that transforms valid input to
-     * the answer data desired and throws on invalid input. Mutates the given
-     * AnswerMap as needed. Returns a follow-up question, if necessary. Can be
-     * async.
-     */
-    transformerValidator?: (rawInput: any, answers: AnswerMap) => Promise<QuestionTree | undefined> | QuestionTree | undefined;
-}
-
-/**
- * Represents a single option in a list of options for a multiple choice
- * question.
- */
-export interface QuestionOption {
-    /**
-     * The text shown to the user to describe this option.
-     */
-    label: string;
-
-    /**
-     * The value that should be used when this option is selected. If the
-     * question also contains a transformerValidator, this is data will be
-     * passed as rawInput.
-     */
-    value: any;
-
-    /**
-     * The follow-up question that should be given to the user after this one,
-     * if applicable.
-     */
-    nextQuestion?: QuestionTree;
-
-    /**
-     * Whether or not this option should be the default if no other option is
-     * selected.
-     */
-    default?: boolean;
-}
+import { resolve as resolvePath } from "path";
+import { readdirSync } from "fs";
+import { QuestionTree, AnswerMap } from "./types";
+import chalk from "chalk";
 
 const _outputDirQuestion: QuestionTree = {
     name: "outputPath",
     prompt: "Where should we create the config files for this network? Please\n" +
-    "choose either an empty directory, or a path to a new directory that does\n" +
+ "choose either an empty directory, or a path to a new directory that does\n" +
     "not yet exist. Default: ./quorum-test-network",
     transformerValidator: (rawInput: string, answers: AnswerMap) => {
         // TODO: add some more checks to make sure that the path is valid
@@ -75,6 +14,30 @@ const _outputDirQuestion: QuestionTree = {
             answers.outputPath = rawInput;
         } else {
             answers.outputPath = "./quorum-test-network";
+        }
+
+        try {
+            const files = readdirSync(resolvePath(answers.outputPath));
+            if (files.length > 0) {
+                console.log(chalk.red(
+                    `Whoops! It appears that the directory that you've chosen, ${answers.outputPath as string}\n` +
+                    `already contains some files. Please clear the directory before continuing, or choose\n` +
+                    `a different one.\n`
+                ));
+                return _outputDirQuestion;
+            }
+        } catch (err) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            if (err.code as string === "ENOENT") {
+                return undefined;
+            } else {
+                console.log(chalk.red(
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                    `Whoops! There was an error when checking your output directory (${err.code as string}). Please\n` +
+                    `choose a different one before proceeding.\n`
+                ));
+                return _outputDirQuestion;
+            }
         }
 
         // this is a no-op, but it makes the TS compiler happy :-/
@@ -107,6 +70,8 @@ const _orchestrateQuestion: QuestionTree = {
                 return _privacyQuestion;
             }
         } else {
+            console.log(chalk.red("Sorry, but I didn't understand your answer. Please select Y or N,\n" +
+                "or just hit enter if you want the default.\n"));
             return _orchestrateQuestion;
         }
     }
@@ -161,6 +126,8 @@ function _getYesNoValidator(question: QuestionTree, nextQuestion?: QuestionTree,
             answers[question.name] = normalizedInput === "y";
             return nextQuestion;
         } else {
+            console.log(chalk.red("Sorry, but I didn't understand your answer. Please select Y or N,\n" +
+                "or just hit enter if you want the default.\n"));
             return question;
         }
     };
