@@ -1,8 +1,20 @@
 import { rootQuestion } from "./questions";
 import { QuestionRenderer } from "./questionRenderer";
 import { buildNetwork, NetworkContext } from "./networkBuilder";
+import chalk from "chalk";
 
 export async function main(): Promise<void> {
+    if (process.platform === "win32") {
+        console.error(chalk.red(
+            "Unfortunately this tool is not compatible with Windows at the moment.\n" +
+            "We recommend running it under Windows Subsystem For Linux 2 with Docker Desktop.\n" +
+            "Please visit the following pages for installation instructions.\n\n" +
+            "https://docs.microsoft.com/en-us/windows/wsl/install-win10\n" +
+            "https://docs.docker.com/docker-for-windows/wsl/"
+        ));
+        process.exit(1);
+    }
+
     const qr = new QuestionRenderer(rootQuestion);
     const answers = await qr.render();
     await buildNetwork(answers as NetworkContext);
