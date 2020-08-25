@@ -6,9 +6,9 @@ const Web3 = require('web3');
 const member1AccountAddress = "0xf0e2db6c8dc6c681bb5d6ad121a107f300e9b2b5"
 const member3TMPubKey = "1iTZde/ndBHvzhcl7V68x44Vx7pl8nwx9LqnM/AfJUg="
 
-const member1 = new Web3("http://localhost:20000");
-const member2 = new Web3("http://localhost:20002");
-const member3 = new Web3("http://localhost:20004");
+const member1 = new Web3("http://127.0.0.1:20000");
+const member2 = new Web3("http://127.0.0.1:20002");
+const member3 = new Web3("http://127.0.0.1:20004");
 member1.eth.defaultAccount = member1AccountAddress;
 
 function getValueAtAddressOnNode(web3Client, nodeName="node", abi, deployedContractAddress){
