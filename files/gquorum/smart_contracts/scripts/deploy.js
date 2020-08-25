@@ -24,7 +24,7 @@ function getValueAtAddressOnNode(web3Client, nodeName="node", abi, deployedContr
 
 // abi and bytecode generated from simplestorage.sol:
 // > solcjs --bin --abi simplestorage.sol
-const constractJsonPath = path.resolve(__dirname, '../','contracts','simplestorage.json');
+const constractJsonPath = path.resolve(__dirname, '../','contracts','SimpleStorage.json');
 const constractJson = JSON.parse(fs.readFileSync(constractJsonPath));
 const abi = constractJson.abi;
 const bytecode = constractJson.evm.bytecode.object
@@ -63,9 +63,9 @@ contractInstance.deploy(contractOptions)
 
       console.log("Checking each member to verify that the contract has been deployed between members 1 & 3 only...")
       //read the value of the contract at the address deployed
-      getValueAtAddressOnNode(member1, "member1", abi, deployedContractAddress);
-      getValueAtAddressOnNode(member2, "member2", abi, deployedContractAddress);
-      getValueAtAddressOnNode(member3, "member3", abi, deployedContractAddress);
+      getValueAtAddressOnNode(member1, "Member1", abi, deployedContractAddress);
+      getValueAtAddressOnNode(member2, "Member2", abi, deployedContractAddress);
+      getValueAtAddressOnNode(member3, "Member3", abi, deployedContractAddress);
   });
 
 

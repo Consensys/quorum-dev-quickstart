@@ -109,9 +109,9 @@ receipt: 0x00fFD3548725459255f1e78A61A07f1539Db0271
 newContractInstance address: 0x00fFD3548725459255f1e78A61A07f1539Db0271
 
 Checking each member to verify that the contract has been deployed between members 1 & 3 only...
-member3 value of deployed contract is: 47
-member1 value of deployed contract is: 47
-member2 cannot find any value here.
+Member3 value of deployed contract is: 47
+Member1 value of deployed contract is: 47
+Member2 cannot find any value here.
 ```
 
 
