@@ -18,7 +18,9 @@ export async function main(): Promise<void> {
     const qr = new QuestionRenderer(rootQuestion);
     const answers = await qr.render();
     await buildNetwork(answers as NetworkContext);
-    process.exit(0);
+    setTimeout(() => {
+        process.exit(0);
+    }, 500);
 }
 
 if (require.main === module) {
