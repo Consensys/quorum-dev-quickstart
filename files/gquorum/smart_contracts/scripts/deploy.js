@@ -2,12 +2,13 @@ const path = require('path');
 const fs = require('fs-extra');
 const Web3 = require('web3');
 
+// WARNING: the keys here are demo purposes ONLY. Please use a tool like Orchestrate or EthSigner for production, rather than hard coding private keys
 const member1AccountAddress = "0xf0e2db6c8dc6c681bb5d6ad121a107f300e9b2b5"
 const member3TMPubKey = "1iTZde/ndBHvzhcl7V68x44Vx7pl8nwx9LqnM/AfJUg="
 
-const member1 = new Web3(new Web3.providers.HttpProvider("http://localhost:20000"));
-const member2 = new Web3(new Web3.providers.HttpProvider("http://localhost:20002"));
-const member3 = new Web3(new Web3.providers.HttpProvider("http://localhost:20004"));
+const member1 = new Web3("http://localhost:20000");
+const member2 = new Web3("http://localhost:20002");
+const member3 = new Web3("http://localhost:20004");
 member1.eth.defaultAccount = member1AccountAddress;
 
 function getValueAtAddressOnNode(web3Client, nodeName="node", abi, deployedContractAddress){
@@ -17,7 +18,6 @@ function getValueAtAddressOnNode(web3Client, nodeName="node", abi, deployedContr
        console.log(nodeName + " value of deployed contract is: "+ res);
     } else {
        console.error(nodeName + " cannot find any value here.");
-       //console.error(err);
     }
   });
 }
@@ -69,7 +69,7 @@ contractInstance.deploy(contractOptions)
   });
 
 
-// check the transaction hash
+// optionally check the transaction hash
 // if the data value has a 0x25 or 0x26; it indicates that the transaction has a private payload
 //member1.eth.getTransaction(deployedTxHash)
 //.then(res => { console.log(res);})
