@@ -95,14 +95,16 @@ Use cases:
 Once the network is up and running you can send a private transaction between members and verify that other nodes do not see it.
 Under the smart_contracts folder there is an `EventEmitter` contract which can be deployed and tested by running:
 ```
-node smart_contracts/scripts/deploy.js
+cd smart_contracts
+npm install
+node scripts/deploy.js
 ```
 which deploys the contract and sends an arbitrary value (47) from `Member1` to `Member3`. Once done, it queries all three members (orion)
 to check the value at an address, and you should observe that only `Member1` & `Member3` have this information as they were involved in the transaction 
 and that `Member2` responds with a `0x` to indicate it is unaware of the transaction.
 
 ```
-node smart_contracts/scripts/deploy.js 
+node scripts/deploy.js 
 Creating contract...
 Getting contractAddress from txHash:  0x10e8e9f46c7043f87f92224e065279638523f5b2d9139c28195e1c7e5ac02c72
 Waiting for transaction to be mined ...

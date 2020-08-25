@@ -95,14 +95,16 @@ Use cases:
 Once the network is up and running you can send a private transaction between members and verify that other nodes do not see it.
 Under the smart_contracts folder there is a `SimpleStorage` contract which can be deployed and tested by running:
 ```
-node smart_contracts/scripts/deploy.js
+cd smart_contracts
+npm install
+node scripts/deploy.js
 ```
 which deploys the contract and sends an arbitrary value (47) from `Member1` to `Member3`. Once done, it queries all three members  
 to check the value at an address, and you should observe that only `Member1` & `Member3` have this information as they were involved in the transaction 
 and that `Member2` responds with a message saying it cannot find a value.
 
 ```
-node files/gquorum/smart_contracts/scripts/deploy.js 
+node scripts/deploy.js 
 error= null; transactionHash=0x4d7ec1e6135785209b2c7915948b5220c18eecc2b2fd46db3c7f47dce525b05b
 Contract transaction send: TransactionHash: 0x4d7ec1e6135785209b2c7915948b5220c18eecc2b2fd46db3c7f47dce525b05b waiting to be mined...
 receipt: 0x00fFD3548725459255f1e78A61A07f1539Db0271
