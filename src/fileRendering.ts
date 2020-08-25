@@ -1,4 +1,4 @@
-import { render } from "nunjucks";
+import { renderString } from "nunjucks";
 import { resolve as resolvePath, join as joinPath, dirname } from "path";
 import fs from "fs";
 import { NetworkContext } from "./networkBuilder";
@@ -39,7 +39,8 @@ export function renderFileToDir(basePath: string, filePath: string, context: Net
         throw new Error(`It appears that an output file already exists at '${outputPath}'. Aborting.`);
     }
 
-    const output = render(templatePath, context);
+    const templateSrc = fs.readFileSync(templatePath, "utf-8");
+    const output = renderString(templateSrc, context);
 
     const outputDirname = dirname(outputPath);
 
