@@ -28,7 +28,7 @@ To run these tutorials, you must have the following installed:
 
 Create the docker-compose file and artifacts with 
 
-`npm install && npm start` 
+`npx quorum-dev-quickstart` 
 
 This prompts you to pick a quorum variant, whether you would like to try Privacy and the location for the artifacts.
 
