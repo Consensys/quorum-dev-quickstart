@@ -92,19 +92,35 @@ Use cases:
 - you are a user looking to execute private transactions at least one other party
 - you are looking to create a private Ethereum network with private transactions between two or more parties.
 
-Once the network is up and running you can follow the [eeajs-multinode-example](https://besu.hyperledger.org/en/stable/Tutorials/Privacy/eeajs-Multinode-example/) which deploys 
-an `EventEmitter` contract followed by a number of Private Transaction from Node1 -> Node2 (& vice versa) with an arbitrary value (1000). This is a [video tutorial](https://www.youtube.com/watch?v=Menekt6-TEQ) of 
-what the privacy example does where the node details are as follows:
+Once the network is up and running you can send a private transaction between members and verify that other nodes do not see it.
+Under the smart_contracts folder there is an `EventEmitter` contract which can be deployed and tested by running:
+```
+node smart_contracts/scripts/deploy.js
+```
+which deploys the contract and sends an arbitrary value (47) from `Member1` to `Member3`. Once done, it queries all three members (orion)
+to check the value at an address, and you should observe that only `Member1` & `Member3` have this information as they were involved in the transaction 
+and that `Member2` responds with a `0x` to indicate it is unaware of the transaction.
 
-Name  | Besu Node address                      | Orion node key | Node URL
------ | ---- | ---- | ---- |
-node1 | 0x866b0df7138daf807300ed9204de733c1eb6d600 | 9QHwUJ6uK+FuQMzFSXIo7wOLCGFZa0PiF771OLX5c1o= | http://localhost:20000
-node2 | 0xa46f0935de4176ffeccdeecaf3c6e3ca03e31b22 | qVDsbJh2UluZOePxbXAL49g0S0s2gGlJ3ftQceMlchU= | http://localhost:20002
-node3 | 0x998c8bc11c28b667e4b1930c3fe3c9ab1cde3c52 | T1ItOQxwgY1pTW6YXb2EbKXYkK4saBEys3CfJ2OIKHs= | http://localhost:20004
+```
+node smart_contracts/scripts/deploy.js 
+Creating contract...
+Getting contractAddress from txHash:  0x10e8e9f46c7043f87f92224e065279638523f5b2d9139c28195e1c7e5ac02c72
+Waiting for transaction to be mined ...
+Contract deployed at address: 0x649f1dff9ca6dfbdd27135c94171334ea0fab5ee
 
-At the end of both transactions, it then reads all three Orion nodes to check the value at an address, and you should observe 
-that only Node1 & Node2 have this information as they were involved in the transaction and that Node3 responds with a `0x` 
-value for reads at those addresses and therefore unaware of the details of the private transactions.
+Transaction Hash: 0x30b53a533afe909aee59df716e07f7003c0605075a13f97799b29cdd3c2c42a7
+Waiting for transaction to be mined ...
+Transaction Hash: 0x181e37e64cdfb8d3cb0f076ee63045981436f3273942bac47820c7ec1aad0c23
+Transaction Hash: 0xa27db2772689fe8ca995d32d1753d2695421120c9f171d6d32eb0873f2b96466
+Waiting for transaction to be mined ...
+Waiting for transaction to be mined ...
+Member3 value from deployed contract is: 0x000000000000000000000000000000000000000000000000000000000000002f
+Member1 value from deployed contract is: 0x000000000000000000000000000000000000000000000000000000000000002f
+Member2 value from deployed contract is: 0x
+```
+
+Further [documentation](https://besu.hyperledger.org/en/stable/Tutorials/Privacy/eeajs-Multinode-example/) for this example and a [video tutorial](https://www.youtube.com/watch?v=Menekt6-TEQ) 
+is also available.
 
 There is an additional erc20 token example that you can also test with: executing `node example/erc20.js` deploys a `HumanStandardToken` contract and transfers 1 token to Node2.
 

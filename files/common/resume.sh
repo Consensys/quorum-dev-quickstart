@@ -17,7 +17,7 @@ NO_LOCK_REQUIRED=false
 . ./.common.sh
 
 echo "${bold}*************************************"
-echo "Sample Network for Besu at ${version}"
+echo "Quorum Dev Quickstart "
 echo "*************************************${normal}"
 echo "Resuming network..."
 echo "----------------------------------"

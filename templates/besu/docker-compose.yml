@@ -182,17 +182,23 @@ services:
 
   member1besu:
     << : *besu-def
-    command: [
-      "--config-file=/config/config.toml",
-      "--genesis-file=/config/genesis.json",
-      "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-ibft}",
-      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-ibft}",
-      "--min-gas-price=0",
-      "--privacy-enabled",
-      "--privacy-url=http://member1orion:8888",
-      "--privacy-public-key-file=/config/orion/orion.pub",
-      "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false}"]
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        while [ ! -f "/opt/besu/public-keys/bootnode_pubkey" ]; do sleep 5; done ;
+        /opt/besu/bin/besu \
+        --config-file=/config/config.toml \
+        --p2p-host=$$(hostname -i) \
+        --genesis-file=/config/genesis.json \
+        --node-private-key-file=/opt/besu/keys/key \
+        --min-gas-price=0 \
+        --privacy-enabled \
+        --privacy-url=http://member1orion:8888 \
+        --privacy-public-key-file=/config/orion/orion.pub \
+        --privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false} \
+        --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} \
+        --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} ;
     volumes:
       - public-keys:/opt/besu/public-keys/
       - ./config/besu/config.toml:/config/config.toml
@@ -230,17 +236,23 @@ services:
 
   member2besu:
     << : *besu-def
-    command: [
-      "--config-file=/config/config.toml",
-      "--genesis-file=/config/genesis.json",
-      "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-ibft}",
-      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-ibft}",
-      "--min-gas-price=0",
-      "--privacy-enabled",
-      "--privacy-url=http://member2orion:8888",
-      "--privacy-public-key-file=/config/orion/orion.pub",
-      "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false}"]
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        while [ ! -f "/opt/besu/public-keys/bootnode_pubkey" ]; do sleep 5; done ;
+        /opt/besu/bin/besu \
+        --config-file=/config/config.toml \
+        --p2p-host=$$(hostname -i) \
+        --genesis-file=/config/genesis.json \
+        --node-private-key-file=/opt/besu/keys/key \
+        --min-gas-price=0 \
+        --privacy-enabled \
+        --privacy-url=http://member2orion:8888 \
+        --privacy-public-key-file=/config/orion/orion.pub \
+        --privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false} \
+        --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} \
+        --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} ;
     volumes:
       - public-keys:/opt/besu/public-keys/
       - ./config/besu/config.toml:/config/config.toml
@@ -278,17 +290,23 @@ services:
 
   member3besu:
     << : *besu-def
-    command: [
-      "--config-file=/config/config.toml",
-      "--genesis-file=/config/genesis.json",
-      "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-ibft}",
-      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-ibft}",
-      "--min-gas-price=0",
-      "--privacy-enabled",
-      "--privacy-url=http://member3orion:8888",
-      "--privacy-public-key-file=/config/orion/orion.pub",
-      "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false}"]
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        while [ ! -f "/opt/besu/public-keys/bootnode_pubkey" ]; do sleep 5; done ;
+        /opt/besu/bin/besu \
+        --config-file=/config/config.toml \
+        --p2p-host=$$(hostname -i) \
+        --genesis-file=/config/genesis.json \
+        --node-private-key-file=/opt/besu/keys/key \
+        --min-gas-price=0 \
+        --privacy-enabled \
+        --privacy-url=http://member3orion:8888 \
+        --privacy-public-key-file=/config/orion/orion.pub \
+        --privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false} \
+        --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} \
+        --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} ;
     volumes:
       - public-keys:/opt/besu/public-keys/
       - ./config/besu/config.toml:/config/config.toml
