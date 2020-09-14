@@ -59,6 +59,7 @@
   },
   "homepage": "https://gitlab.com/ConsenSys/client/fr/core-stack/quick-start",
   "devDependencies": {
+    "@openzeppelin/contracts": "~3.1.0",
     "@types/uuid": "^8.0.0",
     "axios": "~0.19.2",
     "cross-var": "~1.1.0",
