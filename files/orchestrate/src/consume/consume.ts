@@ -1,4 +1,5 @@
 import { Consumer, EventType, ResponseMessage } from 'pegasys-orchestrate'
+import * as util from 'util'
 
 const STOP_MSG =
   '\n\n---------------------------------------------\nStop consumer by pressing ctrl+c at the end of the quickstart.\n---------------------------------------------\n'
@@ -17,7 +18,7 @@ export const consume = async () => {
       console.error('Transaction failed with error: ', value.errors)
     } else {
       console.log('RequestId:', value.id)
-      console.log('Receipt: ', value.receipt)
+      console.log('Receipt: ', util.inspect(value.receipt, false, null, true))
     }
 
     await responseMessage.commit()
