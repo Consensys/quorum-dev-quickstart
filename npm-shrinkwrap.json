@@ -2295,7 +2295,7 @@
       "resolved": "https://registry.npmjs.org/keycloak-connect/-/keycloak-connect-11.0.0.tgz",
       "integrity": "sha512-Wx5dEhOfh+iUBd6NnIq5oIX4xWjAj3+jN2pjdTgLJjaZmxMw6nzbV6A8sAB6oK/lA9hE/nO8NAnfgty4DWRIPQ==",
       "requires": {
-        "chromedriver": "~84.0.1",
+        "chromedriver": "^84.0.1",
         "jwk-to-pem": "^2.0.0"
       },
       "dependencies": {

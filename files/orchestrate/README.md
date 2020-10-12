@@ -7,7 +7,7 @@
 3. [Dev Network Setups](#dev-network-setups)
    1. [Deploy contracts & send transactions](#orchestrate-contracts)
    2. [Multitenancy](#orchestrate-multitenancy)
-                  
+
 
 ## Prerequisites
 
@@ -16,13 +16,13 @@ To run these tutorials, you must have the following installed:
 - [Docker and Docker-compose](https://docs.docker.com/compose/install/)
 
 | ⚠️ **Note**: If on MacOS or Windows, please ensure that you allow docker to use upto 4G of memory or 6G if running Privacy examples under the _Resources_ section. The [Docker for Mac](https://docs.docker.com/docker-for-mac/) and [Docker Desktop](https://docs.docker.com/docker-for-windows/) sites have details on how to do this at the "Resources" heading       |
-| ---                                                                                                                                                                                                                                                                                                                                                                                |
+| ---
 
 
-| ⚠️ **Note**: This has only been tested on Windows 10 Build 18362 and Docker >= 17.12.2                                                                                                                                                                                                                                                                                              |
-| ---                                                                                                                                                                                                                                                                                                                                                                                |
+| ⚠️ **Note**: This has only been tested on Windows 10 Build 18362 and Docker >= 17.12.2
+| ---
 
-- On Windows ensure that the drive that this repo is cloned onto is a "Shared Drive" with Docker Desktop
+- On Windows ensure that the drive, that this repo is cloned onto, is a "Shared Drive" with Docker Desktop
 - On Windows we recommend running all commands from GitBash
 - [Nodejs](https://nodejs.org/en/download/) or [Yarn](https://yarnpkg.com/cli/node)
 
@@ -55,15 +55,15 @@ It provides advanced features when connected to blockchain networks like:
 
 For more information, refer to the Codefi Orchestrate official [Documentation](http://docs.orchestrate.consensys.net).
 
-| ⚠️ **Note**: Orchestate is available free of charge for a trial period. To get access to the artifacts and continue, please create a free account [HERE](https://accounts.quorum.consensys.net/auth/realms/quorum/account)    |
-| ---      
+| ⚠️ **Note**: Orchestrate is available free of charge for a trial period. To get access to the artifacts and continue, please create a free account [HERE](https://accounts.quorum.consensys.net/auth/realms/quorum/account)    |
+| ---
 
 
 | ⚠️ **Note**: If you have an existing Quorum quickstart running, please stop it before proceeding. The Orchestrate quickstart spins up an Ethereum client which serves as an RPC endpoint. If you have an existing RPC endpoint, please update the `NETWORK_ENDPOINT` in the `.env` file and comment out the eth_client container in the file `<output_folder>/orchestrate/scripts/deps/docker-compose.yml` |
-| ---      
+| ---
 
 
-This tutorial will show you how to connect Orchestate to a blockchain network and use the Contract Registry to deploy 
+This tutorial will show you how to connect Orchestrate to a blockchain network and use the Contract Registry to deploy 
 smart contracts, send transactions etc 
 
 Change directory to the artifacts folder: 
@@ -102,7 +102,7 @@ which returns (please note the account value will be different in your case)
 ```
 Copy the output of this command and add it to the `.env` file as the value for the `FAUCET_ACCOUNT` variable, like so: 
 `FAUCET_ACCOUNT=0x90494000f242D9e41Cd635939536Aa7aA869CfCF`
-                                                             
+
 
 ##### List accounts stored in Hashicorp Vault
 The faucet account's private key is stored in Hashicorp Vault and it's Ethereum address can be obtained by
@@ -159,7 +159,7 @@ which returns (please note the key value will be different in your case)
 ```
 The Chain Unique Identifier (uuid) is displayed in the JSON result. Copy this value and add it to the `.env` file as 
 the value for the `CHAIN_UUID` variable, like so: `CHAIN_UUID=35e2a951-1f9f-4ad0-9d14-199f5b330dc2`
-                                                                                                                                 
+
 Once done, verify that the chain JSON-RPC is being proxied by Orchestrate
 ```
 npm run get-latest-block
@@ -279,7 +279,7 @@ which returns
  Hashicorp Vault service.
 
 ```
-npm run  generate-account
+npm run generate-account
 ```
 which returns
 ``` 
@@ -291,7 +291,7 @@ which returns
 
 Note: The generated account is automatically funded by the faucet service configured previously. Copy the account addresss 
 and set the FROM_ACCOUNT value with this address in .env file, like so: `FROM_ACCOUNT=0xF0156f5949e4667E5396D41ff22616EDc21f0150`
-                                                                                                                                     
+
 
 
 ##### Deploy the contract and send transactions 
@@ -307,12 +307,12 @@ In the next steps, we send two kinds of transactions:
 You have to run a consumer script to listen to the transaction receipt events and see them happen on the network. In your 
 current terminal, start the consumer and let the consumer run in the foreground:
 ```
-npm run  consume
+npm run consume
 ```
 
 In another terminal session, deploy the smart contract
 ```
-npm run  deploy
+npm run deploy
 ```
 After a few seconds (depending on block time), you see the receipt related to the contract creation transaction in the consumer terminal.
 which returns
