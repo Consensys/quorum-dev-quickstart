@@ -14,7 +14,7 @@
 To run these tutorials, you must have the following installed:
 
 - [Docker and Docker-compose](https://docs.docker.com/compose/install/)
-f
+
 | ⚠️ **Note**: If on MacOS or Windows, please ensure that you allow docker to use upto 4G of memory or 6G if running Privacy examples under the _Resources_ section. The [Docker for Mac](https://docs.docker.com/docker-for-mac/) and [Docker Desktop](https://docs.docker.com/docker-for-windows/) sites have details on how to do this at the "Resources" heading       |
 | ---
 
