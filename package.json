@@ -3,7 +3,7 @@
   "version": "0.0.5",
   "description": "A utility that lets developers try out the new suite of Quorum tools from ConsenSys!",
   "main": "build/index.js",
-  "repository": "git@github.com:PegaSysEng/quorum-dev-quickstart.git",
+  "repository": "git@github.com:ConsenSys/quorum-dev-quickstart.git",
   "author": "Ben Burns <803016+benjamincburns@users.noreply.github.com>",
   "license": "Apache-2.0",
   "private": false,
