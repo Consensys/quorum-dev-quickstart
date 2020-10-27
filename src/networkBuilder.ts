@@ -72,6 +72,8 @@ export async function buildNetwork(context: NetworkContext): Promise<void> {
         } else {
             console.log(`To start your test network, run 'run.sh' in the installation directory, '${context.outputPath}'`);
         }
+        console.log();
+        console.log(`For more information on the test network, see 'README.md' in the installation directory, '${context.outputPath}'`);
     } catch (err) {
         if (spinner.isRunning) {
             await spinner.fail(`Installation failed. Error: ${(err as Error).message}`);
