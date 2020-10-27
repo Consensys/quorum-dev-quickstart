@@ -34,5 +34,7 @@ fi
 if [ ! -z `docker-compose -f docker-compose.yml ps -q cakeshop 2> /dev/null` ]; then
 echo "Cakeshop toolkit address            : http://${HOST}:8999"
 fi
+echo ""
+echo "For more information on the endpoints and services, refer to README.md in the installation directory."
 echo "****************************************************************"
 
