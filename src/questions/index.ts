@@ -45,12 +45,20 @@ const _outputDirQuestion: QuestionTree = {
     }
 };
 
+const _elkQuestion: QuestionTree = {
+    name: "elk",
+    prompt: "Do you wish to enable support for ELK? [y/N]",
+};
+// have to add this below the definition because of the self reference..
+_elkQuestion.transformerValidator = _getYesNoValidator(_elkQuestion, _outputDirQuestion, "n");
+
 const _privacyQuestion: QuestionTree = {
     name: "privacy",
     prompt: "Do you wish to enable support for private transactions? [Y/n]",
 };
 // have to add this below the definition because of the self reference..
-_privacyQuestion.transformerValidator = _getYesNoValidator(_privacyQuestion, _outputDirQuestion, "y");
+_privacyQuestion.transformerValidator = _getYesNoValidator(_privacyQuestion, _elkQuestion, "y");
+
 
 const _orchestrateQuestion: QuestionTree = {
     name: "orchestrate",

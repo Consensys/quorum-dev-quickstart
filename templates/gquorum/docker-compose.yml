@@ -208,7 +208,7 @@ x-cakeshop-def:
 
 x-ethsignerProxy-def:
   &ethsignerProxy-def
-  image: pegasyseng/ethsigner:latest
+  image: consensys/quorum-ethsigner:${QUORUM_ETHSIGNER_VERSION:-latest}
   command: [
     "--chain-id=2018",
     "--http-listen-host=0.0.0.0",
