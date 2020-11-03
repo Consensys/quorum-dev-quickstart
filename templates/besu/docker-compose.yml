@@ -44,13 +44,98 @@ x-besu-def:
 {% if privacy %}
 x-orion-def:
   &orion-def
-  image: "pegasyseng/orion:latest"
+  image: consensys/quorum-orion:${QUORUM_ORION_VERSION:-latest}
   command: ["/config/orion.conf"]
 {% endif %}
 
+
+{% if elk %}
+x-redis-def:
+  &redis-def
+  image: redis:alpine
+
+x-elasticsearch-def:
+  &elasticsearch-def
+  build: ./elasticsearch
+  environment:
+    - bootstrap.memory_lock=true
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    - "http.host=0.0.0.0"
+    - "transport.host=127.0.0.1"
+  ulimits:
+    memlock:
+      soft: -1
+      hard: -1
+    nofile:
+      soft: 65536
+      hard: 65536
+  cap_add:
+    - IPC_LOCK
+
+x-kibana-def:
+  &kibana-def
+  image: docker.elastic.co/kibana/kibana:7.9.3
+  environment:
+    ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+    XPACK_MONITORING_ENABLED: "true"
+    XPACK_MONITORING_COLLECTION_ENABLED: "true"
+    SERVER_NAME: "localhost"
+  depends_on:
+    - elasticsearch
+  links:
+    - elasticsearch
+  ports:
+    - 5601:5601/tcp
+
+x-logstash-def:
+  &logstash-def
+  build: ./logstash
+  environment:
+    - ES_HOST=http://elasticsearch:9200
+    - REDIS_HOST=redis
+    - REDIS_PORT=6379
+  depends_on:
+    - redis
+    - elasticsearch
+  links:
+    - redis
+    - elasticsearch
+
+x-filebeat-def:
+  &filebeat-def
+  build: ./filebeat
+  environment:
+    - ENV_NAME=dev
+    - IP_ADDRESS=127.0.0.1
+    - REDIS_HOST=redis
+    - REDIS_PORT=6379
+  depends_on:
+    - redis
+  links:
+    - redis
+  volumes:
+    - ./logs/besu/:/var/log/besu/
+    - ./logs/orion/:/var/log/orion/    
+
+x-metricbeat-def:
+  &metricbeat-def
+  build: ./metricbeat
+  environment:
+    - ENV_NAME=dev
+    - IP_ADDRESS=127.0.0.1
+    - REDIS_HOST=redis
+    - REDIS_PORT=6379
+  depends_on:
+    - redis
+  links:
+    - redis
+
+{% endif %}
+
+
 x-ethsignerProxy-def:
   &ethsignerProxy-def
-  image: pegasyseng/ethsigner:latest
+  image: consensys/quorum-ethsigner:${QUORUM_ETHSIGNER_VERSION:-latest}
   command: [
     "--chain-id=2018",
     "--http-listen-host=0.0.0.0",
@@ -363,6 +448,48 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.33
+
+
+{% if elk %}
+  redis:
+    << : *redis-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.34
+
+  elasticsearch:
+    << : *elasticsearch-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.35
+
+  kibana:
+    << : *kibana-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.36
+
+  logstash:
+    << : *logstash-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.37
+
+  filebeat:
+    << : *filebeat-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.38      
+
+  metricbeat:
+    << : *metricbeat-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.39 
+
+{% endif %}
+
+
 
 volumes:
   public-keys:

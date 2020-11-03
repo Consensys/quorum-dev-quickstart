@@ -1,0 +1,44 @@
+cluster:
+  name: "${ES_CLUSTER_NAME:default-cluster}"
+  routing:
+    allocation:
+      node_concurrent_recoveries: 2
+      node_initial_primaries_recoveries: 4
+
+node:
+  master: "${ES_MASTER}"
+  data: "${ES_DATA}"
+
+network:
+  host: 0.0.0.0
+  bind_host: 0.0.0.0
+
+discovery:
+  type: single-node
+  zen:
+    minimum_master_nodes: "${ES_MIN_MASTER_NODES}"
+
+# use host: _site_ = Any site-local addresses on the system, for example 192.168.0.1.
+# https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-network.html#network-interface-values
+http:
+  host: _site_
+  bind_host: 0.0.0.0
+  cors:
+    enabled : true
+    allow-origin : "*"
+    allow-methods : OPTIONS, HEAD, GET, POST, PUT, DELETE
+    allow-headers : X-Requested-With,X-Auth-Token,Content-Type, Content-Length
+
+# threadpool settings for snapshot/restore
+thread_pool:
+  snapshot:
+    keep_alive: "2m"
+
+# x-pack config
+xpack.security.enabled: false
+xpack.monitoring.enabled: true
+xpack.graph.enabled: false
+xpack.watcher.enabled: false
+
+
+

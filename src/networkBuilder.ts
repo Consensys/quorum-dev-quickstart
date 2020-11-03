@@ -8,6 +8,7 @@ export interface NetworkContext {
     clientType: "gquorum" | "besu";
     nodeCount: number;
     privacy: boolean;
+    elk: boolean;
     outputPath: string;
     orchestrate: boolean;
 }

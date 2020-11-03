@@ -15,15 +15,43 @@ NO_LOCK_REQUIRED=false
 
 . ./.env
 . ./.common.sh
-
+dots=""
+maxRetryCount=50
 HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}
 
 # Displays links to exposed services
 echo "${bold}*************************************"
 echo "Quorum Dev Quickstart "
 echo "*************************************${normal}"
+
+
+elk_setup=true
+if [ -z `docker-compose -f docker-compose.yml ps -q kibana` ] ; then
+  elk_setup=false
+fi
+if [ $elk_setup == true ]; then
+    while [ "$(curl -m 10 -s -o /dev/null -w ''%{http_code}'' http://${HOST}:5601/api/status)" != "200" ] && [ ${#dots} -le ${maxRetryCount} ]
+    do
+      dots=$dots"."
+      printf "Kibana is starting, please wait $dots\\r"
+      sleep 10
+    done
+
+    echo "Setting up the index patterns in kibana"
+    curl -X POST "http://${HOST}:5601/api/saved_objects/index-pattern/metricbeat" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"attributes": {"title": "metricbeat-*","timeFieldName": "@timestamp"}}'
+    curl -X POST "http://${HOST}:5601/api/saved_objects/_import" -H 'kbn-xsrf: true' --form file=@./config/kibana/besu_overview_dashboard.ndjson
+    curl -X POST "http://${HOST}:5601/api/saved_objects/index-pattern/besu" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"attributes": {"title": "besu-*","timeFieldName": "@timestamp"}}'
+    curl -X POST "http://${HOST}:5601/api/saved_objects/index-pattern/orion" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"attributes": {"title": "orion-*","timeFieldName": "@timestamp"}}'
+    curl -X POST "http://${HOST}:5601/api/saved_objects/index-pattern/quorum" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"attributes": {"title": "quorum-*","timeFieldName": "@timestamp"}}'
+    curl -X POST "http://${HOST}:5601/api/saved_objects/index-pattern/tessera" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"attributes": {"title": "tessera-*","timeFieldName": "@timestamp"}}'
+
+fi
+
+
+
 echo "List endpoints and services"
 echo "----------------------------------"
+
 echo "JSON-RPC HTTP service endpoint      : http://${HOST}:8545"
 echo "JSON-RPC WebSocket service endpoint : ws://${HOST}:8546"
 echo "Web block explorer address          : http://${HOST}:25000/"
@@ -33,6 +61,9 @@ echo "Grafana address                     : http://${HOST}:3000/d/XE4V0WGZz/besu
 fi
 if [ ! -z `docker-compose -f docker-compose.yml ps -q cakeshop 2> /dev/null` ]; then
 echo "Cakeshop toolkit address            : http://${HOST}:8999"
+fi
+if [ $elk_setup == true ]; then
+echo "Kibana logs address                 : http://${HOST}:5601/app/kibana#/discover"
 fi
 echo ""
 echo "For more information on the endpoints and services, refer to README.md in the installation directory."
