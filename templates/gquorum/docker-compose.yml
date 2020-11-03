@@ -20,6 +20,7 @@ x-quorum-def:
     - /bin/sh
     - -c
     - |
+      mkdir -p /var/log/quorum/;
       mkdir /data;
       cp -r /quorum/* /data;
       geth --datadir=/data init /config/genesis.json;
@@ -32,14 +33,16 @@ x-quorum-def:
       --verbosity 5 \
       --istanbul.blockperiod 5 --mine --minerthreads 1 --emitcheckpoints \
       --syncmode full --nousb \
-      --networkid ${QUORUM_NETWORK_ID:-10} \
-      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONS_ALGO:-istanbul} \
+      --networkid $${QUORUM_NETWORK_ID:-10} \
+      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$${QUORUM_CONS_ALGO:-istanbul} \
       --port 30303 \
-      --identity node${NODE_ID}-${QUORUM_CONS_ALGO:-istanbul} \
+      --identity node$${NODE_ID}-$${QUORUM_CONS_ALGO:-istanbul} \
       --unlock 0 \
       --allow-insecure-unlock \
-      --password /config/passwords.txt
+      --password /config/passwords.txt \
+      &> /var/log/quorum/geth-$$HOSTNAME.log | tee -a /var/log/quorum/geth-$$HOSTNAME.log
       ;
+
 
 
 x-quorum-member-def:
@@ -75,7 +78,7 @@ x-quorum-member-def:
       done
       {% endif %}
 
-
+      mkdir -p /var/log/quorum/;
       mkdir /data/dd;
       cp -r /quorum/* /data/dd/;
       geth --datadir=/data/dd init /config/genesis.json;
@@ -88,15 +91,18 @@ x-quorum-member-def:
       --verbosity 5 \
       --istanbul.blockperiod 5 --mine --minerthreads 1 --emitcheckpoints \
       --syncmode full --nousb \
-      --networkid ${QUORUM_NETWORK_ID:-10} \
-      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONS_ALGO:-istanbul} \
-      --ws --wsaddr 0.0.0.0 --wsport 8546 --wsorigins "*" --wsapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,${QUORUM_CONS_ALGO:-istanbul} \
+      --networkid $${QUORUM_NETWORK_ID:-10} \
+      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$${QUORUM_CONS_ALGO:-istanbul} \
+      --ws --wsaddr 0.0.0.0 --wsport 8546 --wsorigins "*" --wsapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$${QUORUM_CONS_ALGO:-istanbul} \
       --port 30303 \
-      --identity node${NODE_ID}-${QUORUM_CONS_ALGO:-istanbul} \
+      --identity node$${NODE_ID}-$${QUORUM_CONS_ALGO:-istanbul} \
       --unlock 0 \
       --allow-insecure-unlock \
-      --password /config/passwords.txt
+      --password /config/passwords.txt \
+      --password /config/passwords.txt \
+      &> /var/log/quorum/geth-$$HOSTNAME.log | tee -a /var/log/quorum/geth-$$HOSTNAME.log
       ;
+
 
 
 {% if privacy %}
@@ -117,6 +123,7 @@ x-tessera-def:
     - /bin/sh
     - -c
     - |
+      mkdir -p /var/log/tessera/;
       mkdir /data/tm/;
       cp /config/keys/tm.* /data/tm/ ;
 
@@ -176,7 +183,8 @@ x-tessera-def:
           }
       EOF
           cat /data/tm/tessera-config-09.json
-          java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile /data/tm/tessera-config-09.json
+          java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile /data/tm/tessera-config-09.json &> /var/log/tessera/tessera-$$HOSTNAME.log | tee -a /var/log/tessera/tessera-$$HOSTNAME.log
+
 {% endif %}
 
 x-cakeshop-def:
@@ -224,6 +232,78 @@ x-ethsignerProxy-def:
     - 8545
 
 
+{% if elk %}
+x-redis-def:
+  &redis-def
+  image: redis:alpine
+
+x-elasticsearch-def:
+  &elasticsearch-def
+  build: ./elasticsearch
+  environment:
+    - bootstrap.memory_lock=true
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    - "http.host=0.0.0.0"
+    - "transport.host=127.0.0.1"
+  ulimits:
+    memlock:
+      soft: -1
+      hard: -1
+    nofile:
+      soft: 65536
+      hard: 65536
+  cap_add:
+    - IPC_LOCK
+
+x-kibana-def:
+  &kibana-def
+  image: docker.elastic.co/kibana/kibana:7.9.3
+  environment:
+    ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+    XPACK_MONITORING_ENABLED: "true"
+    XPACK_MONITORING_COLLECTION_ENABLED: "true"
+    SERVER_NAME: "localhost"
+  depends_on:
+    - elasticsearch
+  links:
+    - elasticsearch
+  ports:
+    - 5601:5601/tcp
+
+x-logstash-def:
+  &logstash-def
+  build: ./logstash
+  environment:
+    - ES_HOST=http://elasticsearch:9200
+    - REDIS_HOST=redis
+    - REDIS_PORT=6379
+  depends_on:
+    - redis
+    - elasticsearch
+  links:
+    - redis
+    - elasticsearch
+
+x-filebeat-def:
+  &filebeat-def
+  build: ./filebeat
+  environment:
+    - ENV_NAME=dev
+    - IP_ADDRESS=127.0.0.1
+    - REDIS_HOST=redis
+    - REDIS_PORT=6379
+  depends_on:
+    - redis
+  links:
+    - redis
+  volumes:
+    - ./logs/quorum/:/var/log/quorum/
+    - ./logs/tessera/:/var/log/tessera/
+
+{% endif %}
+
+
+
 services:
 
   validator1:
@@ -240,6 +320,7 @@ services:
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/validator1:/config/keys
+      - ./logs/quorum:/var/log/quorum/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.11
@@ -258,6 +339,7 @@ services:
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/validator2:/config/keys
+      - ./logs/quorum:/var/log/quorum/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.12
@@ -276,6 +358,7 @@ services:
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/validator3:/config/keys
+      - ./logs/quorum:/var/log/quorum/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.13
@@ -294,6 +377,7 @@ services:
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/validator4:/config/keys
+      - ./logs/quorum:/var/log/quorum/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.14
@@ -313,6 +397,7 @@ services:
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/rpcnode:/config/keys
+      - ./logs/quorum:/var/log/quorum/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.15
@@ -342,6 +427,7 @@ services:
     volumes:
       - ./config/quorum/networkFiles/member1:/config/keys
       - member1volume:/data
+      - ./logs/tessera:/var/log/tessera/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.26
@@ -364,6 +450,7 @@ services:
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/member1:/config/keys
       - member1volume:/data
+      - ./logs/quorum:/var/log/quorum/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.16
@@ -379,6 +466,7 @@ services:
     volumes:
       - ./config/quorum/networkFiles/member2:/config/keys
       - member2volume:/data
+      - ./logs/tessera:/var/log/tessera/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.27
@@ -401,6 +489,7 @@ services:
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/member2:/config/keys
       - member2volume:/data
+      - ./logs/quorum:/var/log/quorum/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.17
@@ -416,6 +505,7 @@ services:
     volumes:
       - ./config/quorum/networkFiles/member3:/config/keys
       - member3volume:/data
+      - ./logs/tessera:/var/log/tessera/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.28
@@ -438,6 +528,7 @@ services:
       - ./config/quorum/support:/quorum
       - ./config/quorum/networkFiles/member3:/config/keys
       - member3volume:/data
+      - ./logs/quorum:/var/log/quorum/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.18
@@ -465,7 +556,40 @@ services:
       - ./config/cakeshop:/quorum
     networks:
       quorum-dev-quickstart:
+        ipv4_address: 172.16.239.32
+
+{% if elk %}
+  redis:
+    << : *redis-def
+    networks:
+      quorum-dev-quickstart:
         ipv4_address: 172.16.239.34
+
+  elasticsearch:
+    << : *elasticsearch-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.35
+
+  kibana:
+    << : *kibana-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.36
+
+  logstash:
+    << : *logstash-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.37
+
+  filebeat:
+    << : *filebeat-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.38
+
+{% endif %}
 
 networks:
   quorum-dev-quickstart:

@@ -47,7 +47,7 @@ const _outputDirQuestion: QuestionTree = {
 
 const _elkQuestion: QuestionTree = {
     name: "elk",
-    prompt: "Do you wish to enable support for ELK? [y/N]",
+    prompt: "Do you wish to enable support for logging with ELK (Elasticsearch, Logstash & Kibana)? [y/N]",
 };
 // have to add this below the definition because of the self reference..
 _elkQuestion.transformerValidator = _getYesNoValidator(_elkQuestion, _outputDirQuestion, "n");

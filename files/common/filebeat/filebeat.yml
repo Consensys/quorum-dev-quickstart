@@ -36,6 +36,28 @@ filebeat.inputs:
       env_name: ${ENV_NAME}
       ip_address: ${IP_ADDRESS}
 
+  - paths:
+      - "/var/log/quorum/*.log"
+    type: log
+    enabled: true
+    document_type: quorum
+    fields_under_root: true
+    fields:
+      service_name: quorum
+      env_name: ${ENV_NAME}
+      ip_address: ${IP_ADDRESS}
+
+  - paths:
+      - "/var/log/tessera/*.log"
+    type: log
+    enabled: true
+    document_type: tessera
+    fields_under_root: true
+    fields:
+      service_name: tessera
+      env_name: ${ENV_NAME}
+      ip_address: ${IP_ADDRESS}      
+
 output.redis:
   enabled: true
   hosts: ["${REDIS_HOST}:${REDIS_PORT}"]

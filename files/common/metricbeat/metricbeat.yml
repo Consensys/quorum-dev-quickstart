@@ -3,17 +3,14 @@ metricbeat.modules:
 - module: prometheus
   period: 15s
   hosts:
-  - bootnode:9545
+  - validator1:9545
   - validator2:9545
   - validator3:9545
   - validator4:9545
   - rpcnode:9545
-  - minernode:9545
-  - node1:9545
-  - node2:9545
-  - node3:9545
-  - node4:9545
-  - node:9545
+  - member1besu:9545
+  - member2besu:9545
+  - member3besu:9545
   metrics_path: /metrics
 
 output.redis:
