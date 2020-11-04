@@ -189,7 +189,7 @@ x-tessera-def:
 
 x-cakeshop-def:
   &cakeshop-def
-  image: quorumengineering/cakeshop:0.11.0
+  image: quorumengineering/cakeshop:${QUORUM_CAKESHOP_VERSION:-0.11.0}
   expose:
     - 8999
   restart: "no"
