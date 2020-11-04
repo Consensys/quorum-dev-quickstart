@@ -26,7 +26,7 @@ echo "*************************************${normal}"
 
 
 elk_setup=true
-if [ -z `docker-compose -f docker-compose.yml ps -q kibana` ] ; then
+if [ -z $(docker-compose -f docker-compose.yml ps -q kibana 2>/dev/null) ] ; then
   elk_setup=false
 fi
 if [ $elk_setup == true ]; then
