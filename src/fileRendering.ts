@@ -1,6 +1,7 @@
 import { renderString } from "nunjucks";
 import { resolve as resolvePath, join as joinPath, dirname } from "path";
 import fs from "fs";
+import os from "os";
 import { NetworkContext } from "./networkBuilder";
 
 export function renderTemplateDir(templateBasePath: string, context: NetworkContext): void {
@@ -16,10 +17,14 @@ export function copyFilesDir(filesBasePath: string, context: NetworkContext): vo
         const outputPath = resolvePath(context.outputPath, filePath);
         const outputDirname = dirname(outputPath);
 
+        const fileSrc = fs.readFileSync(resolvePath(filesBasePath, filePath), "utf-8");
+        const output = fileSrc.replace(/(\r\n|\n|\r)/gm, os.EOL);
+
         if (!validateDirectoryExists(outputDirname)) {
             fs.mkdirSync(outputDirname, { recursive: true });
         }
-        fs.copyFileSync(resolvePath(filesBasePath, filePath), outputPath);
+
+        fs.writeFileSync(outputPath, output, { encoding: "utf-8", flag: "w" });
     }
 }
 
@@ -40,7 +45,7 @@ export function renderFileToDir(basePath: string, filePath: string, context: Net
     }
 
     const templateSrc = fs.readFileSync(templatePath, "utf-8");
-    const output = renderString(templateSrc, context);
+    const output = renderString(templateSrc, context).replace(/(\r\n|\n|\r)/gm, os.EOL);
 
     const outputDirname = dirname(outputPath);
 
