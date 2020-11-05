@@ -37,3 +37,4 @@ docker-compose up --detach
 
 #list services and endpoints
 ./list.sh
+

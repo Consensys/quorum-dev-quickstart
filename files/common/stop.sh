@@ -29,3 +29,4 @@ if [ -f "docker-compose-deps.yml" ]; then
     echo "Stopping dependencies..."
     docker-compose -f docker-compose-deps.yml stop
 fi
+

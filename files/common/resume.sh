@@ -29,3 +29,4 @@ if [ -f "docker-compose-deps.yml" ]; then
 fi
 
 docker-compose start
+
