@@ -17,6 +17,7 @@ export function copyFilesDir(filesBasePath: string, context: NetworkContext): vo
         const outputPath = resolvePath(context.outputPath, filePath);
         const outputDirname = dirname(outputPath);
 
+        const mode = fs.statSync(resolvePath(filesBasePath, filePath)).mode;
         const fileSrc = fs.readFileSync(resolvePath(filesBasePath, filePath), "utf-8");
         const output = fileSrc.replace(/(\r\n|\n|\r)/gm, os.EOL);
 
@@ -24,7 +25,7 @@ export function copyFilesDir(filesBasePath: string, context: NetworkContext): vo
             fs.mkdirSync(outputDirname, { recursive: true });
         }
 
-        fs.writeFileSync(outputPath, output, { encoding: "utf-8", flag: "w" });
+        fs.writeFileSync(outputPath, output, { encoding: "utf-8", flag: "w", mode });
     }
 }
 
@@ -44,6 +45,7 @@ export function renderFileToDir(basePath: string, filePath: string, context: Net
         throw new Error(`It appears that an output file already exists at '${outputPath}'. Aborting.`);
     }
 
+    const mode = fs.statSync(templatePath).mode;
     const templateSrc = fs.readFileSync(templatePath, "utf-8");
     const output = renderString(templateSrc, context).replace(/(\r\n|\n|\r)/gm, os.EOL);
 
@@ -53,7 +55,7 @@ export function renderFileToDir(basePath: string, filePath: string, context: Net
         fs.mkdirSync(outputDirname, { recursive: true });
     }
 
-    fs.writeFileSync(outputPath, output, { encoding: "utf-8", flag: "w" });
+    fs.writeFileSync(outputPath, output, { encoding: "utf-8", flag: "w", mode });
 }
 
 export function validateDirectoryExists(path: string): boolean {
