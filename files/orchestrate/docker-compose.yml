@@ -9,8 +9,6 @@ x-default-variables: &default-variables
   ETH_CLIENT_RETRY_MAX_ELAPSED_TIME: 5s
   LOG_LEVEL: ${LOG_LEVEL-info}
   LOG_FORMAT: ${LOG_FORMAT-json}
-  JAEGER_AGENT_HOST: ${JAEGER_AGENT_HOST-jaeger}
-  JAEGER_AGENT_PORT: ${JAEGER_AGENT_PORT-6831}
   NONCE_MANAGER_TYPE: ${NONCE_MANAGER_TYPE-redis}
   REDIS_URL: ${REDIS_URL-redis:6379}
   VAULT_ADDR: ${VAULT_ADDR-http://vault:8200}
@@ -140,7 +138,6 @@ services:
     <<: *container-common
     environment:
       <<: *default-variables
-      JAEGER_SERVICE_NAME: TX-CRAFTER
     depends_on:
       - contract-registry
     command: tx-crafter run
@@ -149,7 +146,6 @@ services:
     <<: *container-common
     environment:
       <<: *default-variables
-      JAEGER_SERVICE_NAME: TX-SIGNER
       SECRET_PKEY: ${SECRET_PKEY-}
       SECRET_STORE: ${SECRET_STORE-hashicorp}
     volumes:
@@ -160,7 +156,6 @@ services:
     <<: *container-common
     environment:
       <<: *default-variables
-      JAEGER_SERVICE_NAME: TX-SENDER
     depends_on:
       - transaction-scheduler
     command: tx-sender run
@@ -170,7 +165,6 @@ services:
     environment:
       <<: *default-variables
       LISTENER_START_DEFAULT: latest
-      JAEGER_SERVICE_NAME: TX-LISTENER
     depends_on:
       - transaction-scheduler
       - chain-registry
