@@ -12,7 +12,7 @@ export const sendTx = async () => {
       params: {
         methodSignature: 'increment(uint256)',
         args: [1],
-        to: process.env.TO_ACCOUNT,
+        to: process.env.TO_ACCOUNT!,
         from: process.env.FROM_ACCOUNT!
       }
     },
