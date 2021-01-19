@@ -3,7 +3,7 @@
   "version": "2.3.0",
   "description": "Codefi Orchestrate Quick start",
   "config": {
-    "services": "tx-crafter tx-signer tx-sender tx-listener contract-registry chain-registry transaction-scheduler"
+    "services": "tx-sender tx-listener api"
   },
   "scripts": {
     "lint": "tslint -p . -c tslint.json",
@@ -56,9 +56,9 @@
   ],
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://gitlab.com/ConsenSys/client/fr/core-stack/quick-start/issues"
+    "url": "https://github.com/ConsenSys/quorum-dev-quickstart/issues"
   },
-  "homepage": "https://gitlab.com/ConsenSys/client/fr/core-stack/quick-start",
+  "homepage": "https://github.com/ConsenSys/quorum-dev-quickstart",
   "devDependencies": {
     "@openzeppelin/contracts": "~3.1.0",
     "@types/uuid": "^8.0.0",
