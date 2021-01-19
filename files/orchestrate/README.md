@@ -98,7 +98,11 @@ which returns (please note the account value will be different in your case)
 > codefi-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > dotenv ts-node src/generate-account
 
-0x90494000f242D9e41Cd635939536Aa7aA869CfCF
+{
+  uuid: '35e2a951-1f9f-4ad0-9d14-199f5b330dc2',
+  address: '0x90494000f242D9e41Cd635939536Aa7aA869CfCF',
+  ...
+}
 ```
 Copy the output of this command and add it to the `.env` file as the value for the `FAUCET_ACCOUNT` variable, like so: 
 `FAUCET_ACCOUNT=0x90494000f242D9e41Cd635939536Aa7aA869CfCF`
@@ -107,25 +111,21 @@ Copy the output of this command and add it to the `.env` file as the value for t
 ##### List accounts stored in Hashicorp Vault
 The faucet account's private key is stored in Hashicorp Vault and it's Ethereum address can be obtained by
 ```
-npm run hashicorp-accounts
+npm run get-accounts
 ```
 
 which returns (please note the key value will be different in your case)
 ```
-> codefi-orchestrate-quick-start@2.3.0 hashicorp-accounts /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
-> bash scripts/deps/config/hashicorp/vault.sh kv list secret/default
+> codefi-orchestrate-quick-start@2.3.0 get-accounts /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+> dotenv ts-node src/get-accounts
 
-Keys
-----
-_0x90494000f242D9e41Cd635939536Aa7aA869CfCF
-
+[
+  {
+    uuid: '35e2a951-1f9f-4ad0-9d14-199f5b330dc2',
+    ...
+  }
+]
 ```
-
-Please note you can also run any other Hashicorp Vault CLI commands by running `npm run hashicorp-vault -- <command>`
-
-For example, to display the vault token:
-`npm run hashicorp-vault -- token lookup`
-
 
 ##### Connect to the blockchain network
 Now that you have Orchestrate up and running and an account created, it's time to connect Orchestrate to a blockchain 
@@ -256,8 +256,8 @@ which returns
       type: 'function'
     }
   ],
-  bytecode: '0x6080604052348015600f57600080fd5b5061010a8061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c80637cf5dab014602d575b600080fd5b605660048036036020811015604157600080fd5b81019080803590602001909291905050506058565b005b8060008082825401925050819055507f38ac789ed44572701765277c4d0970f2db1c1a571ed39e84358095ae4eaa54203382604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018281526020019250505060405180910390a15056fea265627a7a72315820302e34d4ab81c03f1e9b3c7a9a3933bfa023ee991843ebe212da27a0533e593564736f6c63430005100032',
-  deployedBytecode: '0x6080604052348015600f57600080fd5b506004361060285760003560e01c80637cf5dab014602d575b600080fd5b605660048036036020811015604157600080fd5b81019080803590602001909291905050506058565b005b8060008082825401925050819055507f38ac789ed44572701765277c4d0970f2db1c1a571ed39e84358095ae4eaa54203382604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018281526020019250505060405180910390a15056fea265627a7a72315820302e34d4ab81c03f1e9b3c7a9a3933bfa023ee991843ebe212da27a0533e593564736f6c63430005100032'
+  bytecode: '0x60806040...',
+  deployedBytecode: '0x6080604052348015600f57...'
 }
 
 ```
@@ -286,7 +286,11 @@ which returns
 > codefi-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
 > dotenv ts-node src/generate-account
 
-0xF0156f5949e4667E5396D41ff22616EDc21f0150
+{
+  uuid: '35e2a951-1f9f-4ad0-9d14-199f5b330dc2',
+  address: '0xF0156f5949e4667E5396D41ff22616EDc21f0150',
+  ...
+}
 ```
 
 Note: The generated account is automatically funded by the faucet service configured previously. Copy the account addresss 
@@ -329,11 +333,7 @@ Transaction request sent successfully {
     contractName: 'Counter',
     contractTag: 'latest'
   },
-  schedule: {
-    uuid: '7a2fcc31-4410-4510-9af4-2a27c7e2c21f',
-    jobs: [ [Object] ],
-    createdAt: '2020-08-10T00:26:33.311468Z'
-  },
+  jobs: [ [Object] ],
   createdAt: '2020-08-10T00:26:33.311468Z'
 }
 
@@ -452,7 +452,7 @@ To generate a valid JWT we need to run the following command, where `TENANT_ID=`
 TENANT_ID=foo npm run generate-jwt
 ```
 
-By default the _expiration time is 1h_, which can modified to suit your needs by passing in an _EXPIRATION_ environment 
+By default the _expiration time is 24h_, which can modified to suit your needs by passing in an _EXPIRATION_ environment 
 variable at runtime. For example, to make it 5 hours you would execute:
 ```
 EXPIRATION=5h TENANT_ID=foo npm run generate-jwt

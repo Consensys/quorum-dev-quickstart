@@ -1,10 +1,10 @@
 // tslint:disable: no-console
 
-import { TransactionClient, Priority } from "pegasys-orchestrate";
+import { OrchestrateClient, Priority } from "pegasys-orchestrate";
 
 export const start = async () => {
   try {
-    const txClient = new TransactionClient("http://localhost:8031");
+    const txClient = new OrchestrateClient(process.env.API_HOST!);
 
     // Try to send a transfer transaction with a lower gas price than the network requires.
     // This strategy might lower the transaction fee but also increases the risk of not being mined.

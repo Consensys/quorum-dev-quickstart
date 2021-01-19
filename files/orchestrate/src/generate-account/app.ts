@@ -1,21 +1,22 @@
 // tslint:disable: no-console
-import { AccountGenerator } from 'pegasys-orchestrate'
+import { OrchestrateClient } from "pegasys-orchestrate";
 
 export const start = async () => {
   try {
-    const accountGenerator = new AccountGenerator([process.env.KAFKA_HOST!], undefined, undefined, {
-      groupId: 'quick-start'
-    })
+    const client = new OrchestrateClient(process.env.API_HOST!);
 
-    await accountGenerator.connect()
-    const address = await accountGenerator.generateAccount({
-      authToken: process.env.AUTH_TOKEN ? `Bearer ${process.env.AUTH_TOKEN}` : '',
-      chain: process.env.CHAIN!
-    })
-    await accountGenerator.disconnect()
+    const authToken = process.env.AUTH_TOKEN
+      ? `Bearer ${process.env.AUTH_TOKEN}`
+      : undefined;
+    const account = await client.createAccount(
+      {
+        chain: process.env.CHAIN!,
+      },
+      authToken
+    );
 
-    console.log(address)
+    console.log(account);
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
-}
+};
