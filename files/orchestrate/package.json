@@ -3,7 +3,7 @@
   "version": "2.3.0",
   "description": "Codefi Orchestrate Quick start",
   "config": {
-    "services": "tx-crafter tx-signer tx-sender tx-listener contract-registry chain-registry transaction-scheduler"
+    "services": "tx-sender tx-listener api"
   },
   "scripts": {
     "lint": "tslint -p . -c tslint.json",
@@ -13,6 +13,7 @@
     "clean": "rimraf ./dist ./build",
     "compile": "truffle compile",
     "generate-account": "dotenv ts-node src/generate-account",
+    "get-accounts": "dotenv ts-node src/get-accounts",
     "register-chain": "dotenv ts-node src/register-chain",
     "get-latest-block": "dotenv -- cross-var curl -X POST -H 'Authorization: Bearer %AUTH_TOKEN%' --data '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\", false],\"id\":1}' %CHAIN_REGISTRY_HOST%/%CHAIN_UUID%",
     "create-faucet": "dotenv ts-node src/create-faucet",
@@ -33,7 +34,6 @@
     "down": "npm run down-orchestrate ; npm run down-deps",
     "start": "npm run up",
     "stop": "npm run down",
-    "hashicorp-accounts": "bash scripts/deps/config/hashicorp/vault.sh kv list secret/default",
     "hashicorp-token-lookup": "bash scripts/deps/config/hashicorp/vault.sh token lookup",
     "hashicorp-vault": "bash -x scripts/deps/config/hashicorp/vault.sh"
   },
@@ -56,9 +56,9 @@
   ],
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://gitlab.com/ConsenSys/client/fr/core-stack/quick-start/issues"
+    "url": "https://github.com/ConsenSys/quorum-dev-quickstart/issues"
   },
-  "homepage": "https://gitlab.com/ConsenSys/client/fr/core-stack/quick-start",
+  "homepage": "https://github.com/ConsenSys/quorum-dev-quickstart",
   "devDependencies": {
     "@openzeppelin/contracts": "~3.1.0",
     "@types/uuid": "^8.0.0",

@@ -1,21 +1,24 @@
 // tslint:disable: no-console
 
-import { ChainRegistry } from 'pegasys-orchestrate'
+import { OrchestrateClient } from "pegasys-orchestrate";
 
 export const start = async () => {
   try {
-    const chainRegistry = new ChainRegistry(process.env.CHAIN_REGISTRY_HOST!)
+    const chainRegistry = new OrchestrateClient(process.env.API_HOST!);
 
+    const authToken = process.env.AUTH_TOKEN
+      ? `Bearer ${process.env.AUTH_TOKEN}`
+      : "";
     const chain = await chainRegistry.registerChain(
       {
         name: process.env.CHAIN!,
-        urls: [process.env.NETWORK_ENDPOINT!]
+        urls: [process.env.NETWORK_ENDPOINT!],
       },
-      process.env.AUTH_TOKEN!
-    )
+      authToken
+    );
 
-    console.log(chain)
+    console.log(chain);
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
-}
+};

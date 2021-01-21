@@ -1,8 +1,8 @@
-import { TransactionClient } from 'pegasys-orchestrate'
+import { OrchestrateClient } from 'pegasys-orchestrate'
 import * as uuid from 'uuid'
 
 export const deploy = async () => {
-  const txClient = new TransactionClient(process.env.TX_SCHEDULER_HOST!)
+  const txClient = new OrchestrateClient(process.env.API_HOST!)
 
   // Deploy a new Counter contract and return the Transaction
   const idempotencyKey = uuid.v4()

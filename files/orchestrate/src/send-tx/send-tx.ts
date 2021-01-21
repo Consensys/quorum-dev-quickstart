@@ -1,24 +1,24 @@
-import { TransactionClient } from 'pegasys-orchestrate'
-import * as uuid from 'uuid'
+import { OrchestrateClient } from "pegasys-orchestrate";
 
 export const sendTx = async () => {
-  const txClient = new TransactionClient(process.env.TX_SCHEDULER_HOST!)
-  const idempotencyKey = uuid.v4()
-  const authToken = process.env.AUTH_TOKEN ? `Bearer ${process.env.AUTH_TOKEN}` : undefined
+  const txClient = new OrchestrateClient(process.env.API_HOST!);
+  const authToken = process.env.AUTH_TOKEN
+    ? `Bearer ${process.env.AUTH_TOKEN}`
+    : undefined;
 
-  const txResponse = await txClient.send(
+  const txResponse = await txClient.sendTransaction(
     {
       chain: process.env.CHAIN!,
       params: {
-        methodSignature: 'increment(uint256)',
+        methodSignature: "increment(uint256)",
         args: [1],
         to: process.env.TO_ACCOUNT!,
-        from: process.env.FROM_ACCOUNT!
-      }
+        from: process.env.FROM_ACCOUNT!,
+      },
     },
-    idempotencyKey,
+    undefined,
     authToken
-  )
+  );
 
-  console.log('Transaction request sent successfully', txResponse)
-}
+  console.log("Transaction request sent successfully", txResponse);
+};

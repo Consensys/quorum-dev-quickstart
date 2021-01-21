@@ -1,14 +1,16 @@
 // tslint:disable: no-console
 
-import { ContractRegistry } from 'pegasys-orchestrate'
+import { OrchestrateClient } from "pegasys-orchestrate";
 
 export const start = async () => {
   try {
-    const contractRegistry = new ContractRegistry(process.env.CONTRACT_REGISTRY_HOST!)
+    const contractRegistry = new OrchestrateClient(process.env.API_HOST!);
 
-    const authToken = process.env.AUTH_TOKEN ? `Bearer ${process.env.AUTH_TOKEN}` : ''
-    console.log(await contractRegistry.getCatalog(authToken))
+    const authToken = process.env.AUTH_TOKEN
+      ? `Bearer ${process.env.AUTH_TOKEN}`
+      : "";
+    console.log(await contractRegistry.getContractsCatalog(authToken));
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
-}
+};

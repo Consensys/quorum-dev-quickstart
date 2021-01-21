@@ -21,7 +21,7 @@ services:
 
   kafka:
     <<: *container-common
-    image: confluentinc/cp-kafka:5.3.0
+    image: confluentinc/cp-kafka:5.4.3
     depends_on:
       - zookeeper
     ports:
@@ -34,66 +34,40 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
 
-  redis:
-    <<: *container-common
-    image: redis:5.0-alpine
-    command: redis-server /usr/local/etc/redis/redis.conf
-    ports:
-      - 6379:6379
-    volumes:
-      - ./config/redis/redis.conf:/usr/local/etc/redis/redis.conf
-
-  postgres-contract-registry:
-    <<: *container-common
-    <<: *postgres-common
-    image: postgres:10.12-alpine
-    ports:
-      - 5432
-    volumes:
-      - db-data-contract-registry:/var/lib/postgresql/data
-
-  postgres-transaction-scheduler:
+  postgres-api:
     <<: *container-common
     <<: *postgres-common
     image: postgres:10.12-alpine
     volumes:
-      - db-data-transaction-scheduler:/var/lib/postgresql/data
-    ports:
-      - 5432
-
-  postgres-chain-registry:
-    <<: *container-common
-    <<: *postgres-common
-    image: postgres:10.12-alpine
-    volumes:
-      - db-data-chain-registry:/var/lib/postgresql/data
+      - db-data-api:/var/lib/postgresql/data
     ports:
       - 5432
 
   vault:
     <<: *container-common
-    image: library/vault:1.1.1
+    image: library/vault:1.6.0
     tty: true
     cap_add:
       - IPC_LOCK
+    volumes:
+      - ./hashicorp/config/config.hcl:/vault/config.hcl:ro
+      - ./hashicorp/plugins/orchestrate-hashicorp-vault-plugin:/vault/plugins/orchestrate
+    entrypoint: vault server -config=/vault/config.hcl
     ports:
       - 9999:8200
-    volumes:
-      - ./config/hashicorp/config.hcl:/vault/config.hcl:ro
-    entrypoint: vault server -config=/vault
 
   vault-init:
     <<: *container-common
-    # image: library/vault:1.1.1
-    build: ./config/hashicorp
+    build: ./hashicorp
     environment:
       VAULT_ADDR: ${VAULT_ADDR-http://vault:8200}
-    restart: 'no'
+    restart: "no"
     depends_on:
       - vault
     volumes:
       - vault-token:/vault/token
-      - ./config/hashicorp/init.sh:/init.sh
+      - ./hashicorp/init.sh:/init.sh
+      - ./hashicorp/plugins/orchestrate-hashicorp-vault-plugin:/vault/plugins/orchestrate
     command: sh /init.sh
 
   eth-client:
@@ -151,16 +125,9 @@ services:
     networks:
       - orchestrate
 
-
 volumes:
-  db-data-contract-registry:
+  db-data-api:
     driver: local
-  db-data-transaction-scheduler:
-    driver: local
-  db-data-chain-registry:
-    driver: local
-# chain-data:
-#   driver: local
   vault-token:
     driver: local
 

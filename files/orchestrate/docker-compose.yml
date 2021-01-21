@@ -1,182 +1,144 @@
 version: '3.7'
 
 x-default-variables: &default-variables
-  CONTRACT_REGISTRY_URL: ${CONTRACT_REGISTRY_URL-contract-registry:8080}
-  CHAIN_REGISTRY_URL: ${CHAIN_REGISTRY_URL-http://chain-registry:8081}
-  TRANSACTION_SCHEDULER_URL: ${TRANSACTION_SCHEDULER_URL-http://transaction-scheduler:8081}
-  KAFKA_URL: ${KAFKA_URL-kafka:29092}
-  CHAIN_REGISTRY_INIT: ${CHAIN_REGISTRY_INIT-}
-  ETH_CLIENT_RETRY_MAX_ELAPSED_TIME: 5s
-  LOG_LEVEL: ${LOG_LEVEL-info}
-  LOG_FORMAT: ${LOG_FORMAT-json}
-  NONCE_MANAGER_TYPE: ${NONCE_MANAGER_TYPE-redis}
-  REDIS_URL: ${REDIS_URL-redis:6379}
+  API_URL: ${CONTRACT_REGISTRY_URL-contract-registry:8080}
+  API_METRICS_URL: ${API-http://api:8082}
+  KEY_MANAGER_URL: ${KEY_MANAGER_URL-http://key-manager:8081}
+  KEY_MANAGER_METRICS_URL: ${KEY_MANAGER_URL-http://key-manager:8082}
+  TX_SENDER_METRICS_URL: ${TX_SENDER_METRICS_URL-http://tx-sender:8082}
+  TX_LISTENER_METRICS_URL: ${TX_LISTENER_METRICS_URL-http://tx-listener:8082}
+  LOG_LEVEL: ${LOG_LEVEL-debug}
+  LOG_FORMAT: ${LOG_FORMAT-}
+  NONCE_MANAGER_TYPE: ${NONCE_MANAGER_TYPE-in-memory}
   VAULT_ADDR: ${VAULT_ADDR-http://vault:8200}
-  MULTI_TENANCY_ENABLED: ${MULTI_TENANCY_ENABLED-}
-  AUTH_JWT_CLAIMS_NAMESPACE: ${AUTH_JWT_CLAIMS_NAMESPACE-}
+  MULTI_TENANCY_ENABLED: ${MULTI_TENANCY_ENABLED-false}
+  AUTH_JWT_CLAIMS_NAMESPACE: ${AUTH_JWT_CLAIMS_NAMESPACE-http://tenant.info/}
   AUTH_JWT_CERTIFICATE: ${AUTH_JWT_CERTIFICATE-}
-  AUTH_JWT_PRIVATE_KEY: ${AUTH_JWT_PRIVATE_KEY-}
   AUTH_API_KEY: ${AUTH_API_KEY-}
-  TX_SCHEDULER_ENABLED: ${TX_SCHEDULER_ENABLED-true}
-  ENVELOPE_STORE_ENABLED: ${ENVELOPE_STORE_ENABLED-false}
+  KAFKA_URL: ${KAFKA_URL-kafka:29092}
+  KAFKA_SASL_ENABLED: ${KAFKA_SASL_ENABLED-false}
+  KAFKA_SASL_MECHANISM: ${KAFKA_SASL_MECHANISM-PLAIN}
+  KAFKA_SASL_USER: ${KAFKA_SASL_USER-}
+  KAFKA_SASL_PASSWORD: ${KAFKA_SASL_PASSWORD-}
+  KAFKA_TLS_ENABLED: ${KAFKA_TLS_ENABLED-false}
+  KAFKA_TLS_INSECURE_SKIP_VERIFY: ${KAFKA_TLS_INSECURE_SKIP_VERIFY-false}
+  DB_TLS_SSLMODE: ${DB_TLS_SSLMODE-}
+  DB_TLS_CERT: ${DB_TLS_CERT-}
+  DB_TLS_KEY: ${DB_TLS_KEY-}
+  DB_TLS_CA: ${DB_TLS_CA-}
+  METRICS_MODULES: ${METRICS_MODULES-}
+  ETH_CLIENT_RETRY_MAX_ELAPSED_TIME: 5s
 
 x-container-common: &container-common
   restart: ${CONTAINER_RESTART-on-failure}
-  image: orchestrate:v2.4.0-rc3
+  image: registry.gitlab.com/consensys/client/fr/core-stack/orchestrate:ac6fc90d
   networks:
     - orchestrate
 
-x-contract-registry-common: &contract-registry-common
-  CONTRACT_REGISTRY_TYPE: ${CONTRACT_REGISTRY_TYPE-}
-  DB_HOST: postgres-contract-registry
+x-proxy-common: &proxy-common
+  PROXY_MAXIDLECONNSPERHOST: ${PROXY_MAXIDLECONNSPERHOST-}
+  PROXY_CACHE_TTL: ${PROXY_CACHE_TTL-}
 
-x-transaction-scheduler-common: &transaction-scheduler-common
-  TRANSACTION_SCHEDULER_TYPE: ${TRANSACTION_SCHEDULER_TYPE-}
-  DB_HOST: postgres-transaction-scheduler
+x-api-common: &api-common
+  API_STORE_TYPE: ${API_STORE_TYPE-}
+  DB_HOST: postgres-api
 
-x-chain-registry-common: &chain-registry-common
-  CHAIN_REGISTRY_TYPE: ${CHAIN_REGISTRY_TYPE-}
-  DB_HOST: postgres-chain-registry
+x-key-manager-common: &key-manager-common
+  KEY_MANAGER_TYPE: ${KEY_MANAGER_TYPE-}
 
 services:
-  chain-registry-migration-init:
+  api-migration-init:
     <<: *container-common
     environment:
       <<: *default-variables
-      <<: *chain-registry-common
+      <<: *api-common
     restart: 'no'
-    command: chain-registry migrate init
+    command: api migrate init
 
-  chain-registry-migration:
+  api-migration:
     <<: *container-common
     environment:
       <<: *default-variables
-      <<: *chain-registry-common
+      <<: *api-common
     restart: 'no'
     depends_on:
-      - chain-registry-migration-init
-    command: chain-registry migrate
+      - api-migration-init
+    command: api migrate up
 
-  chain-registry:
+  api:
     <<: *container-common
     ports:
-      - 8010:8080
-      - 8011:8081
-      - 8012:8082
-    environment:
-      <<: *default-variables
-      <<: *chain-registry-common
-      CHAIN_REGISTRY_INIT: ${CHAIN_REGISTRY_INIT-}
-    depends_on:
-      - chain-registry-migration
-    command: chain-registry run
-
-  contract-registry-migration-init:
-    <<: *container-common
-    environment:
-      <<: *default-variables
-      <<: *contract-registry-common
-    restart: 'no'
-    command: contract-registry migrate init
-
-  contract-registry-migration:
-    <<: *container-common
-    environment:
-      <<: *default-variables
-      <<: *contract-registry-common
-    restart: 'no'
-    depends_on:
-      - contract-registry-migration-init
-    command: contract-registry migrate
-
-  contract-registry:
-    <<: *container-common
-    ports:
-      - 8020:8080
-      - 8021:8081
-      - 8022:8082
-    environment:
-      <<: *default-variables
-      <<: *contract-registry-common
-      LOG_LEVEL: trace
-    depends_on:
-      - contract-registry-migration
-    command: contract-registry run
-
-  transaction-scheduler-migration-init:
-    <<: *container-common
-    environment:
-      <<: *default-variables
-      <<: *transaction-scheduler-common
-    restart: 'no'
-    command: transaction-scheduler migrate init
-
-  transaction-scheduler-migration:
-    <<: *container-common
-    environment:
-      <<: *default-variables
-      <<: *transaction-scheduler-common
-    restart: 'no'
-    depends_on:
-      - transaction-scheduler-migration-init
-    command: transaction-scheduler migrate up
-
-  transaction-scheduler:
-    <<: *container-common
-    ports:
-      - 8030:8080
       - 8031:8081
       - 8032:8082
     environment:
       <<: *default-variables
-      <<: *transaction-scheduler-common
+      <<: *api-common
+      <<: *proxy-common
     depends_on:
-      - transaction-scheduler-migration
-    command: transaction-scheduler run
+      - api-migration
+      - key-manager
+    command: api run
+    labels:
+      filebeat: "false"
 
-  tx-crafter:
+  key-vault-init:
+    build: ./scripts/deps/hashicorp
+    environment:
+      VAULT_ADDR: ${VAULT_ADDR-http://vault:8200}
+    networks:
+      - orchestrate
+    volumes:
+      - vault-token:/vault/token
+      - ./scripts/deps/hashicorp/renew.sh:/renew.sh
+    command: sh /renew.sh
+
+  key-manager:
     <<: *container-common
+    ports:
+      - 8091:8081
+      - 8092:8082
     environment:
       <<: *default-variables
+      <<: *key-manager-common
     depends_on:
-      - contract-registry
-    command: tx-crafter run
-
-  tx-signer:
-    <<: *container-common
-    environment:
-      <<: *default-variables
-      SECRET_PKEY: ${SECRET_PKEY-}
-      SECRET_STORE: ${SECRET_STORE-hashicorp}
+      - key-vault-init
+    command: key-manager run
     volumes:
       - vault-token:/vault/token:ro
-    command: tx-signer run
+      - ./build/bin/orchestrate:/bin/main
 
   tx-sender:
     <<: *container-common
+    ports:
+      - 8062:8082
     environment:
       <<: *default-variables
+      SECRET_STORE: ${SECRET_STORE-hashicorp}
+    volumes:
+      - vault-token:/vault/token:ro
+      - ./build/bin/orchestrate:/bin/main
     depends_on:
-      - transaction-scheduler
+      - key-manager
+      - api
     command: tx-sender run
 
   tx-listener:
+    ports:
+      - 8082:8082
     <<: *container-common
     environment:
       <<: *default-variables
-      LISTENER_START_DEFAULT: latest
     depends_on:
-      - transaction-scheduler
-      - chain-registry
+      - api
     command: tx-listener run
 
   generate-jwt:
     <<: *container-common
     environment:
       <<: *default-variables
-      TENANT_ID: ${TENANT_ID-}
-    command: 'utils generate-jwt --tenant=${TENANT_ID}'
-    restart: 'no'
+      AUTH_JWT_PRIVATE_KEY: ${AUTH_JWT_PRIVATE_KEY-}
+    command: utils generate-jwt --tenant=${TENANT_ID-_} --expiration=${EXPIRATION-24h}
+    restart: "no"
 
 volumes:
   vault-token:
