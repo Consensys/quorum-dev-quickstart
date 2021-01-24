@@ -45,7 +45,7 @@ services:
 
   vault:
     <<: *container-common
-    image: library/vault:1.6.0
+    image: library/vault:1.6.1
     tty: true
     cap_add:
       - IPC_LOCK
@@ -101,7 +101,6 @@ services:
       - ./config/gquorum/genesis.json:/nodeData/genesis.json
       - ./config/gquorum/keystore:/nodeData/keystore
       - ./config/gquorum/password:/nodeData/password
-      #- chain-data:/nodeData/geth
     healthcheck:
       test: ["CMD", "wget", "--spider", "--proxy", "off", "http://localhost:8545"]
       interval: 3s
