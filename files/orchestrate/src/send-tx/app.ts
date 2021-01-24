@@ -1,6 +1,6 @@
 import { OrchestrateClient } from "pegasys-orchestrate";
 
-export const sendTx = async () => {
+export const start = async () => {
   const txClient = new OrchestrateClient(process.env.API_HOST!);
   const authToken = process.env.AUTH_TOKEN
     ? `Bearer ${process.env.AUTH_TOKEN}`

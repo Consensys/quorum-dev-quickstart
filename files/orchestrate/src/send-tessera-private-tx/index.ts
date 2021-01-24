@@ -4,4 +4,4 @@ start()
   .then(() => {
     process.exit()
   })
-  .catch(console.error)
+  .catch(console.error);
