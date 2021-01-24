@@ -24,9 +24,10 @@ For more information, refer to the Codefi Orchestrate official [Documentation](h
 3. [Tutorial](#tutorial)
    1. [Chains](#orchestrate-chains)
    2. [Accounts](#orchestrate-accounts)
-   3. [Contracts & Transactions ](#orchestrate-contracts)
+   3. [Contracts & Transactions](#orchestrate-contracts)
    4. [Private transactions](#orchestrate-priv-transactions)
-   5. [Multitenancy](#orchestrate-multitenancy)
+   5. [Signing](#orchestrate-signing)
+   6. [Multitenancy](#orchestrate-multitenancy)
 
 
 ## Prerequisites
@@ -388,7 +389,35 @@ output on the first terminal.
 
 > For more information about tessera private transactions, refer to the [Quorum privacy documentation](https://goquorum.readthedocs.io/en/stable/Privacy/Tessera/Tessera/).
 
-### e. Multitenancy <a name="orchestrate-multitenancy"></a>
+### e. Signing <a name="orchestrate-singing"></a>
+
+Using Orchestrate and accounts store in the key vault you can sign any kind of data and/or typed data. In addition verifying whether
+or not a signature corresponds to a certain sender.
+
+To sign the payload data defined in our `.env` file `DATA_TO_SIGN=....`:
+```
+$> npm run sign-payload
+...
+0x98e7f3b87d9094f7f4f27dbc9e61f95efedb2ccc95506647a1f8d3a84d257b5b3b67cb175ecf3dc22125a7d6a067f32fd176b1f8b0c1991a2670c86db97c035100
+```
+
+Taking previous output update `SIGNATURE=...` in `.env` before running next command;
+```
+$> npm run verify-signature
+...
+Signature was verified successfully
+```
+
+#### Sign typed data
+
+At last if you want to sign typed data:
+```
+$> npm run sign-typed-data
+...
+0x8ff93e4724254373d6a1f7066e2cb39210c220b1e0d38cc44b3766e87be59b1d4dd3c530e48a83592da57e07b3e195f7543fe153feaee5c7c22f47dd2026283b01
+```
+
+### f. Multitenancy <a name="orchestrate-multitenancy"></a>
 
 Multi-tenancy enables serving multiple blockchain applications with a single Orchestrate instance. Resources including 
 transaction streams, access to the blockchain network, private keys, and smart contracts are isolated to the tenant that 
