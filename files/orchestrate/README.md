@@ -175,7 +175,7 @@ The next thing to do is to add some ETH to your faucet account - this is done by
 clients RPC endpoint ie. `http://localhost:8545`. Then import one of the genesis account's private keys and transfer 1 
 or 2 ETH from one of the test accounts to your `FAUCET_ACCOUNT` address.
 
-![Image metamask_faucet](files/common/static/metamask-faucet-transfer.png)
+![Image metamask_faucet](/files/common/static/metamask-faucet-transfer.png)
 
 
 ### c. Deploy contracts and send transactions <a name="orchestrate-contracts"></a>

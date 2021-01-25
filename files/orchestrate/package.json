@@ -16,7 +16,7 @@
     "generate-account": "dotenv ts-node src/generate-account",
     "get-accounts": "dotenv ts-node src/get-accounts",
     "register-chain": "dotenv ts-node src/register-chain",
-    "get-latest-block": "dotenv -- cross-var curl -X POST -H 'Authorization: Bearer %AUTH_TOKEN%' --data '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\", false],\"id\":1}' %CHAIN_REGISTRY_HOST%/%CHAIN_UUID%",
+    "get-latest-block": "dotenv -- cross-var curl -X POST -H 'Authorization: Bearer %AUTH_TOKEN%' --data '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\", false],\"id\":1}' %API_HOST%/proxy/chains/%CHAIN_UUID%",
     "create-faucet": "dotenv ts-node src/create-faucet",
     "register-contract": "dotenv ts-node src/register-contract",
     "get-catalog": "dotenv ts-node src/get-catalog",
