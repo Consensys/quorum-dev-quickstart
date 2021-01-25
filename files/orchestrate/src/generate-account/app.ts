@@ -11,6 +11,7 @@ export const start = async () => {
     const account = await client.createAccount(
       {
         chain: process.env.CHAIN!,
+        alias: `account-${Math.floor(Math.random() * 100)}`,
       },
       authToken
     );

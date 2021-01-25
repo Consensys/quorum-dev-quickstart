@@ -83,7 +83,7 @@ services:
       filebeat: "false"
 
   key-vault-init:
-    build: ./scripts/deps/config/hashicorp
+    build: ./scripts/deps/hashicorp
     environment:
       VAULT_ADDR: ${VAULT_ADDR-http://vault:8200}
     networks:
