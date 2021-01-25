@@ -31,9 +31,10 @@ x-default-variables: &default-variables
 
 x-container-common: &container-common
   restart: ${CONTAINER_RESTART-on-failure}
-  image: registry.gitlab.com/consensys/client/fr/core-stack/orchestrate:ac6fc90d
+  image: registry.gitlab.com/consensys/client/fr/core-stack/orchestrate:29d24cd6
   networks:
     - orchestrate
+    - quickstart
 
 x-proxy-common: &proxy-common
   PROXY_MAXIDLECONNSPERHOST: ${PROXY_MAXIDLECONNSPERHOST-}
@@ -82,7 +83,7 @@ services:
       filebeat: "false"
 
   key-vault-init:
-    build: ./scripts/deps/hashicorp
+    build: ./scripts/deps/config/hashicorp
     environment:
       VAULT_ADDR: ${VAULT_ADDR-http://vault:8200}
     networks:
@@ -149,3 +150,6 @@ networks:
   orchestrate:
     external:
       name: deps_orchestrate
+  quickstart:
+    external:
+      name: network_quorum-dev-quickstart

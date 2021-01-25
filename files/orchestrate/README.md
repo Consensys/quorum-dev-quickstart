@@ -50,12 +50,6 @@ To run these tutorials, you must have the following installed:
 
 ## Environment setup
 
-Change directory to the artifacts folder (./quorum-test-network): 
-
-```
-$> cd ./quorum-test-network
-``` 
-
 **Install the Orchestrate CLI**
 ```
 $> npm install 
@@ -63,7 +57,7 @@ $> npm install
 
 See Orchestrate CLI help:
 ```
-$> npm run orchestrate help
+$> npm run orchestrate -- help
 ```
  
 **To start services and the dependencies:**
@@ -359,9 +353,20 @@ This concludes the first tutorial on how to deploy contracts and send transactio
 
 ### d. Send private transactions <a name="orchestrate-priv-transactions"></a>
 
-PegaSys Orchestrate is compatible with **Quorum Tessera** and **Besu Orion** networks for private transactions. Private transactions are only available within participants of the consortium.
+PegaSys Orchestrate is compatible with **Quorum Tessera** and **Besu Orion** networks for private transactions. Private transactions are only available within participants of the consortium. 
+
+<!-- In order to be able to follow next part of the tutorial you have to setup your selected network: -->
+<!-- ``` -->
+<!-- $> cd ./network/ -->
+<!-- ``` -->
+
+<!-- Then following instructions: -->
+<!-- - [Hyperledger Besu](../besu/README.md) -->
+<!-- - [GoQuorum](../gquorum/README.md) -->
 
 #### Besu Orion
+
+Firstly we need to register 
 
 To send a private transaction in Besu Orion, run:
 
