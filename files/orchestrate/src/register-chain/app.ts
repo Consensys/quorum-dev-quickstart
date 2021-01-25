@@ -14,11 +14,12 @@ export const start = async () => {
         name: process.env.CHAIN!,
         urls: [process.env.NETWORK_ENDPOINT!],
     };
-    if (process.env.PRIVATE_NETWORK_ENDPOINT != "") {
-        chainReq.privateTxManager = {
-            type: "Tessera",
-            url: process.env.PRIVATE_NETWORK_ENDPOINT!
-        }
+
+    if (typeof process.env.PRIVATE_NETWORK_ENDPOINT != "undefined") {
+      chainReq.privateTxManager = {
+        type: "Tessera",
+        url: process.env.PRIVATE_NETWORK_ENDPOINT!
+      }
     }
 
     const chain = await chainRegistry.registerChain(chainReq,
