@@ -17,15 +17,19 @@ export function copyFilesDir(filesBasePath: string, context: NetworkContext): vo
         const outputPath = resolvePath(context.outputPath, filePath);
         const outputDirname = dirname(outputPath);
 
-        const mode = fs.statSync(resolvePath(filesBasePath, filePath)).mode;
-        const fileSrc = fs.readFileSync(resolvePath(filesBasePath, filePath), "utf-8");
-        const output = fileSrc.replace(/(\r\n|\n|\r)/gm, os.EOL);
+        // const mode = fs.statSync(resolvePath(filesBasePath, filePath)).mode;
+        // const fileSrc = fs.readFileSync(resolvePath(filesBasePath, filePath), "utf-8");
+        // const output = fileSrc.replace(/(\r\n|\n|\r)/gm, os.EOL);
 
         if (!validateDirectoryExists(outputDirname)) {
             fs.mkdirSync(outputDirname, { recursive: true });
         }
 
-        fs.writeFileSync(outputPath, output, { encoding: "utf-8", flag: "w", mode });
+        fs.copyFileSync(resolvePath(filesBasePath, filePath), outputPath)
+        // fs.createReadStream(resolvePath(filesBasePath, filePath)).pipe(fs.createWriteStream(outputPath, {
+        //     mode,
+        // }));
+        // fs.writeFileSync(outputPath, output, { encoding: "utf-8", flag: "w", mode });
     }
 }
 
