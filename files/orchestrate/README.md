@@ -406,7 +406,7 @@ $> npm run sign-payload
 0x98e7f3b87d9094f7f4f27dbc9e61f95efedb2ccc95506647a1f8d3a84d257b5b3b67cb175ecf3dc22125a7d6a067f32fd176b1f8b0c1991a2670c86db97c035100
 ```
 
-Taking previous output update `SIGNATURE=...` in `.env` before running next command;
+Taking previous replace `[SIGNATURE]` in `.env` file before running next command;
 ```
 $> npm run verify-signature
 ...
@@ -442,7 +442,7 @@ AUTH_TOKEN=
 Then, we need to start Orchestrate again:
 
 ```bash
-npm run down && npm run up
+npm run down-orchestrate && npm run up-orchestrate
 ```
 
 ##### Using self-generated certificates
@@ -469,7 +469,7 @@ EXPIRATION=5h TENANT_ID=foo npm run generate-jwt
 > **Note:** Decode the generated token using _[https://jwt.io/](https://jwt.io/)_ and verify the correct tenant is included within the selected namespace.
 
 ##### Testing the JWT token
-Once you have obtained a valid token, please add it to the AUTH_TOKEN=_ value in the `.env` file. Following that, if you 
+Once you have obtained a valid token, please replace it to the `[TENANT_AUTH_TOKEN]` value in the `.env` file. Following that, if you 
 go through the first [Contracts & Transactions tutorial](#orchestrate-contracts), you should observer that every request 
 now gets sent using the generated JWT.
 

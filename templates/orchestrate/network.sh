@@ -3,9 +3,12 @@
 pushd ./network
 
 if [ $1 == "up" ]; then
-. run.sh
+  if [ -f "./quorumDevQuickstart.lock" ]; then
+    . resume.sh
+  else
+    . run.sh
+  fi
 elif [ $1 == "down" ]; then
-rm -f ./network/.quorumDevQuickstart.lock
 . stop.sh
 fi
 

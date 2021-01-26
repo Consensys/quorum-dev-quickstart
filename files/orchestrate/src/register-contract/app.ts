@@ -8,10 +8,6 @@ import * as ERC20 from "../../build/contracts/ERC20.json";
 export const start = async () => {
   try {
     const client = new OrchestrateClient(process.env.API_HOST!);
-
-    const authToken = process.env.AUTH_TOKEN
-      ? `Bearer ${process.env.AUTH_TOKEN}`
-      : "";
     await client.registerContract(
       {
         name: "Counter",
@@ -19,10 +15,10 @@ export const start = async () => {
         bytecode: Counter.bytecode,
         deployedBytecode: Counter.deployedBytecode,
       },
-      authToken
+      process.env.AUTH_TOKEN
     );
 
-    console.log(await client.getContract("Counter", undefined, authToken));
+    console.log(await client.getContract("Counter", undefined, process.env.AUTH_TOKEN));
 
     await client.registerContract(
       {
@@ -31,10 +27,10 @@ export const start = async () => {
         bytecode: ERC20.bytecode,
         deployedBytecode: ERC20.deployedBytecode,
       },
-      authToken
+      process.env.AUTH_TOKEN
     );
 
-    console.log(await client.getContract("ERC20", undefined, authToken));
+    console.log(await client.getContract("ERC20", undefined, process.env.AUTH_TOKEN));
   } catch (error) {
     console.error(error);
   }

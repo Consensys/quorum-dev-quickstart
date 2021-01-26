@@ -3,9 +3,6 @@ import * as uuid from 'uuid'
 
 export const start = async () => {
   const txClient = new OrchestrateClient(process.env.API_HOST!);
-  const authToken = process.env.AUTH_TOKEN
-    ? `Bearer ${process.env.AUTH_TOKEN}`
-    : undefined;
   const idempotencyKey = uuid.v4();
 
   // Deploy contract in private network between two private participants
@@ -21,7 +18,7 @@ export const start = async () => {
       }
     },
     idempotencyKey,
-    authToken
+    process.env.AUTH_TOKEN
   );
 
   console.log('Transaction request sent successfully', txResponse);

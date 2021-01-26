@@ -2,10 +2,6 @@ import { OrchestrateClient } from "pegasys-orchestrate";
 
 export const start = async () => {
   const txClient = new OrchestrateClient(process.env.API_HOST!);
-  const authToken = process.env.AUTH_TOKEN
-    ? `Bearer ${process.env.AUTH_TOKEN}`
-    : undefined;
-
   const txResponse = await txClient.sendTransaction(
     {
       chain: process.env.CHAIN!,
@@ -17,7 +13,7 @@ export const start = async () => {
       },
     },
     undefined,
-    authToken
+    process.env.AUTH_TOKEN
   );
 
   console.log("Transaction request sent successfully", txResponse);

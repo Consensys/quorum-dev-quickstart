@@ -5,9 +5,6 @@ export const start = async () => {
   try {
     const client = new OrchestrateClient(process.env.API_HOST!);
 
-    const authToken = process.env.AUTH_TOKEN
-      ? `Bearer ${process.env.AUTH_TOKEN}`
-      : undefined;
     const signature = await client.signTypedData(
       process.env.FROM_ACCOUNT!,
       {
@@ -32,7 +29,8 @@ export const start = async () => {
         },
         messageType: "Mail"
       },
-      authToken);
+      process.env.AUTH_TOKEN
+    );
 
     console.log(signature);
   } catch (error) {
