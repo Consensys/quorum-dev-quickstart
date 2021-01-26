@@ -16,8 +16,8 @@ export const start = async () => {
         contractName: 'Counter',
         from: process.env.FROM_ACCOUNT!,
         protocol: ProtocolType.Tessera,
-        privateFrom: process.env.TESSERA1_MEMBER_KEY,  // Tessera node 2 public key
-        privateFor: [process.env.TESSERA2_MEMBER_KEY!] // Tessera node 1 public key
+        privateFrom: process.env.TESSERA1_MEMBER_KEY,  // Tessera node 1 public key
+        privateFor: [process.env.TESSERA2_MEMBER_KEY!] // Tessera node 2 public key
       }
     },
     idempotencyKey,
