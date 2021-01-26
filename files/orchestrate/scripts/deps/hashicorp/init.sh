@@ -1,17 +1,19 @@
-# Store root token in a file so it can be shared with other services through volume
-mkdir -p /vault/token
-rm -rf /vault/token/*
+#!/usr/bin/env sh
 
+# Store root token in a file so it can be shared with other services through volume
+mkdir -p $TOKEN_PATH
+
+echo "Initializing Vault: ${VAULT_ADDR}"
 # Init Vault
-curl --request POST --data '{"secret_shares": 1, "secret_threshold": 1}' ${VAULT_ADDR}/v1/sys/init >init.json
+curl --request POST --data '{"secret_shares": 1, "secret_threshold": 1}' ${VAULT_ADDR}/v1/sys/init > init.json
 
 # Retrieve root token and unseal key
 VAULT_TOKEN=$(cat init.json | jq .root_token | tr -d '"')
 UNSEAL_KEY=$(cat init.json | jq .keys | jq .[0])
-SHA256SUM=$(sha256sum -b /vault/plugins/orchestrate | cut -d' ' -f1)
+SHA256SUM=$(cat $PLUGIN_PATH/SHA256SUM)
 rm init.json
 
-echo $VAULT_TOKEN > /vault/token/.root
+echo $VAULT_TOKEN > $TOKEN_PATH/.root
 echo "ROOT_TOKEN: $VAULT_TOKEN"
 echo "SHA256SUM: ${SHA256SUM}"
 
@@ -47,10 +49,10 @@ curl --header "X-Vault-Token: $VAULT_TOKEN" \
 curl --header "X-Vault-Token: $VAULT_TOKEN" \
   ${VAULT_ADDR}/v1/auth/approle/role/key-manager/role-id >role.json
 ROLE_ID=$(cat role.json | jq .data.role_id | tr -d '"')
-echo $ROLE_ID >/vault/token/role
+echo $ROLE_ID > $TOKEN_PATH/role
 
 curl --header "X-Vault-Token: $VAULT_TOKEN" \
   --request POST \
   ${VAULT_ADDR}/v1/auth/approle/role/key-manager/secret-id >secret.json
 SECRET_ID=$(cat secret.json | jq .data.secret_id | tr -d '"')
-echo $SECRET_ID >/vault/token/secret
+echo $SECRET_ID > $TOKEN_PATH/secret

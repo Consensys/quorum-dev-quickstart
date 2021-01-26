@@ -50,8 +50,8 @@ services:
     cap_add:
       - IPC_LOCK
     volumes:
+      - vault-plugin:/vault/plugins
       - ./hashicorp/config/config.hcl:/vault/config.hcl:ro
-      - ./hashicorp/plugins/orchestrate-hashicorp-vault-plugin:/vault/plugins/orchestrate
     entrypoint: vault server -config=/vault/config.hcl
     ports:
       - 8200:8200
@@ -61,19 +61,26 @@ services:
     build: ./hashicorp
     environment:
       VAULT_ADDR: ${VAULT_ADDR-http://vault:8200}
+      PLUGIN_PATH: ${PLUGIN_PATH-/vault/plugins}
+      TOKEN_PATH: ${TOKEN_PATH-/vault/token}
+      PLUGIN_VERSION: ${PLUGIN_VERSION-v0.0.9}
     restart: "no"
     depends_on:
       - vault
     volumes:
-      - vault-token:/vault/token
-      - ./hashicorp/init.sh:/init.sh
-      - ./hashicorp/plugins/orchestrate-hashicorp-vault-plugin:/vault/plugins/orchestrate
-    command: sh /init.sh
+    - vault-token:/vault/token
+    - vault-plugin:/vault/plugins
+    - ./hashicorp/init.sh:/init.sh
+    - ./hashicorp/plugin.sh:/plugin.sh
+    command: >
+      sh -c "./plugin.sh && ./init.sh"
 
 volumes:
   db-data-api:
     driver: local
   vault-token:
+    driver: local
+  vault-plugin:
     driver: local
 
 networks:

@@ -1,3 +1,5 @@
+#!/usr/bin/env sh
+
 ROLE_ID=$(cat /vault/token/role)
 SECRET_ID=$(cat /vault/token/secret)
 echo "ROLE_ID: $ROLE_ID"
