@@ -1,5 +1,4 @@
 import { renderString } from "nunjucks";
-import { isBinaryFileSync } from "isbinaryfile";
 import { resolve as resolvePath, join as joinPath, dirname } from "path";
 import fs from "fs";
 import os from "os";
@@ -18,21 +17,14 @@ export function copyFilesDir(filesBasePath: string, context: NetworkContext): vo
         const outputPath = resolvePath(context.outputPath, filePath);
         const outputDirname = dirname(outputPath);
 
-        const { mode, size } = fs.statSync(resolvePath(filesBasePath, filePath));
+        const mode = fs.statSync(resolvePath(filesBasePath, filePath)).mode;
+        const fileSrc = fs.readFileSync(resolvePath(filesBasePath, filePath), "utf-8");
+        const output = fileSrc.replace(/(\r\n|\n|\r)/gm, os.EOL);
 
         if (!validateDirectoryExists(outputDirname)) {
             fs.mkdirSync(outputDirname, { recursive: true });
         }
 
-        if (isBinaryFileSync(resolvePath(filesBasePath, filePath), size)) {
-            fs.createReadStream(resolvePath(filesBasePath, filePath)).pipe(fs.createWriteStream(outputPath, {
-              mode,
-            }));
-            continue
-        }
-
-        const fileSrc = fs.readFileSync(resolvePath(filesBasePath, filePath), "utf-8");
-        const output = fileSrc.replace(/(\r\n|\n|\r)/gm, os.EOL);
         fs.writeFileSync(outputPath, output, { encoding: "utf-8", flag: "w", mode });
     }
 }
