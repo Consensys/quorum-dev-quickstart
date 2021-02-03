@@ -1,12 +1,33 @@
-# Quorum Dev Quickstart
+# Orchestrate Quickstart
+
+Orchestrate is a platform that enables enterprises to easily build secure and reliable applications on Ethereum blockchains. 
+It provides advanced features when connected to blockchain networks like:
+- Transaction management (transaction crafting, gas management, nonce management, and transaction listening)
+- Account management with private key storage in Hashicorp Vault
+- Smart contract registry
+- Public and private transactions
+- Multi-chain.
+
+For more information, refer to the Codefi Orchestrate official [Documentation](http://docs.orchestrate.consensys.net).
+
+| ⚠️ **Note**: Orchestrate is available free of charge for a trial period. To get access to the artifacts and continue, please create a free account [HERE](https://accounts.quorum.consensys.net/auth/realms/quorum/account)    |
+| ---
+
+
+| ⚠️ **Note**: If you have an existing Quorum quickstart running, please stop it before proceeding. The Orchestrate quickstart spins up an Ethereum client which serves as an RPC endpoint. If you have an existing RPC endpoint, please update the `NETWORK_ENDPOINT` in the `.env` file and comment out the eth_client container in the file `<output_folder>/orchestrate/scripts/deps/docker-compose.yml` |
+| ---
 
 
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
-2. [Usage](#usage)
-3. [Dev Network Setups](#dev-network-setups)
-   1. [Deploy contracts & send transactions](#orchestrate-contracts)
-   2. [Multitenancy](#orchestrate-multitenancy)
+2. [Environment setup](#environment-setup)
+3. [Tutorial](#tutorial)
+   1. [Chains](#orchestrate-chains)
+   2. [Accounts](#orchestrate-accounts)
+   3. [Contracts & Transactions](#orchestrate-contracts)
+   4. [Private transactions](#orchestrate-priv-transactions)
+   5. [Signing](#orchestrate-signing)
+   6. [Multitenancy](#orchestrate-multitenancy)
 
 
 ## Prerequisites
@@ -27,120 +48,44 @@ To run these tutorials, you must have the following installed:
 - [Nodejs](https://nodejs.org/en/download/) or [Yarn](https://yarnpkg.com/cli/node)
 
 
+## Environment setup
 
-## Usage 
+**Install the Orchestrate CLI**
+```
+$> npm install 
+```
 
-Change directory to the artifacts folder: 
-
-`cd quorum-test-network` (default folder location) 
+See Orchestrate CLI help:
+```
+$> npm run orchestrate -- help
+```
  
-**To start services and the network:**
+**To start services and the dependencies:**
 
-`npm run up` starts all the docker containers
+```
+$> npm run up
+```
 
-**To stop services :**
+**To stop environment**
 
-`npm run down` stops the entire network
+```
+$> npm run down
+```
 
-
-## Dev Network Setups
-
-Orchestrate is a platform that enables enterprises to easily build secure and reliable applications on Ethereum blockchains. 
-It provides advanced features when connected to blockchain networks like:
-- Transaction management (transaction crafting, gas management, nonce management, and transaction listening)
-- Account management with private key storage in Hashicorp Vault
-- Smart contract registry
-- Public and private transactions
-- Multi-chain.
-
-For more information, refer to the Codefi Orchestrate official [Documentation](http://docs.orchestrate.consensys.net).
-
-| ⚠️ **Note**: Orchestrate is available free of charge for a trial period. To get access to the artifacts and continue, please create a free account [HERE](https://accounts.quorum.consensys.net/auth/realms/quorum/account)    |
-| ---
-
-
-| ⚠️ **Note**: If you have an existing Quorum quickstart running, please stop it before proceeding. The Orchestrate quickstart spins up an Ethereum client which serves as an RPC endpoint. If you have an existing RPC endpoint, please update the `NETWORK_ENDPOINT` in the `.env` file and comment out the eth_client container in the file `<output_folder>/orchestrate/scripts/deps/docker-compose.yml` |
-| ---
-
+## Tutorial
 
 This tutorial will show you how to connect Orchestrate to a blockchain network and use the Contract Registry to deploy 
-smart contracts, send transactions etc 
+smart contracts, send transactions etc.
 
-Change directory to the artifacts folder: 
-
-`cd quorum-test-network` default folder location 
- 
-##### Install the Orchestrate cli
-```
-npm install && npm run orchestrate help 
-```
-
-##### Start the network up
-This starts the Orchestrate services, as well as other services including Kafka, Redis, Postgres and Hashicorp Vault, 
-and an Ethereum Client node.
-```
-npm run up
-```
-
-##### Check the .env file with details that match your account (if required)
-```
-vim .env
-```
-
-### a. Deploy contracts & send transactions <a name="orchestrate-contracts"></a>
-
-##### Create an Ethereum account that serves as your **Network Faucet**
-```
-npm run generate-account
-```
-which returns (please note the account value will be different in your case)
-```
-> codefi-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
-> dotenv ts-node src/generate-account
-
-{
-  uuid: '35e2a951-1f9f-4ad0-9d14-199f5b330dc2',
-  address: '0x90494000f242D9e41Cd635939536Aa7aA869CfCF',
-  ...
-}
-```
-Copy the output of this command and add it to the `.env` file as the value for the `FAUCET_ACCOUNT` variable, like so: 
-`FAUCET_ACCOUNT=0x90494000f242D9e41Cd635939536Aa7aA869CfCF`
-
-
-##### List accounts stored in Hashicorp Vault
-The faucet account's private key is stored in Hashicorp Vault and it's Ethereum address can be obtained by
-```
-npm run get-accounts
-```
-
-which returns (please note the key value will be different in your case)
-```
-> codefi-orchestrate-quick-start@2.3.0 get-accounts /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
-> dotenv ts-node src/get-accounts
-
-[
-  {
-    uuid: '35e2a951-1f9f-4ad0-9d14-199f5b330dc2',
-    ...
-  }
-]
-```
+### a. Register chains <a name="orchestrate-chains"></a>
 
 ##### Connect to the blockchain network
 Now that you have Orchestrate up and running and an account created, it's time to connect Orchestrate to a blockchain 
 network, by using the REST APIs
 
 ```
-npm run register-chain
-```
-
-
-which returns (please note the key value will be different in your case)
-```
-> codefi-orchestrate-quick-start@2.3.0 register-chain /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
-> dotenv ts-node src/register-chain
-
+$> npm run register-chain
+...
 {
   uuid: '35e2a951-1f9f-4ad0-9d14-199f5b330dc2',
   name: 'dev',
@@ -162,10 +107,42 @@ the value for the `CHAIN_UUID` variable, like so: `CHAIN_UUID=35e2a951-1f9f-4ad0
 
 Once done, verify that the chain JSON-RPC is being proxied by Orchestrate
 ```
-npm run get-latest-block
+$> npm run get-latest-block
 ```
 and the response should be details about the latest mined block on your chain
 
+
+### b. Account management <a name="orchestrate-accounts"></a>
+
+##### Create an Ethereum account that serves as your **Network Faucet**
+```
+$> npm run generate-account
+...
+{
+  uuid: '35e2a951-1f9f-4ad0-9d14-199f5b330dc2',
+  address: '0x90494000f242D9e41Cd635939536Aa7aA869CfCF',
+  ...
+}
+```
+(please note the account value will be different in your case)
+
+Copy the output of this command and add it to the `.env` file as the value for the `FAUCET_ACCOUNT` variable, like so: 
+`FAUCET_ACCOUNT=0x90494000f242D9e41Cd635939536Aa7aA869CfCF`
+
+
+##### List accounts stored in Hashicorp Vault
+The faucet account's private key is stored in Hashicorp Vault and it's Ethereum address can be obtained by
+```
+$> npm run get-accounts
+...
+[
+  {
+    uuid: '35e2a951-1f9f-4ad0-9d14-199f5b330dc2',
+    ...
+  }
+]
+```
+(please note the key value will be different in your case)
 
 ##### Configure a [Faucet](https://docs.orchestrate.pegasys.tech)
 Note: On paid gas networks (for example, public networks such as Ethereum mainnet or Rinkeby and also some private networks, 
@@ -178,16 +155,11 @@ The following command uses the CHAIN, CHAIN_UUID and FAUCET_ACCOUNT values from 
 Here the faucet is named using the chain name suffixed by -faucet.
 
 ```
-npm run create-faucet
-```
-which returns
-```
-> codefi-orchestrate-quick-start@2.3.0 create-faucet /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
-> dotenv ts-node src/create-faucet
-
+$> npm run create-faucet
+...
 {
   uuid: '47afcb8c-e8bf-4275-a21d-ae29968e10d8',
-  name: 'besu-faucet',
+  name: 'dev-faucet',
   tenantID: '_',
   createdAt: '2020-07-29T03:59:52.783253Z',
   updatedAt: '2020-07-29T03:59:52.783253Z',
@@ -203,7 +175,11 @@ The next thing to do is to add some ETH to your faucet account - this is done by
 clients RPC endpoint ie. `http://localhost:8545`. Then import one of the genesis account's private keys and transfer 1 
 or 2 ETH from one of the test accounts to your `FAUCET_ACCOUNT` address.
 
-![Image metamask_faucet](files/common/static/metamask-faucet-transfer.png)
+![Image metamask_faucet](/files/common/static/metamask-faucet-transfer.png)
+
+
+### c. Deploy contracts and send transactions <a name="orchestrate-contracts"></a>
+
 
 ##### Register the smart contract 
 Orchestrate provides a contract registry which you can use to deploy contracts on your registered networks. But first 
@@ -211,11 +187,8 @@ you have to create, compile, and add your contract to the registry.
 
 So, first we compile the contracts 
 ```
-npm run compile
-```
-which returns
-```
-> codefi-orchestrate-quick-start@2.3.0 compile /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
+$> npm run compile
+...
 > truffle compile
 
 
@@ -229,13 +202,8 @@ Compiling your contracts...
 
 Then we send it to the Contract Registry
 ```
-npm run register-contract
-```
-which returns
-``` 
-> codefi-orchestrate-quick-start@2.3.0 register-contract /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
-> dotenv ts-node src/register-contract
-
+$> npm run register-contract
+... 
 {
   name: 'Counter',
   tag: 'latest',
@@ -264,28 +232,19 @@ which returns
 
 To query the Contract Registry for a list of Smart Contracts:
 ```
-npm run get-catalog
-```
-which returns
-``` 
-> codefi-orchestrate-quick-start@2.3.0 get-catalog /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
-> dotenv ts-node src/get-catalog
-
+$> npm run get-catalog
+...
 [ 'Counter' ]
 ```
 
 ##### Create an account to send transactions 
- Generate an account to be used for sending transactions to the smart contact. The generated account is stored by the 
+
+Generate an account to be used for sending transactions to the smart contact. The generated account is stored by the 
  Hashicorp Vault service.
 
 ```
-npm run generate-account
-```
-which returns
-``` 
-> codefi-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
-> dotenv ts-node src/generate-account
-
+$> npm run generate-account
+...
 {
   uuid: '35e2a951-1f9f-4ad0-9d14-199f5b330dc2',
   address: '0xF0156f5949e4667E5396D41ff22616EDc21f0150',
@@ -293,12 +252,10 @@ which returns
 }
 ```
 
-Note: The generated account is automatically funded by the faucet service configured previously. Copy the account addresss 
-and set the FROM_ACCOUNT value with this address in .env file, like so: `FROM_ACCOUNT=0xF0156f5949e4667E5396D41ff22616EDc21f0150`
+Note: The generated account is automatically funded by the faucet service configured previously. Copy the account address 
+and set the `FROM_ACCOUNT` value with this address in `.env` file, like so: `FROM_ACCOUNT=0xF0156f5949e4667E5396D41ff22616EDc21f0150`
 
-
-
-##### Deploy the contract and send transactions 
+##### Deploy the contract and send contract transactions 
 
 Orchestrate manages blockchain transactions that are asynchronous by nature due to blockchain mining time. Orchestrate 
 provides an event consumer to process transaction receipts when they are generated, and uses Apache Kafka to handle these 
@@ -311,20 +268,13 @@ In the next steps, we send two kinds of transactions:
 You have to run a consumer script to listen to the transaction receipt events and see them happen on the network. In your 
 current terminal, start the consumer and let the consumer run in the foreground:
 ```
-npm run consume
+$> npm run consume
 ```
 
 In another terminal session, deploy the smart contract
 ```
-npm run deploy
-```
-After a few seconds (depending on block time), you see the receipt related to the contract creation transaction in the consumer terminal.
-which returns
-``` 
-> codefi-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
-> dotenv ts-node src/deploy-contract
-
-
+$> npm run deploy
+...
 Transaction request sent successfully {
   uuid: 'b98f148c-0c83-4e8f-9d75-8ac3aabb3355',
   idempotencyKey: '699833c9-e9d3-4d69-8590-4467ccea5a28',
@@ -338,11 +288,9 @@ Transaction request sent successfully {
 }
 
 ```
-and the consumer window will have a transaction receipt
-``` 
-> codefi-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
-> dotenv ts-node src/consume
 
+After a few seconds (depending on block time), you see the receipt related to the contract creation transaction in the consumer terminal.
+``` 
 Message received ! {
   envelopeId: 'b98f148c-0c83-4e8f-9d75-8ac3aabb3355',
   offset: '1',
@@ -367,8 +315,6 @@ Receipt: {
   "privateFor": [],
   "privacyGroupId": undefined
 }
-
-}
 ```
 Copy the contractAddress in the receipt and set the TO_ACCOUNT value with this address in .env file, like so: 
 `TO_ACCOUNT=0xA94F5374fCE5EDBC8E2A8697C15331677D6EBF0B`
@@ -379,13 +325,8 @@ Copy the contractAddress in the receipt and set the TO_ACCOUNT value with this a
 
 On the second terminal, send the transaction:
 ```
-npm run send-tx
-```
-After a few seconds you will see the transaction request id, and the transaction receipt in the consumer output on the 
-first terminal as before
-``` 
-> codefi-orchestrate-quick-start@2.3.0 generate-account /home/jfernandes/workspace/quorum-dev-quickstart/quorum-test-network/orchestrate
-> dotenv ts-node src/send-tx
+> npm run send-tx
+...
 
 Transaction request sent successfully {
   uuid: '12431cba-5719-4a69-912d-d8713bc4a8ad',
@@ -405,15 +346,83 @@ Transaction request sent successfully {
   },
   createdAt: '2020-08-11T00:11:
 ```
+After a few seconds you will see the transaction request id, and the transaction receipt in the consumer output on the 
+first terminal as before
 
 This concludes the first tutorial on how to deploy contracts and send transactions.
 
-##### To stop the network 
-```
-npm run down
+### d. Send private transactions <a name="orchestrate-priv-transactions"></a>
+
+PegaSys Orchestrate is compatible with **Quorum Tessera** and **Besu Orion** networks for private transactions. Private transactions are only available within participants of the consortium. 
+
+<!-- In order to be able to follow next part of the tutorial you have to setup your selected network: -->
+<!-- ``` -->
+<!-- $> cd ./network/ -->
+<!-- ``` -->
+
+<!-- Then following instructions: -->
+<!-- - [Hyperledger Besu](../besu/README.md) -->
+<!-- - [GoQuorum](../gquorum/README.md) -->
+
+#### Besu Orion
+
+Firstly we need to register 
+
+To send a private transaction in Besu Orion, run:
+
+```bash
+$> npm run send-eea-private-tx
 ```
 
-### b. Multitenancy <a name="orchestrate-multitenancy"></a>
+After a few seconds (depending on block time), you see the transaction private receipt in the consumer
+output on the first terminal.
+
+![Receipt for private transaction](./static/npm-send-private-tx.png)
+
+> For more information about private transactions, refer to the [Besu privacy documentation](https://besu.hyperledger.org/Concepts/Privacy/Privacy-Overview/).
+
+#### Quorum Tessera 
+
+To send a private transaction in Quorum Tessera, run:
+
+```bash
+$> npm run send-tessera-private-tx
+```
+
+After a few seconds (depending on block time), you see the transaction private receipt in the consumer
+output on the first terminal.
+
+> For more information about tessera private transactions, refer to the [Quorum privacy documentation](https://goquorum.readthedocs.io/en/stable/Privacy/Tessera/Tessera/).
+
+### e. Signing <a name="orchestrate-singing"></a>
+
+Using Orchestrate and accounts store in the key vault you can sign any kind of data and/or typed data. In addition verifying whether
+or not a signature corresponds to a certain sender.
+
+To sign the payload data defined in our `.env` file `DATA_TO_SIGN=....`:
+```
+$> npm run sign-payload
+...
+0x98e7f3b87d9094f7f4f27dbc9e61f95efedb2ccc95506647a1f8d3a84d257b5b3b67cb175ecf3dc22125a7d6a067f32fd176b1f8b0c1991a2670c86db97c035100
+```
+
+Taking previous replace `[SIGNATURE]` in `.env` file before running next command;
+```
+$> npm run verify-signature
+...
+Signature was verified successfully
+```
+
+#### Sign typed data
+
+At last if you want to sign typed data:
+```
+$> npm run sign-typed-data
+...
+0x8ff93e4724254373d6a1f7066e2cb39210c220b1e0d38cc44b3766e87be59b1d4dd3c530e48a83592da57e07b3e195f7543fe153feaee5c7c22f47dd2026283b01
+```
+
+### f. Multitenancy <a name="orchestrate-multitenancy"></a>
 
 Multi-tenancy enables serving multiple blockchain applications with a single Orchestrate instance. Resources including 
 transaction streams, access to the blockchain network, private keys, and smart contracts are isolated to the tenant that 
@@ -433,7 +442,7 @@ AUTH_TOKEN=
 Then, we need to start Orchestrate again:
 
 ```bash
-npm run down && npm run up
+npm run down-orchestrate && npm run up-orchestrate
 ```
 
 ##### Using self-generated certificates
@@ -460,7 +469,7 @@ EXPIRATION=5h TENANT_ID=foo npm run generate-jwt
 > **Note:** Decode the generated token using _[https://jwt.io/](https://jwt.io/)_ and verify the correct tenant is included within the selected namespace.
 
 ##### Testing the JWT token
-Once you have obtained a valid token, please add it to the AUTH_TOKEN=_ value in the `.env` file. Following that, if you 
+Once you have obtained a valid token, please replace it to the `[TENANT_AUTH_TOKEN]` value in the `.env` file. Following that, if you 
 go through the first [Contracts & Transactions tutorial](#orchestrate-contracts), you should observer that every request 
 now gets sent using the generated JWT.
 

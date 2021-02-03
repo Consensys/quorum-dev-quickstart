@@ -4,15 +4,14 @@ import { OrchestrateClient } from "pegasys-orchestrate";
 export const start = async () => {
   try {
     const client = new OrchestrateClient(process.env.API_HOST!);
-    const account = await client.createAccount(
-      {
-        chain: process.env.CHAIN!,
-        alias: `account-${Math.floor(Math.random() * 100)}`,
-      },
+
+    const signature = await client.sign(
+      process.env.FROM_ACCOUNT!,
+      process.env.DATA_TO_SIGN!,
       process.env.AUTH_TOKEN
     );
 
-    console.log(account);
+    console.log(signature);
   } catch (error) {
     console.error(error);
   }

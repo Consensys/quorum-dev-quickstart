@@ -28,13 +28,59 @@ To run these tutorials, you must have the following installed:
 
 Create the docker-compose file and artifacts with 
 
-`npx quorum-dev-quickstart` 
+```
+$> npx quorum-dev-quickstart
+              ___
+             / _ \   _   _    ___    _ __   _   _   _ __ ___
+            | | | | | | | |  / _ \  | '__| | | | | | '_ ' _ \
+            | |_| | | |_| | | (_) | | |    | |_| | | | | | | |
+             \__\_\  \__,_|  \___/  |_|     \__,_| |_| |_| |_|
+     
+        ____                          _
+       |  _ \    ___  __   __   ___  | |   ___    _ __     ___   _ __
+       | | | |  / _ \ \ \ / /  / _ \ | |  / _ \  | '_ \   / _ \ | '__|
+       | |_| | |  __/  \ V /  |  __/ | | | (_) | | |_) | |  __/ | |
+       |____/   \___|   \_/    \___| |_|  \___/  | .__/   \___| |_|
+                                                 |_|
+       ___            _          _            _                    _
+      / _ \   _   _  (_)   ___  | | __  ___  | |_    __ _   _ __  | |_
+     | | | | | | | | | |  / __| | |/ / / __| | __|  / _' | | '__| | __|
+     | |_| | | |_| | | | | (__  |   <  \__ \ | |_  | (_| | | |    | |_ 
+      \__\_\  \__,_| |_|  \___| |_|\_\ |___/  \__|  \__,_| |_|     \__|
 
-This prompts you to pick a quorum variant, whether you would like to try Privacy and the location for the artifacts.
 
-Change directory to the artifacts folder: 
+Welcome to the Quorum Developer Quickstart utility. This tool can be used
+to rapidly generate local Quorum blockchain networks for development purposes
+using tools like GoQuorum, Besu, and Codefi Orchestrate.
 
-`cd quorum-test-network` default folder location 
- 
+To get started, be sure that you have both Docker and Docker Compose
+installed, then answer the following questions.
+
+Which Ethereum client would you like to run? Default: [1]
+	1. Hyperledger Besu
+	2. GoQuorum
+...
+  Do you want to try out Codefi Orchestrate? Note: choosing yes will direct you to a login/registration page. [Y/n]
+  ...
+  Do you wish to enable support for private transactions? [Y/n]
+  ...
+  Do you wish to enable support for logging with ELK (Elasticsearch, Logstash & Kibana)? [y/N
+...
+Where should we create the config files for this network? Please
+choose either an empty directory, or a path to a new directory that does
+not yet exist. Default: ./quorum-test-network
+```
+
+This prompts you to pick a quorum variant, whether you would like to try Privacy and the location for the artifacts. By 
+default artifact files are stored at `./quorum-test-network`, change directory to the artifacts folder: 
+
+```
+$> cd quorum-test-network
+``` 
+
 **To start services and the network:**
-Follow the README.md file
+
+Follow the README.md file of select artifact:
+1. [Hyperledger Besu](./files/besu/README.md)
+2. [GoQuorum](./files/gquorum/README.md)
+3. [Codefi Orchestrate](./files/orchestrate/README.md)

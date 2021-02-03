@@ -1,14 +1,14 @@
 version: '3.7'
 
 x-default-variables: &default-variables
-  API_URL: ${CONTRACT_REGISTRY_URL-contract-registry:8080}
-  API_METRICS_URL: ${API-http://api:8082}
+  API_URL: ${API_URL-http://api:8081}
+  API_METRICS_URL: ${API_METRICS_URL-http://api:8082}
   KEY_MANAGER_URL: ${KEY_MANAGER_URL-http://key-manager:8081}
   KEY_MANAGER_METRICS_URL: ${KEY_MANAGER_URL-http://key-manager:8082}
   TX_SENDER_METRICS_URL: ${TX_SENDER_METRICS_URL-http://tx-sender:8082}
   TX_LISTENER_METRICS_URL: ${TX_LISTENER_METRICS_URL-http://tx-listener:8082}
-  LOG_LEVEL: ${LOG_LEVEL-debug}
-  LOG_FORMAT: ${LOG_FORMAT-}
+  LOG_LEVEL: ${LOG_LEVEL-info}
+  LOG_FORMAT: ${LOG_FORMAT-text}
   NONCE_MANAGER_TYPE: ${NONCE_MANAGER_TYPE-in-memory}
   VAULT_ADDR: ${VAULT_ADDR-http://vault:8200}
   MULTI_TENANCY_ENABLED: ${MULTI_TENANCY_ENABLED-false}
@@ -31,9 +31,10 @@ x-default-variables: &default-variables
 
 x-container-common: &container-common
   restart: ${CONTAINER_RESTART-on-failure}
-  image: registry.gitlab.com/consensys/client/fr/core-stack/orchestrate:ac6fc90d
+  image: registry.gitlab.com/consensys/client/fr/core-stack/orchestrate:29d24cd6
   networks:
     - orchestrate
+    - quickstart
 
 x-proxy-common: &proxy-common
   PROXY_MAXIDLECONNSPERHOST: ${PROXY_MAXIDLECONNSPERHOST-}
@@ -149,3 +150,6 @@ networks:
   orchestrate:
     external:
       name: deps_orchestrate
+  quickstart:
+    external:
+      name: network_quorum-dev-quickstart

@@ -412,6 +412,7 @@ services:
         ipv4_address: 172.16.239.18
 {% endif %}
 
+{% if not orchestrate %}
   explorer:
     build: block-explorer-light/.
     image: quorum-dev-quickstart/block-explorer-light:develop
@@ -448,7 +449,7 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.33
-
+{% endif %}
 
 {% if elk %}
   redis:

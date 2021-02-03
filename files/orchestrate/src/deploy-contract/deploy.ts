@@ -2,11 +2,9 @@ import { OrchestrateClient } from 'pegasys-orchestrate'
 import * as uuid from 'uuid'
 
 export const deploy = async () => {
-  const txClient = new OrchestrateClient(process.env.API_HOST!)
+  const txClient = new OrchestrateClient(process.env.API_HOST!);
+  const idempotencyKey = uuid.v4();
 
-  // Deploy a new Counter contract and return the Transaction
-  const idempotencyKey = uuid.v4()
-  const authToken = process.env.AUTH_TOKEN ? `Bearer ${process.env.AUTH_TOKEN}` : undefined
   const txResponse = await txClient.deployContract(
     {
       chain: process.env.CHAIN!,
@@ -16,8 +14,8 @@ export const deploy = async () => {
       }
     },
     idempotencyKey,
-    authToken
-  )
+    process.env.AUTH_TOKEN
+  );
 
   console.log('Transaction request sent successfully', txResponse)
-}
+};

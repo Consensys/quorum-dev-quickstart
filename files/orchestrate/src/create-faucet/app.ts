@@ -15,7 +15,7 @@ export const start = async () => {
         amount: "60000000000000000",
         maxBalance: "100000000000000000",
       },
-      process.env.AUTH_TOKEN!
+      process.env.AUTH_TOKEN
     );
 
     console.log(faucet);
