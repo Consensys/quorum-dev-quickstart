@@ -31,7 +31,7 @@ x-default-variables: &default-variables
 
 x-container-common: &container-common
   restart: ${CONTAINER_RESTART-on-failure}
-  image: orchestrate:v21.1.0
+  image: orchestrate:v21.1.1
   networks:
     - orchestrate
     - quickstart
@@ -64,6 +64,7 @@ services:
     restart: 'no'
     depends_on:
       - api-migration-init
+      - key-manager
     command: api migrate up
 
   api:
