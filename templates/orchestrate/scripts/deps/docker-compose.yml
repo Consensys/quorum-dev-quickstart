@@ -12,7 +12,7 @@ x-postgres-common: &postgres-common
 services:
   zookeeper:
     <<: *container-common
-    image: confluentinc/cp-zookeeper:5.3.0
+    image: confluentinc/cp-zookeeper:5.4.3
     ports:
       - ${ZOOKEEPER_EXTERNAL_PORT-2181}:2181
     environment:
