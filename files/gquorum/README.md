@@ -57,7 +57,7 @@ The overall architecture diagrams to visually show components of the blockchain 
 **Consensus Algorithm**: The Go based Quorum variant uses the `IBFT` consensus mechanism a
 **Private TX Manager**: The Go based Quorum variant uses [Tessera](https://github.com/jpmorganchase/tessera) 
 
-![Image blockchain](./static/blockchain-network.png)
+![Image blockchain](/files/common/static/blockchain-network.png)
  
 
 ### i. POA Network <a name="poa-network"></a>
@@ -121,7 +121,7 @@ Member2 cannot find any value here.
 - Once you have a network up and running from above, install [metamask](https://metamask.io/) as an extension in your browser
 - Once you have setup your own private account, select 'My Accounts' by clicking on the avatar pic and then 'Import Account' and enter the valid private_key
 - You can now deploy contracts and connect DApps to the network. 
-![Image dapp](./static/qs-dapp.png)
+![Image dapp](/files/common/static/qs-dapp.png)
 
 As seen in the architecture overview diagram you can extend the network with monitoring, logging, smart contracts, DApps and so on
 
