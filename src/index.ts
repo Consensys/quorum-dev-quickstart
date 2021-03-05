@@ -2,6 +2,14 @@ import { rootQuestion } from "./questions";
 import { QuestionRenderer } from "./questionRenderer";
 import { buildNetwork, NetworkContext } from "./networkBuilder";
 import chalk from "chalk";
+import { AnswerMap } from "./questions/types";
+
+const defaults : AnswerMap = {
+    enable_static_nodes: false,
+    enable_boot_nodes: true,
+    enable_p2p_discovery: true,
+    enable_node_permissions: true
+};
 
 export async function main(): Promise<void> {
     if (process.platform === "win32") {
@@ -16,7 +24,7 @@ export async function main(): Promise<void> {
     }
 
     const qr = new QuestionRenderer(rootQuestion);
-    const answers = await qr.render();
+    const answers = await qr.render(defaults);
     await buildNetwork(answers as NetworkContext);
     setTimeout(() => {
         process.exit(0);

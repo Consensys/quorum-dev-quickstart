@@ -85,12 +85,33 @@ const _orchestrateQuestion: QuestionTree = {
     }
 };
 
-const _staticNodeQuestion: QuestionTree = {
-    name: "enable_static_nodes",
-    prompt: "Do you wish to use static nodes ? [Y/n]",
+const _nodePermissionsQuestion: QuestionTree = {
+    name: "enable_node_permissions",
+    prompt: "Do you wish to use file based node level permissions ? [Y/n], Default: [Y]",
 };
 // have to add this below the definition because of the self reference..
-_staticNodeQuestion.transformerValidator = _getYesNoValidator(_staticNodeQuestion, _orchestrateQuestion, "n");
+_nodePermissionsQuestion.transformerValidator = _getYesNoValidator(_nodePermissionsQuestion, _orchestrateQuestion, "y");
+
+const _p2pDiscoveryQuestion: QuestionTree = {
+    name: "enable_p2p_discovery",
+    prompt: "Do you wish to use p2p discovery ? [Y/n], Default: [Y]",
+};
+// have to add this below the definition because of the self reference..
+_p2pDiscoveryQuestion.transformerValidator = _getYesNoValidator(_p2pDiscoveryQuestion, _nodePermissionsQuestion, "y");
+
+const _bootNodeQuestion: QuestionTree = {
+    name: "enable_boot_nodes",
+    prompt: "Do you wish to use boot nodes ? [Y/n], Default: [Y]",
+};
+// have to add this below the definition because of the self reference..
+_bootNodeQuestion.transformerValidator = _getYesNoValidator(_bootNodeQuestion, _orchestrateQuestion, "y", _p2pDiscoveryQuestion);
+
+const _staticNodeQuestion: QuestionTree = {
+    name: "enable_static_nodes",
+    prompt: "Do you wish to use static nodes ? [Y/n], Default: [n]",
+};
+// have to add this below the definition because of the self reference..
+_staticNodeQuestion.transformerValidator = _getYesNoValidator(_staticNodeQuestion, _bootNodeQuestion, "n", _orchestrateQuestion);
 
 const bannerText = String.raw`
               ___
@@ -130,20 +151,19 @@ export const rootQuestion: QuestionTree = {
     ]
 };
 
-function _getYesNoValidator(question: QuestionTree, nextQuestion?: QuestionTree, defaultResponse?: "y" | "n" ) {
+function _getYesNoValidator(question: QuestionTree, yesQuestion?: QuestionTree, defaultResponse?: "y" | "n", noQuestion?: QuestionTree) {
     return (rawInput: string, answers: AnswerMap) => {
         const normalizedInput = rawInput.toLowerCase();
 
         if (defaultResponse && !normalizedInput) {
             answers[question.name] = defaultResponse === "y";
-            return nextQuestion;
         } else if (normalizedInput === "y" || normalizedInput === "n") {
             answers[question.name] = normalizedInput === "y";
-            return nextQuestion;
         } else {
             console.log(chalk.red("Sorry, but I didn't understand your answer. Please select Y or N,\n" +
                 "or just hit enter if you want the default.\n"));
             return question;
         }
+        return answers[question.name] ? yesQuestion : undefined == noQuestion ? yesQuestion : noQuestion;
     };
 }
