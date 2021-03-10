@@ -162,6 +162,9 @@ services:
       - ./logs/besu:/var/log/
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator1/keys:/opt/besu/keys
+{% if enable_static_nodes %}
+      - ./config/besu/static-nodes.json:/config/static-nodes.json
+{% endif %}
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.11
@@ -176,6 +179,9 @@ services:
       - ./logs/besu:/var/log/
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator2/keys:/opt/besu/keys
+{% if enable_static_nodes %}
+      - ./config/besu/static-nodes.json:/config/static-nodes.json
+{% endif %}
     depends_on:
       - validator1
     networks:
@@ -192,6 +198,9 @@ services:
       - ./logs/besu:/var/log/
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator3/keys:/opt/besu/keys
+{% if enable_static_nodes %}
+      - ./config/besu/static-nodes.json:/config/static-nodes.json
+{% endif %}
     depends_on:
       - validator1
     networks:
@@ -208,6 +217,9 @@ services:
       - ./logs/besu:/var/log/
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator4/keys:/opt/besu/keys
+{% if enable_static_nodes %}
+      - ./config/besu/static-nodes.json:/config/static-nodes.json
+{% endif %}
     depends_on:
       - validator1
     networks:
@@ -224,6 +236,9 @@ services:
       - ./logs/besu:/var/log/
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
+{% if enable_static_nodes %}
+      - ./config/besu/static-nodes.json:/config/static-nodes.json
+{% endif %}
     depends_on:
       - validator1
     ports:
@@ -293,6 +308,9 @@ services:
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/member1/keys:/opt/besu/keys
       - ./config/orion/networkFiles/orion1/nodeKey.pub:/config/orion/orion.pub
+{% if enable_static_nodes %}
+      - ./config/besu/static-nodes.json:/config/static-nodes.json
+{% endif %}
     depends_on:
       - validator1
       - member1orion
@@ -347,6 +365,9 @@ services:
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/member2/keys:/opt/besu/keys
       - ./config/orion/networkFiles/orion2/nodeKey.pub:/config/orion/orion.pub
+{% if enable_static_nodes %}
+      - ./config/besu/static-nodes.json:/config/static-nodes.json
+{% endif %}
     depends_on:
       - validator1
       - member2orion
@@ -401,6 +422,9 @@ services:
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/member3/keys:/opt/besu/keys
       - ./config/orion/networkFiles/orion3/nodeKey.pub:/config/orion/orion.pub
+{% if enable_static_nodes %}
+      - ./config/besu/static-nodes.json:/config/static-nodes.json
+{% endif %}
     depends_on:
       - validator1
       - member3orion
