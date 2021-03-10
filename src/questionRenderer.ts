@@ -10,9 +10,9 @@ export class QuestionRenderer {
         this._forceDefaults = !!forceDefaults;
     }
 
-    async render(): Promise<AnswerMap> {
+    async render(defaults: AnswerMap = {}): Promise<AnswerMap> {
 
-        const answers: AnswerMap = {};
+        const answers: AnswerMap = defaults;
 
         const rl = readline.createInterface(process.stdin, process.stdout);
         try {
