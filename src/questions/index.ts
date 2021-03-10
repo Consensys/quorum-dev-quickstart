@@ -101,7 +101,7 @@ _p2pDiscoveryQuestion.transformerValidator = _getYesNoValidator(_p2pDiscoveryQue
 
 const _bootNodeQuestion: QuestionTree = {
     name: "enable_boot_nodes",
-    prompt: "Do you wish to use boot nodes ? [Y/n], Default: [Y]",
+    prompt: "Do you wish to use bootnodes ? [Y/n], Default: [Y]",
 };
 // have to add this below the definition because of the self reference..
 _bootNodeQuestion.transformerValidator = _getYesNoValidator(_bootNodeQuestion, _orchestrateQuestion, "y", _p2pDiscoveryQuestion);
