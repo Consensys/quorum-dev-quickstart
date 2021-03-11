@@ -85,13 +85,6 @@ const _orchestrateQuestion: QuestionTree = {
     }
 };
 
-const _staticNodeQuestion: QuestionTree = {
-    name: "enable_static_nodes",
-    prompt: "Do you wish to use static nodes ? [Y/n]",
-};
-// have to add this below the definition because of the self reference..
-_staticNodeQuestion.transformerValidator = _getYesNoValidator(_staticNodeQuestion, _orchestrateQuestion, "n");
-
 const bannerText = String.raw`
               ___
              / _ \   _   _    ___    _ __   _   _   _ __ ___
@@ -125,7 +118,7 @@ export const rootQuestion: QuestionTree = {
     prompt: `${bannerText}${leadInText}Which Ethereum client would you like to run? Default: [1]`,
     options: [
         // TODO: fix these to the correct names
-        { label: "Hyperledger Besu", value: "besu", nextQuestion: _staticNodeQuestion, default: true },
+        { label: "Hyperledger Besu", value: "besu", nextQuestion: _orchestrateQuestion, default: true },
         { label: "GoQuorum", value: "gquorum", nextQuestion: _orchestrateQuestion }
     ]
 };
