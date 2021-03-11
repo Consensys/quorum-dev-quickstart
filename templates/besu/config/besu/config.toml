@@ -26,26 +26,12 @@ metrics-host="0.0.0.0"
 metrics-port=9545
 
 # permissions
-{% if enable_p2p_discovery %}
 permissions-nodes-config-file-enabled=true
 permissions-nodes-config-file="/config/permissions_config.toml"
-{% else %}
-permissions-nodes-config-file-enabled=false
-{% endif %}
 
-{% if enable_boot_nodes %}
 # bootnodes
 bootnodes=["enode://c1979a8a48693db804316b5acebe35e11731e1fb1c9c21ff7268ab25db6f6e03390a429b83cf0ec0865a7205f2669ec1ace652a3def11e2e01571c74939cbe22@172.16.239.11:30303"]
-{% endif %}
 
 {% if enable_static_nodes %}
-# static nodes
 static-nodes-file="/config/static-nodes.json"
-{% endif %}
-
-# p2p discovery
-{% if enable_p2p_discovery %}
-discovery-enabled=true
-{% else %}
-discovery-enabled=false
 {% endif %}
