@@ -1,0 +1,41 @@
+ 
+---
+version: 2.1
+
+executors:
+  node_executor:
+    docker:
+      - image: circleci/node:12.9.0-stretch
+        auth:
+          username: $DOCKER_USER_RO
+          password: $DOCKER_PASSWORD_RO    
+
+jobs:
+  build:
+    executor: node_executor
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - deps-{{ checksum "./npm-shrinkwrap.json" }}
+      - run:
+          name: install dependencies
+          command: |
+            npm ci
+      - run:
+          name: build
+          command: |
+            npm run build
+            npm run lint         
+      - save_cache:
+          paths:
+            - ./node_modules
+          key: deps-{{ checksum "./npm-shrinkwrap.json" }}
+
+workflows:
+  version: 2
+  default:
+    jobs:
+      - build:
+          context:
+            - dockerhub-quorumengineering-ro      
