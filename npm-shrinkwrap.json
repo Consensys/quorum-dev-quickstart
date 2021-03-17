@@ -1,6 +1,6 @@
 {
   "name": "quorum-dev-quickstart",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -2219,6 +2219,11 @@
       "resolved": "https://registry.npmjs.org/isarray/-/isarray-1.0.0.tgz",
       "integrity": "sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE=",
       "dev": true
+    },
+    "isbinaryfile": {
+      "version": "4.0.6",
+      "resolved": "https://registry.npmjs.org/isbinaryfile/-/isbinaryfile-4.0.6.tgz",
+      "integrity": "sha512-ORrEy+SNVqUhrCaal4hA4fBzhggQQ+BaLntyPOdoEiwlKZW9BZiJXjg3RMiruE4tPEI3pyVPpySHQF/dKWperg=="
     },
     "isexe": {
       "version": "2.0.0",
