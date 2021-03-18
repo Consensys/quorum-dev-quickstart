@@ -1,9 +1,9 @@
 {
   "images": [{
-    "id": "sha256:bd1cb9648a0a48a542a190083bac139fb4e47455c2518345b96a65f654b46627",
+    "id": "sha256:94234aaf84f8230ae68d93a5a7f18a145e8fa8746344ac66a598da3707f315c0",
     "tag": "orchestrate:v21.1.1",
     "fileName": "orchestrate-v21.1.1.tgz",
-    "fileSizeBytes": 28456960,
+    "fileSizeBytes": 25973783,
     "url": "https://relay.quorum.consensys.net/quorum-dev-quickstart/orchestrate-v21.1.1.tgz"
   }]
 }
