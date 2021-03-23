@@ -1,5 +1,5 @@
 # ensure name is set so that monitoring in Kibana is easy to identify
-node.name: "logstash-${HOSTNAME}"
+node.name: "logstash-quorum"
 
 log.format: json
 path:

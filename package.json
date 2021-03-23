@@ -1,6 +1,6 @@
 {
   "name": "quorum-dev-quickstart",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "A utility that lets developers try out the new suite of Quorum tools from ConsenSys!",
   "main": "build/index.js",
   "repository": "git@github.com:ConsenSys/quorum-dev-quickstart.git",
