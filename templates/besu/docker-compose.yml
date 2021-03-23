@@ -160,7 +160,7 @@ services:
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/static-nodes.json:/config/static-nodes.json
       - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/var/log/
+      - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator1/keys:/opt/besu/keys
 {% if enable_static_nodes %}
@@ -178,7 +178,7 @@ services:
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/static-nodes.json:/config/static-nodes.json
       - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/var/log/
+      - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator2/keys:/opt/besu/keys
     depends_on:
@@ -195,7 +195,7 @@ services:
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/static-nodes.json:/config/static-nodes.json
       - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/var/log/
+      - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator3/keys:/opt/besu/keys
     depends_on:
@@ -212,7 +212,7 @@ services:
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/static-nodes.json:/config/static-nodes.json
       - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/var/log/
+      - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator4/keys:/opt/besu/keys
     depends_on:
@@ -229,7 +229,7 @@ services:
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/static-nodes.json:/config/static-nodes.json
       - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/var/log/
+      - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
     depends_on:
@@ -267,7 +267,7 @@ services:
     volumes:
       - ./config/orion/orion.conf:/config/orion.conf
       - ./config/orion/networkFiles/orion1:/keys/
-      - ./logs/orion:/var/log/
+      - ./logs/orion:/tmp/orion
       - ./config/orion/log-config.xml:/config/log-config.xml
     networks:
       quorum-dev-quickstart:
@@ -298,7 +298,7 @@ services:
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/static-nodes.json:/config/static-nodes.json
       - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/var/log/
+      - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/member1/keys:/opt/besu/keys
       - ./config/orion/networkFiles/orion1/nodeKey.pub:/config/orion/orion.pub
@@ -322,7 +322,7 @@ services:
     volumes:
       - ./config/orion/orion.conf:/config/orion.conf
       - ./config/orion/networkFiles/orion2:/keys/
-      - ./logs/orion:/var/log/
+      - ./logs/orion:/tmp/orion
       - ./config/orion/log-config.xml:/config/log-config.xml
     networks:
       quorum-dev-quickstart:
@@ -353,7 +353,7 @@ services:
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/static-nodes.json:/config/static-nodes.json
       - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/var/log/
+      - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/member2/keys:/opt/besu/keys
       - ./config/orion/networkFiles/orion2/nodeKey.pub:/config/orion/orion.pub
@@ -377,7 +377,7 @@ services:
     volumes:
       - ./config/orion/orion.conf:/config/orion.conf
       - ./config/orion/networkFiles/orion3:/keys/
-      - ./logs/orion:/var/log/
+      - ./logs/orion:/tmp/orion
       - ./config/orion/log-config.xml:/config/log-config.xml
     networks:
       quorum-dev-quickstart:
@@ -408,7 +408,7 @@ services:
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/static-nodes.json:/config/static-nodes.json
       - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/var/log/
+      - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/member3/keys:/opt/besu/keys
       - ./config/orion/networkFiles/orion3/nodeKey.pub:/config/orion/orion.pub
