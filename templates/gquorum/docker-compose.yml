@@ -33,7 +33,7 @@ x-quorum-def:
       --verbosity 5 \
       --istanbul.blockperiod 5 --mine --minerthreads 1 --emitcheckpoints \
       --syncmode full --nousb \
-      --networkid $${QUORUM_NETWORK_ID:-10} \
+      --networkid $${QUORUM_NETWORK_ID:-1337} \
       --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$${QUORUM_CONS_ALGO:-istanbul} \
       --port 30303 \
       --identity node$${NODE_ID}-$${QUORUM_CONS_ALGO:-istanbul} \
@@ -91,7 +91,7 @@ x-quorum-member-def:
       --verbosity 5 \
       --istanbul.blockperiod 5 --mine --minerthreads 1 --emitcheckpoints \
       --syncmode full --nousb \
-      --networkid $${QUORUM_NETWORK_ID:-10} \
+      --networkid $${QUORUM_NETWORK_ID:-1337} \
       --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$${QUORUM_CONS_ALGO:-istanbul} \
       --ws --wsaddr 0.0.0.0 --wsport 8546 --wsorigins "*" --wsapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$${QUORUM_CONS_ALGO:-istanbul} \
       --port 30303 \
