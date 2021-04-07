@@ -1,6 +1,6 @@
 {
   "config" : {
-    "chainId" : 2018,
+    "chainId" : 1337,
     "constantinoplefixblock" : 0,
     "ibft2" : {
       "blockperiodseconds" : 2,
