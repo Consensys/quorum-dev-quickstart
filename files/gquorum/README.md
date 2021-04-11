@@ -118,18 +118,22 @@ Member2 cannot find any value here.
 
 
 ### iii. Smart Contracts & DApps <a name="poa-network-dapps"></a>
-- Once you have a network up and running from above, install [metamask](https://metamask.io/) as an extension in your browser
-- Once you have setup your own private account, select 'My Accounts' by clicking on the avatar pic and then 'Import Account' and enter the valid private_key
-- You can now deploy contracts and connect DApps to the network. 
-![Image dapp](./static/qs-dapp.png)
-
-As seen in the architecture overview diagram you can extend the network with monitoring, logging, smart contracts, DApps and so on
-
 As an example we've included the Truffle Pet-Shop Dapp in the `dapps` folder and here is a [video tutorial](https://www.youtube.com/watch?v=_3E9FRJldj8) you 
 can follow of deployment to the network and using it. Please import the private key `0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3` to
 Metmask **before** proceeding to build and run the DApp with `run-dapp.sh`. Behind the scenes, this has used a smart contract that is compiled and then 
 deployed (via a migration) to our test network. The source code for the smart contract and the DApp can be found in the folder `dapps/pet-shop`
 
+![Image dapp](./static/qs-dapp.png)
+
+As seen in the architecture overview diagram you can extend the network with monitoring, logging, smart contracts, DApps and so on
+
+- Once you have a network up and running from above, install [metamask](https://metamask.io/) as an extension in your browser
+- Once you have setup your own private account, select 'My Accounts' by clicking on the avatar pic and then 'Import Account' and enter the private key `0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3`
+- Build the DApp container and deploy by 
+```
+cd dapps/pet-shop
+./run_dapp.sh
+```
 When that completes open a new tab in your browser and go to `http://localhost:3001` which opens the Truffle pet-shop box app 
 and you can adopt a pet from there. NOTE: Once you have adopted a pet, you can also go to the block explorer `http://localhost:25000` 
 and search for the transaction where you can see its details recorded. Metamask will also have a record of any transactions.
