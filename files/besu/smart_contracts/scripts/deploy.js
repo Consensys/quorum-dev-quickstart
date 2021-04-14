@@ -5,7 +5,7 @@ const EEAClient = require('web3-eea');
 
 // WARNING: the keys here are demo purposes ONLY. Please use a tool like Orchestrate or EthSigner for production, rather than hard coding private keys
 const { orion, besu } = require("./keys.js");
-const chainId = 2018;
+const chainId = 1337;
 const web3 = new EEAClient(new Web3(besu.member1.url), chainId);
 
 // abi and bytecode generated from simplestorage.sol:
