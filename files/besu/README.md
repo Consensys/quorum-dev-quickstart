@@ -137,7 +137,7 @@ deployed (via a migration) to our test network. The source code for the smart co
 
 | ⚠️ **WARNING**:  |
 | ---  
-This is a test account only and the private and public keys are publicly visible. **Using test accounts on Ethereum mainnet and production networks can lead to loss of funds and identity fraud.** In this documentation, we only provide test accounts for ease of testing and learning purposes;never use them for other purposes. **Always secure your Ethereum mainnet and any production account properly.** See for instance [MyCrypto "Protecting Yourself and Your Funds" guide](https://support.mycrypto.com/staying-safe/protecting-yourself-and-your-funds).  | 
+This is a test account only and the private and public keys are publicly visible. **Using test accounts on Ethereum mainnet and production networks can lead to loss of funds and identity fraud.** In this documentation, we only provide test accounts for ease of testing and learning purposes; never use them for other purposes. **Always secure your Ethereum mainnet and any production account properly.** See for instance [MyCrypto "Protecting Yourself and Your Funds" guide](https://support.mycrypto.com/staying-safe/protecting-yourself-and-your-funds).  | 
 
 
 ![Image dapp](./static/qs-dapp.png)
