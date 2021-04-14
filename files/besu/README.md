@@ -134,6 +134,12 @@ can follow of deployment to the network and using it. Please import the private 
 Metmask **before** proceeding to build and run the DApp with `run-dapp.sh`. Behind the scenes, this has used a smart contract that is compiled and then 
 deployed (via a migration) to our test network. The source code for the smart contract and the DApp can be found in the folder `dapps/pet-shop`
 
+
+| ⚠️ **WARNING**:  |
+| ---  
+This is a test account only and the private and public keys are publicly visible. **Using test accounts on Ethereum mainnet and production networks can lead to loss of funds and identity fraud.** In this documentation, we only provide test accounts for ease of testing and learning purposes;never use them for other purposes. **Always secure your Ethereum mainnet and any production account properly.** See for instance [MyCrypto "Protecting Yourself and Your Funds" guide](https://support.mycrypto.com/staying-safe/protecting-yourself-and-your-funds).  | 
+
+
 ![Image dapp](./static/qs-dapp.png)
 
 As seen in the architecture overview diagram you can extend the network with monitoring, logging, smart contracts, DApps and so on
