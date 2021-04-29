@@ -137,7 +137,7 @@ x-ethsignerProxy-def:
   &ethsignerProxy-def
   image: consensys/quorum-ethsigner:${QUORUM_ETHSIGNER_VERSION:-latest}
   command: [
-    "--chain-id=2018",
+    "--chain-id=1337",
     "--http-listen-host=0.0.0.0",
     "--downstream-http-port=8545",
     "--downstream-http-host=rpcnode",
