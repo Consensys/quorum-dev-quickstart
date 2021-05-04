@@ -54,9 +54,6 @@ contractInstance.deploy(contractOptions)
   .on('receipt', function(receipt){
       console.log("receipt: " + receipt.contractAddress) // contains the new contract address
   })
-  .on('confirmation', function(confirmationNumber, receipt){
-      console.log("confirmation: " + confirmationNumber) // contains the new contract address
-  })
   .then(function(newContractInstance){
       deployedContractAddress = newContractInstance.options.address;
       console.log("newContractInstance address: " + deployedContractAddress) // instance with the new contract address
