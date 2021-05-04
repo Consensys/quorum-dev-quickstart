@@ -8,6 +8,7 @@ x-quorum-def:
   expose:
     - 30303
     - 8545
+    - 9545
   labels:
     com.quorum.consensus: ${QUORUM_CONSENSUS:-istanbul}
   healthcheck:
@@ -33,6 +34,7 @@ x-quorum-def:
       --verbosity 5 \
       --istanbul.blockperiod 5 --mine --minerthreads 1 --emitcheckpoints \
       --syncmode full --nousb \
+      --metrics --pprof --pprofaddr 0.0.0.0 --pprofport 9545 \
       --networkid $${QUORUM_NETWORK_ID:-1337} \
       --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$${QUORUM_CONS_ALGO:-istanbul} \
       --port 30303 \
@@ -52,6 +54,7 @@ x-quorum-member-def:
   expose:
     - 30303
     - 8545
+    - 9545
   labels:
     com.quorum.consensus: ${QUORUM_CONSENSUS:-istanbul}
   healthcheck:
@@ -91,6 +94,7 @@ x-quorum-member-def:
       --verbosity 5 \
       --istanbul.blockperiod 5 --mine --minerthreads 1 --emitcheckpoints \
       --syncmode full --nousb \
+      --metrics --pprof --pprofaddr 0.0.0.0 --pprofport 9545 \
       --networkid $${QUORUM_NETWORK_ID:-1337} \
       --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$${QUORUM_CONS_ALGO:-istanbul} \
       --ws --wsaddr 0.0.0.0 --wsport 8546 --wsorigins "*" --wsapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$${QUORUM_CONS_ALGO:-istanbul} \
@@ -315,6 +319,7 @@ services:
     ports:
       - 21001:8545/tcp
       - 30303
+      - 9545
     environment:
       - NODE_ID=1
       - PRIVATE_CONFIG=ignore
@@ -334,6 +339,7 @@ services:
     ports:
       - 21002:8545/tcp
       - 30303
+      - 9545
     environment:
       - NODE_ID=4
       - PRIVATE_CONFIG=ignore
@@ -353,6 +359,7 @@ services:
     ports:
       - 21003:8545/tcp
       - 30303
+      - 9545
     environment:
       - NODE_ID=4
       - PRIVATE_CONFIG=ignore
@@ -372,6 +379,7 @@ services:
     ports:
       - 22004:8545/tcp
       - 30303
+      - 9545
     environment:
       - NODE_ID=4
       - PRIVATE_CONFIG=ignore
@@ -392,6 +400,7 @@ services:
       - 8545:8545/tcp
       - 8546:8546/tcp
       - 30303
+      - 9545
     environment:
       - NODE_ID=5
       - PRIVATE_CONFIG=ignore
@@ -441,6 +450,7 @@ services:
       - 20000:8545/tcp
       - 20001:8546/tcp
       - 30303
+      - 9545
     depends_on:
       - member1tessera
     environment:
@@ -479,6 +489,7 @@ services:
       - 20002:8545/tcp
       - 20003:8546/tcp
       - 30303
+      - 9545
     depends_on:
       - member2tessera
     environment:
@@ -517,6 +528,7 @@ services:
       - 20004:8545/tcp
       - 20005:8546/tcp
       - 30303
+      - 9545
     depends_on:
       - member3tessera
     environment:
@@ -559,6 +571,32 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.32
+
+  prometheus:
+    image: "prom/prometheus"
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090/tcp
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.33
+
+  grafana:
+    image: "grafana/grafana"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+    volumes:
+      - ./config/grafana/provisioning/:/etc/grafana/provisioning/
+      - grafana:/var/lib/grafana
+    ports:
+      - 3000:3000/tcp
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.34        
 {% endif %}
 
 {% if elk %}
@@ -607,3 +645,5 @@ volumes:
   member1volume:
   member2volume:
   member3volume:
+  prometheus:
+  grafana:
