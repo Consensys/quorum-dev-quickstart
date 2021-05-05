@@ -353,7 +353,7 @@ This concludes the first tutorial on how to deploy contracts and send transactio
 
 ### d. Send private transactions <a name="orchestrate-priv-transactions"></a>
 
-PegaSys Orchestrate is compatible with **Quorum Tessera** and **Besu Orion** networks for private transactions. Private transactions are only available within participants of the consortium. 
+PegaSys Orchestrate is compatible with **Quorum Tessera** for private transactions. Private transactions are only available within participants of the consortium. 
 
 <!-- In order to be able to follow next part of the tutorial you have to setup your selected network: -->
 <!-- ``` -->
@@ -363,23 +363,6 @@ PegaSys Orchestrate is compatible with **Quorum Tessera** and **Besu Orion** net
 <!-- Then following instructions: -->
 <!-- - [Hyperledger Besu](../besu/README.md) -->
 <!-- - [GoQuorum](../gquorum/README.md) -->
-
-#### Besu Orion
-
-Firstly we need to register 
-
-To send a private transaction in Besu Orion, run:
-
-```bash
-$> npm run send-eea-private-tx
-```
-
-After a few seconds (depending on block time), you see the transaction private receipt in the consumer
-output on the first terminal.
-
-![Receipt for private transaction](./static/npm-send-private-tx.png)
-
-> For more information about private transactions, refer to the [Besu privacy documentation](https://besu.hyperledger.org/Concepts/Privacy/Privacy-Overview/).
 
 #### Quorum Tessera 
 

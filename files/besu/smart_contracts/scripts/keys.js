@@ -2,7 +2,7 @@
 // WARNING: the keys here are demo purposes ONLY. Please use a tool like Orchestrate or EthSigner for production, rather than hard coding private keys
 
 module.exports = {
-  orion: {
+  tessera: {
     member1: {
       publicKey: "A1aVtMxLCUHmBVHXoZzzBgPbW/wj5axDpW9X8l91SGo="
     },
