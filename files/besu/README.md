@@ -55,7 +55,7 @@ Each quickstart setup is comprised of 4 validators, one RPC node and some monito
 
 The overall architecture diagrams to visually show components of the blockchain networks is shown below. 
 **Consensus Algorithm**: The Besu based Quorum variant uses the `IBFT2` consensus mechanism.
-**Private TX Manager**: The Besu based Quorum variant uses [Orion](https://github.com/PegaSysEng/orion)
+**Private TX Manager**: Both blockchain clients use [Tessera](https://docs.tessera.consensys.net/en/latest/)
 
 ![Image blockchain](./static/blockchain-network.png)
  
@@ -79,7 +79,7 @@ Use cases:
 ### ii. POA Network with Privacy <a name="poa-network-privacy"></a>
 
 This network is slightly more advanced than the former and you get everything from the POA network above and a few 
-Ethereum clients each paired with a Private Transaction Mananger. The Besu based Quorum variant uses [Orion](https://github.com/PegaSysEng/orion) for it's Private Transaction Mananger.
+Ethereum clients each paired with [Tessera](https://docs.tessera.consensys.net/en/latest/) for its Private Transaction Mananger.
 
 As before, to view the progress of the network, the Alethio block explorer can be used and is available on `http://localhost:25000`. 
 Hyperledger Besu based Quorum also deploys metrics monitoring via Prometheus available on `http://localhost:9090`, 
@@ -99,7 +99,7 @@ cd smart_contracts
 npm install
 node scripts/deploy.js
 ```
-which deploys the contract and sends an arbitrary value (47) from `Member1` to `Member3`. Once done, it queries all three members (orion)
+which deploys the contract and sends an arbitrary value (47) from `Member1` to `Member3`. Once done, it queries all three members (tessera)
 to check the value at an address, and you should observe that only `Member1` & `Member3` have this information as they were involved in the transaction 
 and that `Member2` responds with a `0x` to indicate it is unaware of the transaction.
 

@@ -26,17 +26,6 @@ filebeat.inputs:
       ip_address: ${IP_ADDRESS}
 
   - paths:
-      - "/var/log/orion/*.log"
-    type: log
-    enabled: true
-    document_type: orion
-    fields_under_root: true
-    fields:
-      service_name: orion
-      env_name: ${ENV_NAME}
-      ip_address: ${IP_ADDRESS}
-
-  - paths:
       - "/var/log/quorum/*.log"
     type: log
     enabled: true

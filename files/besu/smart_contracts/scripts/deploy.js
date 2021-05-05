@@ -4,7 +4,7 @@ const Web3 = require('web3');
 const EEAClient = require('web3-eea');
 
 // WARNING: the keys here are demo purposes ONLY. Please use a tool like Orchestrate or EthSigner for production, rather than hard coding private keys
-const { orion, besu } = require("./keys.js");
+const { tessera, besu } = require("./keys.js");
 const chainId = 1337;
 const web3 = new EEAClient(new Web3(besu.member1.url), chainId);
 
@@ -20,8 +20,8 @@ var deployedContractAddress = "";
 async function createContract() {
   const contractOptions = {
     data: '0x'+bytecode,
-    privateFrom: orion.member1.publicKey,
-    privateFor: [orion.member3.publicKey],
+    privateFrom: tessera.member1.publicKey,
+    privateFor: [tessera.member3.publicKey],
     privateKey: besu.member1.privateKey
   };
   console.log("Creating contract...");
@@ -32,7 +32,7 @@ async function createContract() {
 //get address of contract
 async function getContractAddress(transactionHash) {
   console.log("Getting contractAddress from txHash: ", transactionHash);
-  const privateTransactionReceipt = await web3.priv.getTransactionReceipt(transactionHash, orion.member1.publicKey);
+  const privateTransactionReceipt = await web3.priv.getTransactionReceipt(transactionHash, tessera.member1.publicKey);
   console.log(`Private Transaction Receipt: ${privateTransactionReceipt}`);
   return privateTransactionReceipt.contractAddress;
 };
@@ -49,13 +49,13 @@ async function sendFromOneToThree(address, value) {
   const functionParams = {
     to: address,
     data: functionAbi.signature + functionArgs,
-    privateFrom: orion.member1.publicKey,
-    privateFor: [orion.member3.publicKey],
+    privateFrom: tessera.member1.publicKey,
+    privateFor: [tessera.member3.publicKey],
     privateKey: besu.member1.privateKey
   };
   const transactionHash = await web3.eea.sendRawTransaction(functionParams);
   console.log(`Transaction hash: ${transactionHash}`);
-  const result = await web3.priv.getTransactionReceipt(transactionHash, orion.member1.publicKey);
+  const result = await web3.priv.getTransactionReceipt(transactionHash, tessera.member1.publicKey);
   return result;
 };
 
@@ -75,7 +75,7 @@ async function getValueAtAddressOnNode(url, nodeName="node", address, privateFro
   };
   const transactionHash = await web3.eea.sendRawTransaction(functionParams);
   console.log(`Transaction hash: ${transactionHash}`);
-  const result = await web3.priv.getTransactionReceipt(transactionHash, orion.member1.publicKey);
+  const result = await web3.priv.getTransactionReceipt(transactionHash, tessera.member1.publicKey);
   console.log("" + nodeName + " value from deployed contract is: " + result.output);
   return result;
 };
@@ -92,9 +92,9 @@ async function main(){
 
   //wait for the blocks to propogate to the other nodes
   await new Promise(r => setTimeout(r, 20000));
-  getValueAtAddressOnNode(besu.member1.url, "Member1", deployedContractAddress, orion.member1.publicKey, [orion.member3.publicKey], besu.member1.privateKey);
-  getValueAtAddressOnNode(besu.member2.url, "Member2", deployedContractAddress, orion.member2.publicKey, [orion.member1.publicKey], besu.member2.privateKey);
-  getValueAtAddressOnNode(besu.member3.url, "Member3", deployedContractAddress, orion.member3.publicKey, [orion.member1.publicKey], besu.member3.privateKey);
+  getValueAtAddressOnNode(besu.member1.url, "Member1", deployedContractAddress, tessera.member1.publicKey, [tessera.member3.publicKey], besu.member1.privateKey);
+  getValueAtAddressOnNode(besu.member2.url, "Member2", deployedContractAddress, tessera.member2.publicKey, [tessera.member1.publicKey], besu.member2.privateKey);
+  getValueAtAddressOnNode(besu.member3.url, "Member3", deployedContractAddress, tessera.member3.publicKey, [tessera.member1.publicKey], besu.member3.privateKey);
 
 }
 
