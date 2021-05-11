@@ -32,7 +32,7 @@ x-quorum-def:
       --nodiscover \
       --permissioned \
       --verbosity 5 \
-      --istanbul.blockperiod 5 --mine --minerthreads 1 --emitcheckpoints \
+      --istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints \
       --syncmode full --nousb \
       --metrics --pprof --pprofaddr 0.0.0.0 --pprofport 9545 \
       --networkid $${QUORUM_NETWORK_ID:-1337} \
@@ -92,7 +92,7 @@ x-quorum-member-def:
       --nodiscover \
       --permissioned \
       --verbosity 5 \
-      --istanbul.blockperiod 5 --mine --minerthreads 1 --emitcheckpoints \
+      --istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints \
       --syncmode full --nousb \
       --metrics --pprof --pprofaddr 0.0.0.0 --pprofport 9545 \
       --networkid $${QUORUM_NETWORK_ID:-1337} \
