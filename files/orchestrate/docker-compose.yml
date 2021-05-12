@@ -27,11 +27,12 @@ x-default-variables: &default-variables
   DB_TLS_KEY: ${DB_TLS_KEY-}
   DB_TLS_CA: ${DB_TLS_CA-}
   METRICS_MODULES: ${METRICS_MODULES-}
+  VAULT_TOKEN_FILE: ${VAULT_TOKEN_FILE-/vault/token/.vault-token}
   ETH_CLIENT_RETRY_MAX_ELAPSED_TIME: 5s
 
 x-container-common: &container-common
   restart: ${CONTAINER_RESTART-on-failure}
-  image: orchestrate:v21.1.2
+  image: orchestrate:v21.1.4
   networks:
     - orchestrate
     - quickstart
@@ -83,17 +84,6 @@ services:
     labels:
       filebeat: "false"
 
-  key-vault-init:
-    build: ./scripts/deps/hashicorp
-    environment:
-      VAULT_ADDR: ${VAULT_ADDR-http://vault:8200}
-    networks:
-      - orchestrate
-    volumes:
-      - vault-token:/vault/token
-      - ./scripts/deps/hashicorp/renew.sh:/renew.sh
-    command: sh /renew.sh
-
   key-manager:
     <<: *container-common
     ports:
@@ -102,11 +92,9 @@ services:
     environment:
       <<: *default-variables
       <<: *key-manager-common
-    depends_on:
-      - key-vault-init
     command: key-manager run
     volumes:
-      - vault-token:/vault/token:ro
+      - vault-token:/vault/token
       - ./build/bin/orchestrate:/bin/main
 
   tx-sender:
@@ -117,10 +105,8 @@ services:
       <<: *default-variables
       SECRET_STORE: ${SECRET_STORE-hashicorp}
     volumes:
-      - vault-token:/vault/token:ro
       - ./build/bin/orchestrate:/bin/main
     depends_on:
-      - key-manager
       - api
     command: tx-sender run
 

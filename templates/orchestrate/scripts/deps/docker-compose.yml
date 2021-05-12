@@ -45,16 +45,22 @@ services:
 
   vault:
     <<: *container-common
-    image: library/vault:1.6.1
+    image: library/vault:1.6.2
     tty: true
     cap_add:
-      - IPC_LOCK
+    - IPC_LOCK
     volumes:
-      - vault-plugin:/vault/plugins
-      - ./hashicorp/config/config.hcl:/vault/config.hcl:ro
+    - vault-plugin:/vault/plugins
+    - ./hashicorp/config/config.hcl:/vault/config.hcl:ro
     entrypoint: vault server -config=/vault/config.hcl
     ports:
-      - 8200:8200
+    - 8200:8200
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "--proxy", "off", "http://vault:8200/v1/sys/health?standbyok=true" ]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
 
   vault-init:
     <<: *container-common
@@ -63,7 +69,7 @@ services:
       VAULT_ADDR: ${VAULT_ADDR-http://vault:8200}
       PLUGIN_PATH: ${PLUGIN_PATH-/vault/plugins}
       TOKEN_PATH: ${TOKEN_PATH-/vault/token}
-      PLUGIN_VERSION: ${PLUGIN_VERSION-v0.0.9}
+      PLUGIN_VERSION: ${PLUGIN_VERSION-v0.0.10-alpha.5}
     restart: "no"
     depends_on:
       - vault
@@ -74,6 +80,26 @@ services:
     - ./hashicorp/plugin.sh:/plugin.sh
     command: >
       sh -c "./plugin.sh && ./init.sh"
+
+  vault-agent:
+    <<: *container-common
+    image: library/vault:1.6.2
+    tty: true
+    depends_on:
+    - vault
+    - vault-init
+    cap_add:
+    - IPC_LOCK
+    volumes:
+    - vault-token:/vault/token
+    - ./hashicorp/config/agent-config.hcl:/vault/config.hcl:ro
+    entrypoint: vault agent -config=/vault/config.hcl
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "--proxy", "off", "http://vault:8200/v1/sys/health?standbyok=true" ]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
 
 volumes:
   db-data-api:

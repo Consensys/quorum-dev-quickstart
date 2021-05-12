@@ -4,7 +4,7 @@
   "description": "Codefi Orchestrate Quick start",
   "config": {
     "services": "tx-sender tx-listener api",
-    "deps": "vault-init vault postgres-api zookeeper kafka"
+    "deps": "vault-init vault vault-agent postgres-api zookeeper kafka"
   },
   "scripts": {
     "lint": "tslint -p . -c tslint.json",
