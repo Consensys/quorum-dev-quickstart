@@ -69,7 +69,7 @@ services:
       VAULT_ADDR: ${VAULT_ADDR-http://vault:8200}
       PLUGIN_PATH: ${PLUGIN_PATH-/vault/plugins}
       TOKEN_PATH: ${TOKEN_PATH-/vault/token}
-      PLUGIN_VERSION: ${PLUGIN_VERSION-v0.0.10-alpha.5}
+      PLUGIN_VERSION: ${PLUGIN_VERSION-v0.0.10}
     restart: "no"
     depends_on:
       - vault
