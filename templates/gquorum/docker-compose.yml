@@ -17,10 +17,18 @@ x-quorum-def:
     timeout: 3s
     retries: 10
     start_period: 5s
+  environment:
+    - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
   entrypoint:
     - /bin/sh
     - -c
     - |
+      CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints"
+      if [ "raft" == $$QUORUM_CONSENSUS ];
+      then
+        CONSENSUS_ARGS="--raft --raftblocktime 300 --raftport 53000"
+      fi
+
       mkdir -p /var/log/quorum/;
       mkdir -p /data;
       cp -r /quorum/* /data;
@@ -32,18 +40,17 @@ x-quorum-def:
       --nodiscover \
       --permissioned \
       --verbosity 5 \
-      --istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints \
+      $$CONSENSUS_ARGS \
       --syncmode full --nousb \
       --metrics --pprof --pprofaddr 0.0.0.0 --pprofport 9545 \
       --networkid $${QUORUM_NETWORK_ID:-1337} \
-      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$${QUORUM_CONS_ALGO:-istanbul} \
+      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_CONSENSUS \
       --port 30303 \
-      --identity node$${NODE_ID}-$${QUORUM_CONS_ALGO:-istanbul} \
+      --identity node$${NODE_ID}-$$QUORUM_CONSENSUS \
       --unlock 0 \
       --allow-insecure-unlock \
       --password /config/passwords.txt \
-      &> /var/log/quorum/geth-$$HOSTNAME.log | tee -a /var/log/quorum/geth-$$HOSTNAME.log
-      ;
+      &> /var/log/quorum/geth-$$(hostname -i).log | tee -a /var/log/quorum/geth-$$(hostname -i).log
 
 
 
@@ -63,11 +70,12 @@ x-quorum-member-def:
     timeout: 3s
     retries: 10
     start_period: 5s
+  environment:
+    - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
   entrypoint:
     - /bin/sh
     - -c
     - |
-
       {%if privacy %}
       for i in $$(seq 1 100)
       do
@@ -81,6 +89,12 @@ x-quorum-member-def:
       done
       {% endif %}
 
+      CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints"
+      if [ "raft" == $$QUORUM_CONSENSUS ];
+      then
+        CONSENSUS_ARGS="--raft --raftblocktime 300 --raftport 53000"
+      fi
+
       mkdir -p /var/log/quorum/;
       mkdir -p /data/dd;
       cp -r /quorum/* /data/dd/;
@@ -92,20 +106,19 @@ x-quorum-member-def:
       --nodiscover \
       --permissioned \
       --verbosity 5 \
-      --istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints \
+      $$CONSENSUS_ARGS \
       --syncmode full --nousb \
       --metrics --pprof --pprofaddr 0.0.0.0 --pprofport 9545 \
       --networkid $${QUORUM_NETWORK_ID:-1337} \
-      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$${QUORUM_CONS_ALGO:-istanbul} \
-      --ws --wsaddr 0.0.0.0 --wsport 8546 --wsorigins "*" --wsapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$${QUORUM_CONS_ALGO:-istanbul} \
+      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_CONSENSUS \
+      --ws --wsaddr 0.0.0.0 --wsport 8546 --wsorigins "*" --wsapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_CONSENSUS \
       --port 30303 \
-      --identity node$${NODE_ID}-$${QUORUM_CONS_ALGO:-istanbul} \
+      --identity node$${NODE_ID}-$$QUORUM_CONSENSUS \
       --ptm.timeout 5 --ptm.url $${QUORUM_PTM_URL} --ptm.http.writebuffersize 4096 --ptm.http.readbuffersize 4096 --ptm.tls.mode off \
       --unlock 0 \
       --allow-insecure-unlock \
       --password /config/passwords.txt \
-      &> /var/log/quorum/geth-$$HOSTNAME.log | tee -a /var/log/quorum/geth-$$HOSTNAME.log
-      ;
+      &> /var/log/quorum/geth-$$(hostname -i).log | tee -a /var/log/quorum/geth-$$(hostname -i).log
 
 
 
@@ -221,24 +234,6 @@ x-cakeshop-def:
 {% endif %}
       java -Xms128M -Xmx128M -Dcakeshop.config.dir=/data/cakeshop -Dlogging.path=/data/logs/cakeshop -jar /opt/cakeshop/cakeshop.war
       ;;
-
-x-ethsignerProxy-def:
-  &ethsignerProxy-def
-  image: consensys/quorum-ethsigner:${QUORUM_ETHSIGNER_VERSION:-latest}
-  command: [
-    "--chain-id=1337",
-    "--http-listen-host=0.0.0.0",
-    "--downstream-http-port=8545",
-    "--downstream-http-host=rpcnode",
-    "file-based-signer",
-    "-k",
-    "/opt/ethsigner/keyfile",
-    "-p",
-    "/opt/ethsigner/passwordfile"
-  ]
-  ports:
-    - 8545
-
 
 {% if elk %}
 x-redis-def:
@@ -415,19 +410,6 @@ services:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.15
 
-  ethsignerProxy:
-    << : *ethsignerProxy-def
-    volumes:
-      - ./config/ethsigner/password:/opt/ethsigner/passwordfile
-      - ./config/ethsigner/key:/opt/ethsigner/keyfile
-    depends_on:
-      - rpcnode
-    ports:
-      - 18545:8545/tcp
-    networks:
-      quorum-dev-quickstart:
-        ipv4_address: 172.16.239.40
-
 {% if privacy %}
   member1tessera:
     << : *tessera-def
@@ -596,7 +578,7 @@ services:
       - 3000:3000/tcp
     networks:
       quorum-dev-quickstart:
-        ipv4_address: 172.16.239.34        
+        ipv4_address: 172.16.239.34
 {% endif %}
 
 {% if elk %}
