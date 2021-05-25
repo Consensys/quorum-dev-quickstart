@@ -34,6 +34,11 @@ To run these tutorials, you must have the following installed:
 Change directory to the artifacts folder: 
 
 `cd quorum-test-network` (default folder location) 
+
+**To change the consensu algortihm to RAFT instead of ISTANBUL:**
+
+Edit the `.env` file and uncomment the parameter `QUORUM_CONS_ALGO`
+
  
 **To start services and the network:**
 
