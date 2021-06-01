@@ -83,8 +83,7 @@ Use cases:
 ### ii. POA Network with Privacy <a name="poa-network-privacy"></a>
 
 This network is slightly more advanced than the former and you get everything from the POA network above and a few 
-Ethereum clients each paired with a Private Transaction Mananger. The Go based Quorum variant uses [Tessera](https://github.com/jpmorganchase/tessera) 
-for it's Private Transaction Mananger.
+Ethereum clients each paired with [Tessera](https://github.com/jpmorganchase/tessera) for its Private Transaction Mananger. 
 
 As before, to view the progress of the network, the Alethio block explorer can be used and is available on `http://localhost:25000`. 
 Go based Quorum deploys the Cakeshop toolkit available on `http://localhost:8999`
@@ -96,29 +95,66 @@ Use cases:
 - you are a user looking to execute private transactions at least one other party
 - you are looking to create a private Ethereum network with private transactions between two or more parties.
 
+Once the network is up and running you can make public transactions on the chain and interact with the smart contract at its deployed address, 
+and you can also make private transaction between members and verify that other nodes do not see it.
+Under the smart_contracts folder there is a `SimpleStorage` contract which we use for both as an example.
 
-Once the network is up and running you can send a private transaction between members and verify that other nodes do not see it.
-Under the smart_contracts folder there is a `SimpleStorage` contract which can be deployed and tested by running:
+For the public transaction:
 ```
 cd smart_contracts
 npm install
-node scripts/deploy.js
+node scripts/public_tx.js
 ```
-which deploys the contract and sends an arbitrary value (47) from `Member1` to `Member3`. Once done, it queries all three members  
-to check the value at an address, and you should observe that only `Member1` & `Member3` have this information as they were involved in the transaction 
-and that `Member2` responds with a message saying it cannot find a value.
+which creates an account and then deploys the contract with the account's address. It also initializes the default constructor 
+with a value (47). Once done, it will call the `get` function on the contract to check the value at the address, and 
+you should see it return the value. Then it will call the `set` function on the contract and update the value (123) 
+and then verify the address to make sure its been updated.
 
 ```
-node scripts/deploy.js 
-error= null; transactionHash=0x4d7ec1e6135785209b2c7915948b5220c18eecc2b2fd46db3c7f47dce525b05b
-Contract transaction send: TransactionHash: 0x4d7ec1e6135785209b2c7915948b5220c18eecc2b2fd46db3c7f47dce525b05b waiting to be mined...
-receipt: 0x00fFD3548725459255f1e78A61A07f1539Db0271
-newContractInstance address: 0x00fFD3548725459255f1e78A61A07f1539Db0271
+node scripts/public_tx.js 
+{
+  address: '0x36781cB22798149d47c55A228f186F583fA9F64b',
+  privateKey: '0x6ee9f728b2e4c092243427215ecd12e53b9c0e388388dc899b1438c487c02b61',
+  signTransaction: [Function: signTransaction],
+  sign: [Function: sign],
+  encrypt: [Function: encrypt]
+}
+Creating transaction...
+Signing transaction...
+Sending transaction...
+tx transactionHash: 0xaf86a44b2a477fbc4a7c9f71eace0753ac1ffc4c446aa779dbb8682bf765e8b9
+tx contractAddress: 0xE12f1232aE87862f919efb7Df27DC819F0240F07
+Contract deployed at address: 0xE12f1232aE87862f919efb7Df27DC819F0240F07
+Use the smart contracts 'get' function to read the contract's constructor initialized value .. 
+Obtained value at deployed contract is: 47
+Use the smart contracts 'set' function to update that value to 123 .. 
+Verify the updated value that was set .. 
+Obtained value at deployed contract is: 123
 
-Checking each member to verify that the contract has been deployed between members 1 & 3 only...
-Member3 value of deployed contract is: 47
-Member1 value of deployed contract is: 47
-Member2 cannot find any value here.
+```
+
+
+For the private transaction:
+```
+cd smart_contracts
+npm install
+node scripts/private_tx.js
+```
+which deploys the contract and sends an arbitrary value (47) from `Member1` to `Member3`. Once done, it uses the `set` function on the contract to update
+the value to another value (123) and then queries all three members to check the value at an address, and you should observe that 
+only `Member1` & `Member3` have this information as they were involved in the transaction and that `Member2` responds with a 
+message saying it's undefined.
+
+```
+node scripts/private_tx.js 
+Address of transaction:  0x175400c6aB0f56e2e1260dE14094bb5024bE4a0A
+Use the smart contracts 'get' function to read the contract's constructor initialized value .. 
+Member1 obtained value at deployed contract is: 47
+Use the smart contracts 'set' function to update that value to 123 .. - from member1 to member3 
+Verify the private transaction is private by reading the value from all three members .. 
+Member1 obtained value at deployed contract is: 123
+Member3 obtained value at deployed contract is: 123
+Member2 obtained value at deployed contract is: undefined
 ```
 
 
