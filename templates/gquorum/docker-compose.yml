@@ -11,7 +11,7 @@ x-splunk-def:
     - SPLUNK_START_ARGS=--accept-license
     - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
     - SPLUNK_PASSWORD=quickstart
-    - SPLUNK_APPS_URL=https://github.com/splunkdlt/splunk-app-quorum/releases/download/1.0.5/splunk_app_quorum-v1.0.5.tgz
+    - SPLUNK_APPS_URL=https://github.com/splunkdlt/splunk-app-quorum/releases/download/1.0.6/splunk_app_quorum-v1.0.6.tgz
   ports:
     - 8000:8000
     - 8088:8088
@@ -50,7 +50,7 @@ x-ethlogger-def:
   environment:
     - COLLECT_PEER_INFO=true
     - COLLECT_PENDING_TX=true
-    - ETH_RPC_URL=http://quorum-test-network_rpcnode_1:8545
+    - ETH_RPC_URL=http://rpcnode:8545
     - NETWORK_NAME=quickstart
     - START_AT_BLOCK=latest
     - SPLUNK_HEC_URL=https://splunk:8088
@@ -460,6 +460,7 @@ services:
 
   rpcnode:
     << : *quorum-def
+    container_name: rpcnode
     ports:
       - 8545:8545/tcp
       - 8546:8546/tcp
