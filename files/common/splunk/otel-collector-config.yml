@@ -109,7 +109,7 @@ processors:
   attributes/quorum_log_file:
     actions:
       - key: "file_name"
-        pattern: ^geth-(?P<tmp_host>.*)\.log
+        pattern: ^geth-(?P<tmp_host>.*)-(?P<ip>.*)\.log
         action: extract
       - key: host.name
         from_attribute: tmp_host
