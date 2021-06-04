@@ -92,8 +92,46 @@ Use cases:
 - you are a user looking to execute private transactions at least one other party
 - you are looking to create a private Ethereum network with private transactions between two or more parties.
 
-Once the network is up and running you can send a private transaction between members and verify that other nodes do not see it.
-Under the smart_contracts folder there is an `EventEmitter` contract which can be deployed and tested by running:
+Once the network is up and running you can make public transactions on the chain and interact with the smart contract at its deployed address, 
+and you can also make private transaction between members and verify that other nodes do not see it.
+Under the smart_contracts folder there is a `SimpleStorage` contract which we use for both as an example.
+
+For the public transaction:
+```
+cd smart_contracts
+npm install
+node scripts/public_tx.js
+```
+which creates an account and then deploys the contract with the account's address. It also initializes the default constructor 
+with a value (47). Once done, it will call the `get` function on the contract to check the value at the address, and 
+you should see it return the value. Then it will call the `set` function on the contract and update the value (123) 
+and then verify the address to make sure its been updated.
+
+```
+node scripts/public_tx.js 
+{
+  address: '0x36781cB22798149d47c55A228f186F583fA9F64b',
+  privateKey: '0x6ee9f728b2e4c092243427215ecd12e53b9c0e388388dc899b1438c487c02b61',
+  signTransaction: [Function: signTransaction],
+  sign: [Function: sign],
+  encrypt: [Function: encrypt]
+}
+Creating transaction...
+Signing transaction...
+Sending transaction...
+tx transactionHash: 0xaf86a44b2a477fbc4a7c9f71eace0753ac1ffc4c446aa779dbb8682bf765e8b9
+tx contractAddress: 0xE12f1232aE87862f919efb7Df27DC819F0240F07
+Contract deployed at address: 0xE12f1232aE87862f919efb7Df27DC819F0240F07
+Use the smart contracts 'get' function to read the contract's constructor initialized value .. 
+Obtained value at deployed contract is: 47
+Use the smart contracts 'set' function to update that value to 123 .. 
+Verify the updated value that was set .. 
+Obtained value at deployed contract is: 123
+
+```
+
+
+For the private transaction:
 ```
 cd smart_contracts
 npm install
@@ -104,21 +142,24 @@ to check the value at an address, and you should observe that only `Member1` & `
 and that `Member2` responds with a `0x` to indicate it is unaware of the transaction.
 
 ```
-node scripts/deploy.js 
+node scripts/private_tx.js
 Creating contract...
-Getting contractAddress from txHash:  0x10e8e9f46c7043f87f92224e065279638523f5b2d9139c28195e1c7e5ac02c72
+Getting contractAddress from txHash:  0xc1b57f6a7773fe887afb141a09a573d19cb0fdbb15e0f2b9ed0dfead6f5b5dbf
 Waiting for transaction to be mined ...
-Contract deployed at address: 0x649f1dff9ca6dfbdd27135c94171334ea0fab5ee
-
-Transaction Hash: 0x30b53a533afe909aee59df716e07f7003c0605075a13f97799b29cdd3c2c42a7
+Address of transaction: 0x8220ca987f7bb7f99815d0ef64e1d8a072a2c167
+Use the smart contracts 'get' function to read the contract's constructor initialized value .. 
 Waiting for transaction to be mined ...
-Transaction Hash: 0x181e37e64cdfb8d3cb0f076ee63045981436f3273942bac47820c7ec1aad0c23
-Transaction Hash: 0xa27db2772689fe8ca995d32d1753d2695421120c9f171d6d32eb0873f2b96466
-Waiting for transaction to be mined ...
-Waiting for transaction to be mined ...
-Member3 value from deployed contract is: 0x000000000000000000000000000000000000000000000000000000000000002f
 Member1 value from deployed contract is: 0x000000000000000000000000000000000000000000000000000000000000002f
+Use the smart contracts 'set' function to update that value to 123 .. - from member1 to member3 
+Transaction hash: 0x387c6627fe87e235b0f2bbbe1b2003a11b54afc737dca8da4990d3de3197ac5f
+Waiting for transaction to be mined ...
+Verify the private transaction is private by reading the value from all three members .. 
+Waiting for transaction to be mined ...
+Member1 value from deployed contract is: 0x000000000000000000000000000000000000000000000000000000000000007b
+Waiting for transaction to be mined ...
 Member2 value from deployed contract is: 0x
+Waiting for transaction to be mined ...
+Member3 value from deployed contract is: 0x000000000000000000000000000000000000000000000000000000000000007b
 ```
 
 Further [documentation](https://besu.hyperledger.org/en/stable/Tutorials/Privacy/eeajs-Multinode-example/) for this example and a [video tutorial](https://www.youtube.com/watch?v=Menekt6-TEQ) 
