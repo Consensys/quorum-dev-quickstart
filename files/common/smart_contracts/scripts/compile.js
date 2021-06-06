@@ -8,10 +8,12 @@ function buildSources() {
   const sources = {};
   const contractsFiles = fs.readdirSync(contractsPath);
   contractsFiles.forEach(file => {
-    const contractFullPath = path.resolve(contractsPath, file);
-    sources[file] = {
-      content: fs.readFileSync(contractFullPath, 'utf8')
-    };
+    if(file.endsWith(".sol")){
+      const contractFullPath = path.resolve(contractsPath, file);
+      sources[file] = {
+        content: fs.readFileSync(contractFullPath, 'utf8')
+      };
+    }
   });
   return sources;
 }
