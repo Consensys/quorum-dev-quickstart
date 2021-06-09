@@ -71,13 +71,15 @@ echo "Web block explorer address                     : http://${HOST}:25000/"
 if [ ! -z `docker-compose -f docker-compose.yml ps -q prometheus 2> /dev/null` ]; then
 echo "Prometheus address                             : http://${HOST}:9090/graph"
 fi
+grafana_url="http://${HOST}:3000/d/XE4V0WGZz/besu-overview?orgId=1&refresh=10s&from=now-30m&to=now&var-system=All"
 if [ ! -z `docker-compose -f docker-compose.yml ps -q cakeshop 2> /dev/null` ]; then
-echo "Grafana address                                : http://${HOST}:3000/d/a1lVy7ycin9Yv/goquorum-overview?orgId=1&refresh=10s&from=now-30m&to=now&var-system=All"
+grafana_url="http://${HOST}:3000/d/a1lVy7ycin9Yv/goquorum-overview?orgId=1&refresh=10s&from=now-30m&to=now&var-system=All"
 echo "Cakeshop toolkit address                       : http://${HOST}:8999"
-else
-echo "Grafana address                                : http://${HOST}:3000/d/XE4V0WGZz/besu-overview?orgId=1&refresh=10s&from=now-30m&to=now&var-system=All"
-
 fi
+if [ ! -z `docker-compose -f docker-compose.yml ps -q grafana 2> /dev/null` ]; then
+echo "Grafana address                                : $grafana_url"
+fi
+
 if [ $elk_setup == true ]; then
 echo "Collated logs using Kibana endpoint            : http://${HOST}:5601/app/kibana#/discover"
 fi

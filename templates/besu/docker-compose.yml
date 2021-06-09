@@ -20,6 +20,10 @@ x-besu-bootnode-def:
       --min-gas-price=0 \
       --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} \
       --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} ;
+{% if monitoring == "splunk" %}
+  env_file:
+    ./config/besu/env-file
+{% endif %}
 
 x-besu-def:
   &besu-def
@@ -688,6 +692,7 @@ services:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.31
 
+{% if monitoring != "splunk" %}
   prometheus:
     image: "prom/prometheus"
     volumes:
@@ -713,6 +718,7 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.33
+{% endif %}
 {% endif %}
 
 {% if monitoring == "elk" %}
