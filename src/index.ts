@@ -21,10 +21,10 @@ export async function main(): Promise<void> {
     if(process.argv.slice(2).length > 0){
       const args = await yargs(process.argv.slice(2)).options({
         clientType: { type: 'string', demandOption: true, choices:['besu','goquorum'], describe: 'Ethereum client to use.' },
-        outputPath: { type: 'string', describe: 'Location for config files.', default: './' },
-        elk: { type: 'boolean', demandOption: true, describe: 'Enable support for logging with ELK.' },
+        outputPath: { type: 'string', default: './quorum-test-network', describe: 'Location for config files.'},
+        elk: { type: 'boolean', default: false, demandOption: false, describe: 'Enable support for logging with ELK.' },
         privacy: { type: 'boolean', demandOption: true, describe: 'Enable support for private transactions' },
-        orchestrate: { type: 'boolean', demandOption: false, describe: 'Try out Codefi Orchestrate?' },
+        orchestrate: { type: 'boolean', default: true, demandOption: false, describe: 'Try out Codefi Orchestrate?' },
       }).argv;
 
       answers = {
