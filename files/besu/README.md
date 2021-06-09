@@ -68,7 +68,7 @@ of the network, the Alethio block explorer can be used and is available on `http
 Hyperledger Besu based Quorum also deploys monitoring solutions.
 You can choose to make metrics monitoring via Prometheus available on `http://localhost:9090`, 
 paired with Grafana with custom dashboards available on `http://localhost:3000`.
-You can also use Splunk to see all logs, traces and metrics available at `http://localhost:8000` (with the credentials admin/quickstart).
+You can also use Splunk to see all logs, traces and metrics available at `http://localhost:8000` (with the credentials admin/admin).
 
 Essentially you get everything in the architecture diagram above, bar the yellow privacy block
 
@@ -87,7 +87,7 @@ As before, to view the progress of the network, the Alethio block explorer can b
 Hyperledger Besu based Quorum also deploys monitoring solutions.
 You can choose to make metrics monitoring via Prometheus available on `http://localhost:9090`,
 paired with Grafana with custom dashboards available on `http://localhost:3000`.
-You can also use Splunk to see all logs, traces and metrics available at `http://localhost:8000` (with the credentials admin/quickstart).
+You can also use Splunk to see all logs, traces and metrics available at `http://localhost:8000` (with the credentials admin/admin).
 
 Essentially you get everything in the architecture diagram above.
 
