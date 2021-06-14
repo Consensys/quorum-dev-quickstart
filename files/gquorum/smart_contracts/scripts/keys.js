@@ -13,25 +13,25 @@ module.exports = {
       publicKey: "1iTZde/ndBHvzhcl7V68x44Vx7pl8nwx9LqnM/AfJUg="
     }
   },
-  besu: {
+  quorum: {
     member1: {
       url: "http://127.0.0.1:20000",
       wsUrl: "ws://127.0.0.1:20001",
-      privateKey: "8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63"
+      privateKey: "b9a4bd1539c15bcc83fa9078fe89200b6e9e802ae992f13cd83c853f16e8bed4",
+      accountAddress: "f0e2db6c8dc6c681bb5d6ad121a107f300e9b2b5"
     },
     member2: {
       url: "http://127.0.0.1:20002",
       wsUrl: "ws://127.0.0.1:20003",
-      privateKey: "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"
+      privateKey: "f18166704e19b895c1e2698ebc82b4e007e6d2933f4b31be23662dd0ec602570",
+      accountAddress: "ca843569e3427144cead5e4d5999a3d0ccf92b8e"
+
     },
     member3: {
       url: "http://127.0.0.1:20004",
       wsUrl: "ws://127.0.0.1:20005",
-      privateKey: "ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f"
-    },
-    ethsignerProxy: {
-      url: "http://127.0.0.1:18545",
-      accountAddress: "9b790656b9ec0db1936ed84b3bea605873558198"
+      privateKey: "4107f0b6bf67a3bc679a15fe36f640415cf4da6a4820affaac89c8b280dfd1b3",
+      accountAddress: "0fbdc686b912d7722dc86510934589e0aaf3b55a"
     }
   }
 };

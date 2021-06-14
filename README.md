@@ -78,6 +78,15 @@ default artifact files are stored at `./quorum-test-network`, change directory t
 $> cd quorum-test-network
 ``` 
 
+
+Alternatively, you can use cli options and skip the prompt above like so:
+
+```
+npx quorum-dev-quickstart -- --clientType besu --outputPath ./ --elk true --privacy true --orchestra true
+```
+
+The arguments ```--privacy``` and ```--clientType``` are required, the others contain defaults if left blank.
+
 **To start services and the network:**
 
 Follow the README.md file of select artifact:
