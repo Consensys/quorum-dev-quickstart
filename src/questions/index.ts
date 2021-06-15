@@ -45,19 +45,22 @@ const _outputDirQuestion: QuestionTree = {
     }
 };
 
-const _elkQuestion: QuestionTree = {
-    name: "elk",
-    prompt: "Do you wish to enable support for logging with ELK (Elasticsearch, Logstash & Kibana)? [y/N]",
+const _monitoringQuestion: QuestionTree = {
+    name: "monitoring",
+    prompt: "Do you wish to enable support for logging with Splunk or ELK (Elasticsearch, Logstash & Kibana)? Default: [1]",
+    options: [
+      { label: "None", value: "none", nextQuestion: _outputDirQuestion, default: true },
+      { label: "Splunk", value: "splunk", nextQuestion: _outputDirQuestion },
+      { label: "ELK", value: "elk", nextQuestion: _outputDirQuestion }
+    ]
 };
-// have to add this below the definition because of the self reference..
-_elkQuestion.transformerValidator = _getYesNoValidator(_elkQuestion, _outputDirQuestion, "n");
 
 const _privacyQuestion: QuestionTree = {
     name: "privacy",
     prompt: "Do you wish to enable support for private transactions? [Y/n]",
 };
 // have to add this below the definition because of the self reference..
-_privacyQuestion.transformerValidator = _getYesNoValidator(_privacyQuestion, _elkQuestion, "y");
+_privacyQuestion.transformerValidator = _getYesNoValidator(_privacyQuestion, _monitoringQuestion, "y");
 
 
 const _orchestrateQuestion: QuestionTree = {
@@ -91,7 +94,7 @@ const bannerText = String.raw`
             | | | | | | | |  / _ \  | '__| | | | | | '_ ' _ \
             | |_| | | |_| | | (_) | | |    | |_| | | | | | | |
              \__\_\  \__,_|  \___/  |_|     \__,_| |_| |_| |_|
-     
+
         ____                          _
        |  _ \    ___  __   __   ___  | |   ___    _ __     ___   _ __
        | | | |  / _ \ \ \ / /  / _ \ | |  / _ \  | '_ \   / _ \ | '__|
@@ -101,7 +104,7 @@ const bannerText = String.raw`
        ___            _          _            _                    _
       / _ \   _   _  (_)   ___  | | __  ___  | |_    __ _   _ __  | |_
      | | | | | | | | | |  / __| | |/ / / __| | __|  / _' | | '__| | __|
-     | |_| | | |_| | | | | (__  |   <  \__ \ | |_  | (_| | | |    | |_ 
+     | |_| | | |_| | | | | (__  |   <  \__ \ | |_  | (_| | | |    | |_
       \__\_\  \__,_| |_|  \___| |_|\_\ |___/  \__|  \__,_| |_|     \__|
 `;
 
