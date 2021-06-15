@@ -1,9 +1,9 @@
 {
   "images": [{
-    "id": "sha256:dd0dfe2dfa7e77298bc275d6546af94121216a2be7697925901c7294845533b2",
-    "tag": "orchestrate:v21.1.4",
-    "fileName": "orchestrate-v21.1.4.tgz",
-    "fileSizeBytes": 22947182,
-    "url": "https://relay.quorum.consensys.net/quorum-dev-quickstart/orchestrate-v21.1.4.tgz"
+    "id": "sha256:f85b422dc45964787b9738e0b799d34e840db3e04d13f8d0bc4ef9c7ae3ed6c3",
+    "tag": "orchestrate:v21.1.5",
+    "fileName": "orchestrate-v21.1.5.tgz",
+    "fileSizeBytes": 22942105,
+    "url": "https://relay.quorum.consensys.net/quorum-dev-quickstart/orchestrate-v21.1.5.tgz"
   }]
 }
