@@ -82,7 +82,7 @@ $> cd quorum-test-network
 Alternatively, you can use cli options and skip the prompt above like so:
 
 ```
-npx quorum-dev-quickstart -- --clientType besu --outputPath ./ --elk true --privacy true --orchestra true
+npx quorum-dev-quickstart -- --clientType besu --outputPath ./quorum-test-network --monitoring default --privacy true --orchestrate false
 ```
 
 The arguments ```--privacy``` and ```--clientType``` are required, the others contain defaults if left blank.

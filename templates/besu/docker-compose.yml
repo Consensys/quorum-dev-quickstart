@@ -345,13 +345,6 @@ x-docker-logging:
     ./config/besu/env-file
 {% endif %}
 
-{% if privacy %}
-x-orion-def:
-  &orion-def
-  image: consensys/quorum-orion:${QUORUM_ORION_VERSION:-latest}
-  command: ["/config/orion.conf"]
-{% endif %}
-
 x-ethsignerProxy-def:
   &ethsignerProxy-def
   image: consensys/quorum-ethsigner:${QUORUM_ETHSIGNER_VERSION:-latest}
