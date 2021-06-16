@@ -1,6 +1,75 @@
 ---
 version: '3.6'
 
+
+{% if monitoring == "splunk" %}
+x-splunk-def:
+  &splunk-def
+  image: splunk/splunk:8.2
+  container_name: splunk
+  environment:
+    - SPLUNK_START_ARGS=--accept-license
+    - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
+    - SPLUNK_PASSWORD=quickstart
+    - SPLUNK_APPS_URL=https://github.com/splunkdlt/splunk-app-quorum/releases/download/1.0.6/splunk_app_quorum-v1.0.6.tgz
+  ports:
+    - 8000:8000
+    - 8088:8088
+  healthcheck:
+    test: ['CMD', 'curl', '-f', 'http://localhost:8000']
+    interval: 5s
+    timeout: 5s
+    retries: 20
+  volumes:
+    - ./splunk/splunk.yml:/tmp/defaults/default.yml
+    - splunk:/opt/splunk/var
+
+x-otelcollector-def:
+  &otelcollector-def
+  image: quay.io/signalfx/splunk-otel-collector:0.26.0
+  container_name: otelcollector
+  depends_on:
+    - splunk
+  command:
+    - --config
+    - /etc/otel/config.yaml
+  volumes:
+    - ./splunk/otel-collector-config.yml:/etc/otel/config.yaml
+    - /var/log:/var/log
+    - ./logs/tessera:/var/log-tessera
+    - ./logs/quorum:/var/log-quorum
+  environment:
+    - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
+    - SPLUNK_ACCESS_TOKEN=disable # You can use this option to send data to Splunk Cloud.
+    - SPLUNK_REALM=disable # You can use this option to send data to Splunk Cloud.
+
+x-ethlogger-def:
+  &ethlogger-def
+  image: ghcr.io/splunkdlt/ethlogger:3.0.1
+  container_name: ethlogger
+  environment:
+    - COLLECT_PEER_INFO=true
+    - COLLECT_PENDING_TX=true
+    - ETH_RPC_URL=http://rpcnode:8545
+    - NETWORK_NAME=quickstart
+    - START_AT_BLOCK=latest
+    - SPLUNK_HEC_URL=https://splunk:8088
+    - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
+    - SPLUNK_EVENTS_INDEX=ledger
+    - SPLUNK_METRICS_INDEX=metrics
+    - SPLUNK_INTERNAL_INDEX=metrics
+    - SPLUNK_HEC_REJECT_INVALID_CERTS=false
+    - ABI_DIR=/app/abis
+    - DEBUG=ethlogger:platforms,ethlogger:eth
+  volumes:
+    - ethlogger:/app
+    - ./smart_contracts/contracts:/app/abis
+  depends_on:
+    - splunk
+  restart: unless-stopped
+
+{% endif %}
+
 x-quorum-def:
   &quorum-def
   restart: "on-failure"
@@ -50,8 +119,7 @@ x-quorum-def:
       --unlock 0 \
       --allow-insecure-unlock \
       --password /config/passwords.txt \
-      &> /var/log/quorum/geth-$$(hostname -i).log | tee -a /var/log/quorum/geth-$$(hostname -i).log
-
+      &> /var/log/quorum/geth-$$HOSTNAME-$$(hostname -i).log | tee -a /var/log/quorum/geth-$$HOSTNAME-$$(hostname -i).log
 
 
 x-quorum-member-def:
@@ -235,7 +303,8 @@ x-cakeshop-def:
       java -Xms128M -Xmx128M -Dcakeshop.config.dir=/data/cakeshop -Dlogging.path=/data/logs/cakeshop -jar /opt/cakeshop/cakeshop.war
       ;;
 
-{% if elk %}
+
+{% if monitoring == "elk" %}
 x-redis-def:
   &redis-def
   image: redis:alpine
@@ -391,6 +460,7 @@ services:
 
   rpcnode:
     << : *quorum-def
+    container_name: rpcnode
     ports:
       - 8545:8545/tcp
       - 8546:8546/tcp
@@ -581,7 +651,7 @@ services:
         ipv4_address: 172.16.239.34
 {% endif %}
 
-{% if elk %}
+{% if monitoring == "elk" %}
   redis:
     << : *redis-def
     networks:
@@ -614,6 +684,40 @@ services:
 
 {% endif %}
 
+{% if monitoring == "splunk" %}
+  splunk:
+    << : *splunk-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.35
+
+  otelcollector:
+    << : *otelcollector-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.36
+
+  ethlogger:
+    << : *ethlogger-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.37
+
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.39.0
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    command:
+      - --docker_only=true
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.38
+{% endif %}
+
 networks:
   quorum-dev-quickstart:
     driver: bridge
@@ -627,5 +731,7 @@ volumes:
   member1volume:
   member2volume:
   member3volume:
+  splunk:
+  ethlogger:
   prometheus:
   grafana:

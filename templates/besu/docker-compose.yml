@@ -20,6 +20,10 @@ x-besu-bootnode-def:
       --min-gas-price=0 \
       --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} \
       --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} ;
+{% if monitoring == "splunk" %}
+  env_file:
+    ./config/besu/env-file
+{% endif %}
 
 x-besu-def:
   &besu-def
@@ -41,7 +45,10 @@ x-besu-def:
       --min-gas-price=0 \
       --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} \
       --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} ;
-
+{% if monitoring == "splunk" %}
+  env_file:
+    ./config/besu/env-file
+{% endif %}
 
 x-besu-tx-def:
   &besu-tx-def
@@ -77,8 +84,8 @@ x-besu-tx-def:
       --min-gas-price=0 \
       --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} \
       --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} ;
-      
-    
+
+
 
 
 {% if privacy %}
@@ -168,7 +175,7 @@ x-tessera-def:
 
 {% endif %}
 
-{% if elk %}
+{% if monitoring == "elk" %}
 x-redis-def:
   &redis-def
   image: redis:alpine
@@ -248,8 +255,95 @@ x-metricbeat-def:
   links:
     - redis
 
+x-docker-logging:
+  &docker-logging
 {% endif %}
 
+{% if monitoring == "splunk" %}
+x-splunk-def:
+  &splunk-def
+  image: splunk/splunk:8.2
+  container_name: splunk
+  environment:
+    - SPLUNK_START_ARGS=--accept-license
+    - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
+    - SPLUNK_PASSWORD=quickstart
+    - SPLUNK_APPS_URL=https://github.com/splunkdlt/splunk-app-quorum/releases/download/1.0.6/splunk_app_quorum-v1.0.6.tgz
+  ports:
+    - 8000:8000
+    - 8088:8088
+  healthcheck:
+    test: ['CMD', 'curl', '-f', 'http://localhost:8000']
+    interval: 5s
+    timeout: 5s
+    retries: 20
+  volumes:
+    - ./splunk/splunk.yml:/tmp/defaults/default.yml
+    - splunk:/opt/splunk/var
+
+x-otelcollector-def:
+  &otelcollector-def
+  image: quay.io/signalfx/splunk-otel-collector:0.26.0
+  container_name: otelcollector
+  depends_on:
+    - splunk
+  command:
+    - --config
+    - /etc/otel/config.yaml
+  volumes:
+    - ./splunk/otel-collector-config.yml:/etc/otel/config.yaml
+    - /var/log:/var/log
+  environment:
+    - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
+    - SPLUNK_ACCESS_TOKEN=disable # You can use this option to send data to Splunk Cloud.
+    - SPLUNK_REALM=disable # You can use this option to send data to Splunk Cloud.
+
+x-ethlogger-def:
+  &ethlogger-def
+  image: ghcr.io/splunkdlt/ethlogger:3.0.1
+  container_name: ethlogger
+  environment:
+    - COLLECT_PEER_INFO=true
+    - COLLECT_PENDING_TX=true
+    - ETH_RPC_URL=http://rpcnode:8545
+    - NETWORK_NAME=quickstart
+    - START_AT_BLOCK=latest
+    - SPLUNK_HEC_URL=https://splunk:8088
+    - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
+    - SPLUNK_EVENTS_INDEX=ledger
+    - SPLUNK_METRICS_INDEX=metrics
+    - SPLUNK_INTERNAL_INDEX=metrics
+    - SPLUNK_HEC_REJECT_INVALID_CERTS=false
+    - ABI_DIR=/app/abis
+    - DEBUG=ethlogger:platforms,ethlogger:eth
+  volumes:
+    - ethlogger:/app
+    - ./smart_contracts/contracts:/app/abis
+  depends_on:
+    - splunk
+  restart: unless-stopped
+
+
+x-docker-logging:
+  &docker-logging
+  logging:
+    driver: "splunk"
+    options:
+      splunk-token: "11111111-1111-1111-1111-1111111111113"
+      splunk-url: "https://localhost:8088"
+      splunk-index: "logs"
+      splunk-insecureskipverify: "true"
+      splunk-verify-connection: "false"
+      splunk-format: "json"
+      tag: "{% raw %}{{.Name}}-{{.ID}}{% endraw %}"
+      splunk-sourcetype: "docker:logging"
+      splunk-source: quorum-quickstart
+{% endif %}
+
+{% if monitoring == "splunk" %}
+  env_file:
+    ./config/besu/env-file
+{% endif %}
 
 x-ethsignerProxy-def:
   &ethsignerProxy-def
@@ -272,12 +366,15 @@ services:
 
   validator1:
     << : *besu-bootnode-def
+    environment:
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=validator1,service.version=${BESU_VERSION:-latest}
     volumes:
       - public-keys:/tmp/
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/static-nodes.json:/config/static-nodes.json
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator1/keys:/opt/besu/keys
@@ -290,12 +387,15 @@ services:
 
   validator2:
     << : *besu-def
+    environment:
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=validator2,service.version=${BESU_VERSION:-latest}
     volumes:
       - public-keys:/opt/besu/public-keys/
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/static-nodes.json:/config/static-nodes.json
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator2/keys:/opt/besu/keys
@@ -307,12 +407,15 @@ services:
 
   validator3:
     << : *besu-def
+    environment:
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=validator3,service.version=${BESU_VERSION:-latest}
     volumes:
       - public-keys:/opt/besu/public-keys/
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/static-nodes.json:/config/static-nodes.json
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator3/keys:/opt/besu/keys
@@ -324,12 +427,15 @@ services:
 
   validator4:
     << : *besu-def
+    environment:
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=validator4,service.version=${BESU_VERSION:-latest}
     volumes:
       - public-keys:/opt/besu/public-keys/
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/static-nodes.json:/config/static-nodes.json
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator4/keys:/opt/besu/keys
@@ -341,12 +447,16 @@ services:
 
   rpcnode:
     << : *besu-def
+    container_name: rpcnode
+    environment:
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=rpcnode,service.version=${BESU_VERSION:-latest}
     volumes:
       - public-keys:/opt/besu/public-keys/
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/static-nodes.json:/config/static-nodes.json
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
@@ -361,6 +471,7 @@ services:
 
   ethsignerProxy:
     << : *ethsignerProxy-def
+    << : *docker-logging
     volumes:
       - ./config/ethsigner/password:/opt/ethsigner/passwordfile
       - ./config/ethsigner/key:/opt/ethsigner/keyfile
@@ -384,7 +495,7 @@ services:
     volumes:
       - ./config/tessera/networkFiles/member1:/config/keys
       - member1tessera:/data
-      - ./logs/tessera:/var/log/tessera/      
+      - ./logs/tessera:/var/log/tessera/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.26
@@ -392,6 +503,7 @@ services:
   member1besu:
     << : *besu-tx-def
     environment:
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=member1besu,service.version=${BESU_VERSION:-latest}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
       - NODE_ID=6
     entrypoint:
@@ -430,6 +542,10 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.16
+{% if monitoring == "splunk" %}
+    env_file:
+      ./config/besu/env-file
+{% endif %}
 
   member2tessera:
     << : *tessera-def
@@ -440,7 +556,7 @@ services:
     volumes:
       - ./config/tessera/networkFiles/member2:/config/keys
       - member2tessera:/data
-      - ./logs/tessera:/var/log/tessera/ 
+      - ./logs/tessera:/var/log/tessera/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.27
@@ -448,8 +564,9 @@ services:
   member2besu:
     << : *besu-tx-def
     environment:
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=member2besu,service.version=${BESU_VERSION:-latest}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-      - NODE_ID=7    
+      - NODE_ID=7
     entrypoint:
       - /bin/bash
       - -c
@@ -473,6 +590,7 @@ services:
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/static-nodes.json:/config/static-nodes.json
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/member2/keys:/opt/besu/keys
@@ -486,6 +604,10 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.17
+{% if monitoring == "splunk" %}
+    env_file:
+      ./config/besu/env-file
+{% endif %}
 
   member3tessera:
     << : *tessera-def
@@ -496,7 +618,7 @@ services:
     volumes:
       - ./config/tessera/networkFiles/member3:/config/keys
       - member3tessera:/data
-      - ./logs/tessera:/var/log/tessera/ 
+      - ./logs/tessera:/var/log/tessera/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.28
@@ -505,7 +627,8 @@ services:
     << : *besu-tx-def
     environment:
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-      - NODE_ID=8    
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=member3besu,service.version=${BESU_VERSION:-latest}
+      - NODE_ID=8
     entrypoint:
       - /bin/bash
       - -c
@@ -529,6 +652,7 @@ services:
       - ./config/besu/permissions_config.toml:/config/permissions_config.toml
       - ./config/besu/static-nodes.json:/config/static-nodes.json
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/member3/keys:/opt/besu/keys
@@ -542,13 +666,17 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.18
-
+{% if monitoring == "splunk" %}
+    env_file:
+      ./config/besu/env-file
+{% endif %}
 {% endif %}
 
 {% if not orchestrate %}
   explorer:
     build: block-explorer-light/.
     image: quorum-dev-quickstart/block-explorer-light:develop
+    << : *docker-logging
     depends_on:
       - rpcnode
     ports:
@@ -557,6 +685,7 @@ services:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.31
 
+{% if monitoring != "splunk" %}
   prometheus:
     image: "prom/prometheus"
     volumes:
@@ -583,8 +712,9 @@ services:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.33
 {% endif %}
+{% endif %}
 
-{% if elk %}
+{% if monitoring == "elk" %}
   redis:
     << : *redis-def
     networks:
@@ -613,17 +743,51 @@ services:
     << : *filebeat-def
     networks:
       quorum-dev-quickstart:
-        ipv4_address: 172.16.239.38      
+        ipv4_address: 172.16.239.38
 
   metricbeat:
     << : *metricbeat-def
     networks:
       quorum-dev-quickstart:
-        ipv4_address: 172.16.239.39 
+        ipv4_address: 172.16.239.39
 
 {% endif %}
 
+{% if monitoring == "splunk" %}
+  splunk:
+    << : *splunk-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.34
 
+  otelcollector:
+    << : *otelcollector-def
+    << : *docker-logging
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.35
+
+  ethlogger:
+    << : *ethlogger-def
+    << : *docker-logging
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.36
+
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.39.0
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    command:
+      - --docker_only=true
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.37
+{% endif %}
 
 volumes:
   public-keys:
@@ -633,6 +797,10 @@ volumes:
   member1tessera:
   member2tessera:
   member3tessera:
+
+  splunk:
+
+  ethlogger:
 
 networks:
   quorum-dev-quickstart:
