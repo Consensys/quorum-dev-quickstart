@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "description": "Codefi Orchestrate Quick start",
   "config": {
-    "services": "tx-sender tx-listener api",
+    "services": "key-manager tx-sender tx-listener api",
     "deps": "vault-init vault vault-agent postgres-api zookeeper kafka"
   },
   "scripts": {
