@@ -345,6 +345,7 @@ x-docker-logging:
     ./config/besu/env-file
 {% endif %}
 
+{% if not orchestrate %}
 x-ethsignerProxy-def:
   &ethsignerProxy-def
   image: consensys/quorum-ethsigner:${QUORUM_ETHSIGNER_VERSION:-latest}
@@ -361,6 +362,7 @@ x-ethsignerProxy-def:
   ]
   ports:
     - 8545
+{% endif %}
 
 services:
 
@@ -469,6 +471,7 @@ services:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.15
 
+{% if not orchestrate %}
   ethsignerProxy:
     << : *ethsignerProxy-def
     << : *docker-logging
@@ -483,7 +486,7 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.40
-
+{% endif %}
 
 {% if privacy %}
   member1tessera:

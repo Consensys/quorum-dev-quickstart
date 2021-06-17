@@ -13,8 +13,8 @@ export const start = async () => {
         contractName: 'Counter',
         from: process.env.FROM_ACCOUNT!,
         protocol: ProtocolType.Orion,
-        privateFrom: process.env.ORION1_NODE_KEY,  // Orion node 1 public key (the registered chain)
-        privateFor: [process.env.ORION2_NODE_KEY!] // Orion node 2 public key
+        privateFrom: process.env.TESSERA1_MEMBER_KEY,  // Tessera node 1 public key (the registered chain)
+        privateFor: [process.env.TESSERA2_MEMBER_KEY!] // Tessera node 2 public key
       }
     },
     idempotencyKey,
