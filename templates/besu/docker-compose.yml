@@ -5,8 +5,8 @@ x-besu-bootnode-def:
   &besu-bootnode-def
   restart: "on-failure"
   image: hyperledger/besu:${BESU_VERSION:-latest}
-  environment:
-    - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+  env_file:
+    - ./config/besu/.env
   entrypoint:
     - /bin/bash
     - -c
@@ -20,17 +20,13 @@ x-besu-bootnode-def:
       --min-gas-price=0 \
       --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} \
       --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} ;
-{% if monitoring == "splunk" %}
-  env_file:
-    ./config/besu/env-file
-{% endif %}
 
 x-besu-def:
   &besu-def
   restart: "on-failure"
   image: hyperledger/besu:${BESU_VERSION:-latest}
-  environment:
-    - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+  env_file:
+    - ./config/besu/.env
   entrypoint:
     - /bin/bash
     - -c
@@ -45,10 +41,6 @@ x-besu-def:
       --min-gas-price=0 \
       --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} \
       --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} ;
-{% if monitoring == "splunk" %}
-  env_file:
-    ./config/besu/env-file
-{% endif %}
 
 x-besu-tx-def:
   &besu-tx-def
@@ -255,9 +247,8 @@ x-metricbeat-def:
   links:
     - redis
 
-{% endif %}
+{% elif  monitoring == "splunk" %}
 
-{% if monitoring == "splunk" %}
 x-splunk-def:
   &splunk-def
   image: splunk/splunk:8.2
@@ -321,7 +312,6 @@ x-ethlogger-def:
     - splunk
   restart: unless-stopped
 
-
 x-docker-logging:
   &docker-logging
   logging:
@@ -336,11 +326,7 @@ x-docker-logging:
       tag: "{% raw %}{{.Name}}-{{.ID}}{% endraw %}"
       splunk-sourcetype: "docker:logging"
       splunk-source: quorum-quickstart
-{% endif %}
 
-{% if monitoring == "splunk" %}
-  env_file:
-    ./config/besu/env-file
 {% endif %}
 
 {% if not orchestrate %}
@@ -360,6 +346,7 @@ x-ethsignerProxy-def:
   ]
   ports:
     - 8545
+
 {% endif %}
 
 services:
@@ -378,9 +365,6 @@ services:
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator1/keys:/opt/besu/keys
-{% if enable_static_nodes %}
-      - ./config/besu/static-nodes.json:/config/static-nodes.json
-{% endif %}
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.11
@@ -504,7 +488,6 @@ services:
     << : *besu-tx-def
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=member1besu,service.version=${BESU_VERSION:-latest}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
       - NODE_ID=6
     entrypoint:
       - /bin/bash
@@ -542,10 +525,6 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.16
-{% if monitoring == "splunk" %}
-    env_file:
-      ./config/besu/env-file
-{% endif %}
 
   member2tessera:
     << : *tessera-def
@@ -565,7 +544,6 @@ services:
     << : *besu-tx-def
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=member2besu,service.version=${BESU_VERSION:-latest}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
       - NODE_ID=7
     entrypoint:
       - /bin/bash
@@ -604,10 +582,6 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.17
-{% if monitoring == "splunk" %}
-    env_file:
-      ./config/besu/env-file
-{% endif %}
 
   member3tessera:
     << : *tessera-def
@@ -626,7 +600,6 @@ services:
   member3besu:
     << : *besu-tx-def
     environment:
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
       - OTEL_RESOURCE_ATTRIBUTES=service.name=member3besu,service.version=${BESU_VERSION:-latest}
       - NODE_ID=8
     entrypoint:
@@ -666,10 +639,7 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.18
-{% if monitoring == "splunk" %}
-    env_file:
-      ./config/besu/env-file
-{% endif %}
+
 {% endif %}
 
 {% if not orchestrate %}
@@ -683,6 +653,7 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.31
+{% endif %}
 
 {% if monitoring != "splunk" %}
   prometheus:
@@ -711,7 +682,7 @@ services:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.33
 {% endif %}
-{% endif %}
+
 
 {% if monitoring == "elk" %}
   redis:
@@ -750,9 +721,7 @@ services:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.39
 
-{% endif %}
-
-{% if monitoring == "splunk" %}
+{% elif monitoring == "splunk" %}
   splunk:
     << : *splunk-def
     networks:
@@ -786,6 +755,7 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.37
+
 {% endif %}
 
 volumes:
