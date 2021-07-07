@@ -255,8 +255,6 @@ x-metricbeat-def:
   links:
     - redis
 
-x-docker-logging:
-  &docker-logging
 {% endif %}
 
 {% if monitoring == "splunk" %}
@@ -474,7 +472,6 @@ services:
 {% if not orchestrate %}
   ethsignerProxy:
     << : *ethsignerProxy-def
-    << : *docker-logging
     volumes:
       - ./config/ethsigner/password:/opt/ethsigner/passwordfile
       - ./config/ethsigner/key:/opt/ethsigner/keyfile
@@ -679,7 +676,6 @@ services:
   explorer:
     build: block-explorer-light/.
     image: quorum-dev-quickstart/block-explorer-light:develop
-    << : *docker-logging
     depends_on:
       - rpcnode
     ports:
