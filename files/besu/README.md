@@ -139,7 +139,7 @@ For the private transaction:
 ```
 cd smart_contracts
 npm install
-node scripts/deploy.js
+node scripts/private_tx.js
 ```
 which deploys the contract and sends an arbitrary value (47) from `Member1` to `Member3`. Once done, it queries all three members (tessera)
 to check the value at an address, and you should observe that only `Member1` & `Member3` have this information as they were involved in the transaction 
