@@ -292,15 +292,15 @@ x-cakeshop-def:
     - /bin/sh
     - -c
     - |
-      rm -rf /data/cakeshop/local
-      mkdir -p /data/cakeshop/local
-      cp /quorum/application.properties /data/cakeshop/local/application.properties
+      rm -rf /qdata/cakeshop/local
+      mkdir -p /qdata/cakeshop/local
+      cp /quorum/application.properties /qdata/cakeshop/local/application.properties
 {% if privacy %}
-      cp /quorum/8nodes_quorum_docker.json /data/cakeshop/local/seednodes.json
+      cp /quorum/8nodes_quorum_docker.json /qdata/cakeshop/local/cakeshop.json
 {% else %}
-      cp /quorum/5nodes_quorum_docker.json /data/cakeshop/local/seednodes.json
+      cp /quorum/5nodes_quorum_docker.json /qdata/cakeshop/local/cakeshop.json
 {% endif %}
-      java -Xms128M -Xmx128M -Dcakeshop.config.dir=/data/cakeshop -Dlogging.path=/data/logs/cakeshop -jar /opt/cakeshop/cakeshop.war
+      java -Xms128M -Xmx128M -Dspring.config.additional-location=file:/qdata/cakeshop/local/ -Dcakeshop.config.dir=/qdata/cakeshop -jar /cakeshop/cakeshop.war
       ;;
 
 
