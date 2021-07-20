@@ -122,7 +122,7 @@ export const rootQuestion: QuestionTree = {
     options: [
         // TODO: fix these to the correct names
         { label: "Hyperledger Besu", value: "besu", nextQuestion: _orchestrateQuestion, default: true },
-        { label: "GoQuorum", value: "gquorum", nextQuestion: _orchestrateQuestion }
+        { label: "GoQuorum", value: "goquorum", nextQuestion: _orchestrateQuestion }
     ]
 };
 

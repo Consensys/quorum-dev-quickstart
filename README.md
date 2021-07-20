@@ -91,5 +91,5 @@ The arguments ```--privacy``` and ```--clientType``` are required, the others co
 
 Follow the README.md file of select artifact:
 1. [Hyperledger Besu](./files/besu/README.md)
-2. [GoQuorum](./files/gquorum/README.md)
+2. [GoQuorum](./files/goquorum/README.md)
 3. [Codefi Orchestrate](./files/orchestrate/README.md)

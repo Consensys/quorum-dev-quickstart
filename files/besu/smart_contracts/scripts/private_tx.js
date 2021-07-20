@@ -13,7 +13,7 @@ const contractJson = JSON.parse(fs.readFileSync(contractJsonPath));
 const bytecode = contractJson.evm.bytecode.object
 const contractAbi = contractJson.abi;
 // initialize the default constructor with a value `47 = 0x2F`; this value is appended to the bytecode
-const contractConstructorInit = "0000000000000000000000000000000000000000000000000000000000001337";
+const contractConstructorInit = "000000000000000000000000000000000000000000000000000000000000002F";
 
 // Besu doesn't support eth_sendTransaction so we use the eea_sendRawTransaction for things like simple value transfers, contract creation or contract invocation
 async function createContract(clientUrl, fromPrivateKey, fromPublicKey, toPublicKey) {
@@ -86,7 +86,7 @@ async function main(){
   createContract(besu.member1.url, besu.member1.privateKey, tessera.member1.publicKey, tessera.member3.publicKey)
   .then( async function(privateTxReceipt){
     console.log("Address of transaction: ", privateTxReceipt.contractAddress);
-    let newValue = 357;
+    let newValue = 123;
 
     //wait for the blocks to propogate to the other nodes
     await new Promise(r => setTimeout(r, 20000));
@@ -100,7 +100,7 @@ async function main(){
     await getValueAtAddress(besu.member1.url, "Member1",  privateTxReceipt.contractAddress, contractAbi, besu.member1.privateKey, tessera.member1.publicKey, tessera.member3.publicKey);
     await getValueAtAddress(besu.member2.url, "Member2",  privateTxReceipt.contractAddress, contractAbi, besu.member2.privateKey, tessera.member2.publicKey, tessera.member1.publicKey);
     await getValueAtAddress(besu.member3.url, "Member3",  privateTxReceipt.contractAddress, contractAbi, besu.member3.privateKey, tessera.member3.publicKey, tessera.member1.publicKey);
-    
+
   })
  .catch(console.error);
 
