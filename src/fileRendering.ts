@@ -6,14 +6,14 @@ import os from "os";
 import { NetworkContext } from "./networkBuilder";
 
 export function renderTemplateDir(templateBasePath: string, context: NetworkContext): void {
-    const skipDirName = context.clientType === "besu" ? "gquorum" : "besu";
+    const skipDirName = context.clientType === "besu" ? "goquorum" : "besu";
     for (const filePath of _walkDir(templateBasePath, skipDirName)) {
         renderFileToDir(templateBasePath, filePath, context);
     }
 }
 
 export function copyFilesDir(filesBasePath: string, context: NetworkContext): void {
-    const skipDirName = context.clientType === "besu" ? "gquorum" : "besu";
+    const skipDirName = context.clientType === "besu" ? "goquorum" : "besu";
     for (const filePath of _walkDir(filesBasePath, skipDirName)) {
         const outputPath = resolvePath(context.outputPath, filePath);
         const outputDirname = dirname(outputPath);

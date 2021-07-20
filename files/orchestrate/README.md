@@ -362,7 +362,7 @@ PegaSys Orchestrate is compatible with **Quorum Tessera** for private transactio
 
 <!-- Then following instructions: -->
 <!-- - [Hyperledger Besu](../besu/README.md) -->
-<!-- - [GoQuorum](../gquorum/README.md) -->
+<!-- - [GoQuorum](../goquorum/README.md) -->
 
 #### Quorum Tessera 
 

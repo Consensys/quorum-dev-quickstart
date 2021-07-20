@@ -66,7 +66,7 @@ async function createContract(host, contractBin, contractInit) {
 };
 
 async function main(){
-  let newValue = 789;
+  let newValue = 123;
   createContract(host, contractBin, contractConstructorInit)
   .then(async function(tx){
     console.log("Contract deployed at address: " + tx.contractAddress);

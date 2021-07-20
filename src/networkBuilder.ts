@@ -5,7 +5,7 @@ import path from "path";
 import {Spinner} from "./spinner";
 
 export interface NetworkContext {
-    clientType: "gquorum" | "besu";
+    clientType: "goquorum" | "besu";
     nodeCount: number;
     privacy: boolean;
     monitoring: "splunk" | "elk" | "none";
