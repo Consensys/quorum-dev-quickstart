@@ -4,7 +4,9 @@
   "description": "Example smart contracts for trying out Besu",
   "scripts": {
     "compile": "node scripts/compile.js",
-    "deploy": "node scripts/deploy.js"
+    "deploy": "node scripts/deploy.js",
+    "public-transaction": "node scripts/public_tx.js",
+    "private-transaction": "node scripts/private_tx.js"
   },
   "license": "Apache-2.0",
   "dependencies": {
