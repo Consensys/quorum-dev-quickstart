@@ -13,7 +13,7 @@ const contractJson = JSON.parse(fs.readFileSync(contractJsonPath));
 const bytecode = contractJson.evm.bytecode.object
 const contractAbi = contractJson.abi;
 // initialize the default constructor with a value `47 = 0x2F`; this value is appended to the bytecode
-const contractConstructorInit = "000000000000000000000000000000000000000000000000000000000000002F";
+const contractConstructorInit = "0000000000000000000000000000000000000000000000000000000000001337";
 
 // Besu doesn't support eth_sendTransaction so we use the eea_sendRawTransaction for things like simple value transfers, contract creation or contract invocation
 async function createContract(clientUrl, fromPrivateKey, fromPublicKey, toPublicKey) {
@@ -86,13 +86,14 @@ async function main(){
   createContract(besu.member1.url, besu.member1.privateKey, tessera.member1.publicKey, tessera.member3.publicKey)
   .then( async function(privateTxReceipt){
     console.log("Address of transaction: ", privateTxReceipt.contractAddress);
+    let newValue = 357;
 
     //wait for the blocks to propogate to the other nodes
     await new Promise(r => setTimeout(r, 20000));
     console.log("Use the smart contracts 'get' function to read the contract's constructor initialized value .. " )
     await getValueAtAddress(besu.member1.url, "Member1",  privateTxReceipt.contractAddress, contractAbi, besu.member1.privateKey, tessera.member1.publicKey, tessera.member3.publicKey);
-    console.log("Use the smart contracts 'set' function to update that value to 123 .. - from member1 to member3 " );
-    await setValueAtAddress(besu.member1.url, privateTxReceipt.contractAddress, 123, contractAbi, besu.member1.privateKey, tessera.member1.publicKey, tessera.member3.publicKey);
+    console.log(`Use the smart contracts 'set' function to update that value to ${newValue} .. - from member1 to member3`);
+    await setValueAtAddress(besu.member1.url, privateTxReceipt.contractAddress, newValue, contractAbi, besu.member1.privateKey, tessera.member1.publicKey, tessera.member3.publicKey);
     //wait for the blocks to propogate to the other nodes
     await new Promise(r => setTimeout(r, 20000));
     console.log("Verify the private transaction is private by reading the value from all three members .. " )
