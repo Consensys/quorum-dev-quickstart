@@ -1,0 +1,90 @@
+[Eth]
+NetworkId = 1337
+SyncMode = "full"
+DiscoveryURLs = []
+NoPruning = false
+NoPrefetch = false
+LightPeers = 100
+UltraLightFraction = 75
+DatabaseCache = 768
+DatabaseFreezer = ""
+TrieCleanCache = 256
+TrieCleanCacheJournal = "triecache"
+TrieCleanCacheRejournal = 3600000000000
+TrieDirtyCache = 256
+TrieTimeout = 3600000000000
+SnapshotCache = 0
+EnablePreimageRecording = false
+EWASMInterpreter = ""
+EVMInterpreter = ""
+RPCGasCap = 25000000
+RPCTxFeeCap = 1e+00
+
+[Eth.Miner]
+GasFloor = 700000000
+GasCeil = 800000000
+GasPrice = 0
+Recommit = 3000000000
+Noverify = false
+AllowedFutureBlockTime = 0
+
+[Shh]
+MaxMessageSize = 1048576
+MinimumAcceptedPOW = 2e-01
+RestrictConnectionBetweenLightClients = true
+
+[Eth.GPO]
+Blocks = 20
+Percentile = 60
+
+[Eth.TxPool]
+Locals = []
+NoLocals = false
+Journal = "transactions.rlp"
+Rejournal = 3600000000000
+PriceLimit = 1
+PriceBump = 10
+AccountSlots = 16
+GlobalSlots = 4096
+AccountQueue = 64
+GlobalQueue = 1024
+Lifetime = 10800000000000
+TransactionSizeLimit = 64
+MaxCodeSize = 24
+
+[Eth.Istanbul]
+RequestTimeout = 10000
+BlockPeriod = 5
+Epoch = 30000
+Ceil2Nby3Block = 0
+
+[Node]
+DataDir = "/data"
+InsecureUnlockAllowed = true
+NoUSB = true
+IPCPath = "geth.ipc"
+HTTPHost = "0.0.0.0"
+HTTPPort = 8545
+HTTPCors = ["'*'"]
+HTTPVirtualHosts = ["'*'"]
+HTTPModules = ["admin", "db", "eth", "debug", "miner", "net", "shh", "txpool", "personal", "web3", "quorum", "istanbul"]
+WSHost = "0.0.0.0"
+WSPort = 8546
+WSOrigins = ["'*'"]
+WSModules = ["admin", "db", "eth", "debug", "miner", "net", "shh", "txpool", "personal", "web3", "quorum", "istanbul"]
+GraphQLCors = ["'*'"]
+GraphQLVirtualHosts = ["'*'"]
+EnableNodePermission = true
+
+[Node.P2P]
+MaxPeers = 50
+NoDiscovery = true
+BootstrapNodes = []
+BootstrapNodesV5 = []
+ListenAddr = ":30303"
+EnableMsgEvents = false
+
+[Node.HTTPTimeouts]
+ReadTimeout = 30000000000
+WriteTimeout = 30000000000
+IdleTimeout = 120000000000

@@ -106,21 +106,13 @@ x-quorum-def:
       cp /config/keys/nodekey /data/geth/nodekey;
       geth \
       --datadir /data \
-      --nodiscover \
-      --permissioned \
+      --config /quorum/config.toml \
       --verbosity 5 \
-      $$CONSENSUS_ARGS \
-      --syncmode full --nousb \
-      --metrics --pprof --pprofaddr 0.0.0.0 --pprofport 9545 \
-      --networkid $${QUORUM_NETWORK_ID:-1337} \
-      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_CONSENSUS \
-      --port 30303 \
+      --metrics --pprof --pprof.addr 0.0.0.0 --pprof.port 9545 \
+      --mine --minerthreads 1 --emitcheckpoints \
       --identity node$${NODE_ID}-$$QUORUM_CONSENSUS \
-      --unlock 0 \
-      --allow-insecure-unlock \
-      --password /config/passwords.txt \
+      --unlock 0 --password /config/passwords.txt \
       &> /var/log/quorum/geth-$$HOSTNAME-$$(hostname -i).log | tee -a /var/log/quorum/geth-$$HOSTNAME-$$(hostname -i).log
-
 
 x-quorum-member-def:
   &quorum-member-def
@@ -171,24 +163,14 @@ x-quorum-member-def:
       cp /config/keys/nodekey /data/dd/geth/nodekey;
       geth \
       --datadir /data/dd \
-      --nodiscover \
-      --permissioned \
+      --config /quorum/config.toml \
       --verbosity 5 \
-      $$CONSENSUS_ARGS \
-      --syncmode full --nousb \
-      --metrics --pprof --pprofaddr 0.0.0.0 --pprofport 9545 \
-      --networkid $${QUORUM_NETWORK_ID:-1337} \
-      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_CONSENSUS \
-      --ws --wsaddr 0.0.0.0 --wsport 8546 --wsorigins "*" --wsapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_CONSENSUS \
-      --port 30303 \
+      --metrics --pprof --pprof.addr 0.0.0.0 --pprof.port 9545 \
+      --mine --minerthreads 1 --emitcheckpoints \
       --identity node$${NODE_ID}-$$QUORUM_CONSENSUS \
       --ptm.timeout 5 --ptm.url $${QUORUM_PTM_URL} --ptm.http.writebuffersize 4096 --ptm.http.readbuffersize 4096 --ptm.tls.mode off \
-      --unlock 0 \
-      --allow-insecure-unlock \
-      --password /config/passwords.txt \
-      &> /var/log/quorum/geth-$$(hostname -i).log | tee -a /var/log/quorum/geth-$$(hostname -i).log
-
-
+      --unlock 0 --password /config/passwords.txt \
+      &> /var/log/quorum/geth-$$HOSTNAME-$$(hostname -i).log | tee -a /var/log/quorum/geth-$$HOSTNAME-$$(hostname -i).log
 
 {% if privacy %}
 x-tessera-def:
@@ -597,6 +579,11 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.18
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        sleep 1800
 
 {% endif %}
 
