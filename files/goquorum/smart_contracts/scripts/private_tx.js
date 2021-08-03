@@ -36,7 +36,10 @@ async function createContract(host, contractAbi, contractByteCode, contractInit,
   const contractInstance = new web3.eth.Contract(contractAbi);
   const ci = await contractInstance
     .deploy({ data: '0x'+contractByteCode, arguments: [contractInit] })
-    .send({ from: fromAddress, privateFor: [toPublicKey], gasLimit: "0x24A22" });
+    .send({ from: fromAddress, privateFor: [toPublicKey], gasLimit: "0x24A22" }).
+    .on('transactionHash', function(hash){
+      console.log("The transaction hash is: " + hash);
+    });
   return ci;
 };
 
@@ -53,12 +56,12 @@ async function main(){
     await setValueAtAddress(quorum.member1.url, 123, contractAbi, ci.options.address, quorum.member1.accountAddress, tessera.member3.publicKey);
     //wait for the blocks to propogate to the other nodes
     await new Promise(r => setTimeout(r, 10000));
-    
+
     console.log("Verify the private transaction is private by reading the value from all three members .. " )
     await getValueAtAddress(quorum.member1.url, "Member1", contractAbi, ci.options.address);
     await getValueAtAddress(quorum.member3.url, "Member3", contractAbi, ci.options.address);
     await getValueAtAddress(quorum.member2.url, "Member2", contractAbi, ci.options.address);
-    
+
   })
  .catch(console.error);
 
