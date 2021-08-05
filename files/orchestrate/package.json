@@ -1,6 +1,6 @@
 {
   "name": "codefi-orchestrate-quick-start",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Codefi Orchestrate Quick start",
   "config": {
     "services": "key-manager tx-sender tx-listener api",
@@ -38,7 +38,7 @@
     "down-orchestrate": "docker-compose down --volumes --timeout 0",
     "down-deps": "docker-compose -f scripts/deps/docker-compose.yml down --volumes --timeout 0",
     "down-network": "./network.sh down",
-    "up": "npm run up-deps && npm run up-network && sleep 5 && npm run up-orchestrate",
+    "up": "npm run up-deps && npm run up-network && npm run up-orchestrate",
     "down": "npm run down-orchestrate ; npm run down-deps; npm run down-network",
     "start": "npm run up",
     "stop": "npm run down",

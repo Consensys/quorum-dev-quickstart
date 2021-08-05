@@ -92,9 +92,14 @@ services:
     environment:
       <<: *default-variables
       <<: *key-manager-common
-    command: key-manager run
+    entrypoint: ["/bin/sh","-c"]
+    command:
+    - |
+      /bin/sh /wait_for_token.sh
+      /go/bin/main key-manager run
     volumes:
       - vault-token:/vault/token
+      - ./scripts/deps/hashicorp/wait_for_token.sh:/wait_for_token.sh
 
   tx-sender:
     <<: *container-common
