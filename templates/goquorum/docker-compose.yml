@@ -600,6 +600,7 @@ services:
 
 {% endif %}
 
+{% if not orchestrate %}
   cakeshop:
     << : *cakeshop-def
     hostname: cakeshop
@@ -648,7 +649,7 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.33
-
+{% endif %}
 
 {% if monitoring == "elk" %}
   redis:
