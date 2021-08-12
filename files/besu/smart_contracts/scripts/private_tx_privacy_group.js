@@ -15,18 +15,31 @@ const contractAbi = contractJson.abi;
 // initialize the default constructor with a value `47 = 0x2F`; this value is appended to the bytecode
 const contractConstructorInit = "000000000000000000000000000000000000000000000000000000000000002F";
 
-// Besu doesn't support eth_sendTransaction so we use the eea_sendRawTransaction(https://besu.hyperledger.org/en/latest/Reference/API-Methods/#eea_sendrawtransaction) for things like simple value transfers, contract creation or contract invocation
-async function createContract(clientUrl, fromPrivateKey, fromPublicKey, toPublicKey) {
+async function createPrivacyGroup(clientUrl, participantList){
+  const web3 = new Web3(clientUrl)
+  const web3quorum = new Web3Quorum(web3, chainId);
+  const contractOptions = {
+    addresses: participantList,
+    name: "web3js-quorum",
+    description: "quickstart",
+  };
+  const result = await web3.priv.createPrivacyGroup(contractOptions);
+  console.log("Privacy group: " + result + " created between participants: " + participantList);
+  return result;
+};
+
+// Besu doesn't support eth_sendTransaction so we use the eea_sendRawTransaction for things like simple value transfers, contract creation or contract invocation
+async function createContract(clientUrl, privacyGroupId, fromPrivateKey, fromPublicKey) {
   const web3 = new Web3(clientUrl)
   const web3quorum = new Web3Quorum(web3, chainId);
   const txOptions = {
     data: '0x'+contractBytecode+contractConstructorInit,
     privateKey: fromPrivateKey,
     privateFrom: fromPublicKey,
-    privateFor: [toPublicKey]
+    privacyGroupId: privacyGroupId
   };
   console.log("Creating contract...");
-  // Generate and send the Raw transaction to the Besu node using the eea_sendRawTransaction(https://besu.hyperledger.org/en/latest/Reference/API-Methods/#eea_sendrawtransaction) JSON-RPC call
+  // Generate and send the Raw transaction to the Besu node using the eea_sendRawTransaction JSON-RPC call
   const txHash = await web3quorum.priv.generateAndSendRawTransaction(txOptions);
   console.log("Getting contractAddress from txHash: ", txHash);
   const privateTxReceipt = await web3quorum.priv.waitForTransactionReceipt(txHash);
@@ -34,7 +47,7 @@ async function createContract(clientUrl, fromPrivateKey, fromPublicKey, toPublic
   return privateTxReceipt;
 };
 
-async function getValueAtAddress(clientUrl, nodeName="node", address, contractAbi, fromPrivateKey, fromPublicKey, toPublicKey) {
+async function getValueAtAddress(clientUrl, nodeName="node", address, contractAbi, fromPrivateKey, fromPublicKey, privacyGroupId) {
   const web3 = new Web3(clientUrl)
   const web3quorum = new Web3Quorum(web3, chainId);
   const contract = new web3quorum.eth.Contract(contractAbi);
@@ -47,7 +60,7 @@ async function getValueAtAddress(clientUrl, nodeName="node", address, contractAb
     data: functionAbi.signature,
     privateKey: fromPrivateKey,
     privateFrom: fromPublicKey,
-    privateFor: [toPublicKey]
+    privacyGroupId: privacyGroupId
   };
   const transactionHash = await web3quorum.priv.generateAndSendRawTransaction(functionParams);
   // console.log(`Transaction hash: ${transactionHash}`);
@@ -56,7 +69,7 @@ async function getValueAtAddress(clientUrl, nodeName="node", address, contractAb
   return result;
 };
 
-async function setValueAtAddress(clientUrl, address, value, contractAbi, fromPrivateKey, fromPublicKey, toPublicKey) {
+async function setValueAtAddress(clientUrl, address, value, contractAbi, fromPrivateKey, fromPublicKey,     privacyGroupId) {
   const web3 = new Web3(clientUrl)
   const web3quorum = new Web3Quorum(web3, chainId);
   const contract = new web3quorum.eth.Contract(contractAbi);
@@ -72,7 +85,7 @@ async function setValueAtAddress(clientUrl, address, value, contractAbi, fromPri
     data: functionAbi.signature + functionArgs,
     privateKey: fromPrivateKey,
     privateFrom: fromPublicKey,
-    privateFor: [toPublicKey]
+    privacyGroupId
   };
   const transactionHash = await web3quorum.priv.generateAndSendRawTransaction(functionParams);
   console.log(`Transaction hash: ${transactionHash}`);
@@ -83,24 +96,28 @@ async function setValueAtAddress(clientUrl, address, value, contractAbi, fromPri
 
 
 async function main(){
-
-  createContract(besu.member1.url, besu.member1.privateKey, tessera.member1.publicKey, tessera.member3.publicKey)
+  const participantList = [tessera.member1.publicKey, tessera.member3.publicKey ];
+  const privacyGroupId = await createPrivacyGroup(besu.member1.url, participantList);
+  createContract(besu.member1.url, privacyGroupId, besu.member1.privateKey, tessera.member1.publicKey, tessera.member3.publicKey )
   .then( async function(privateTxReceipt){
     console.log("Address of transaction: ", privateTxReceipt.contractAddress);
     let newValue = 123;
 
     //wait for the blocks to propogate to the other nodes
-    await new Promise(r => setTimeout(r, 20000));
+    await new Promise(r => setTimeout(r, 10000));
     console.log("Use the smart contracts 'get' function to read the contract's constructor initialized value .. " )
-    await getValueAtAddress(besu.member1.url, "Member1",  privateTxReceipt.contractAddress, contractAbi, besu.member1.privateKey, tessera.member1.publicKey, tessera.member3.publicKey);
+    await getValueAtAddress(besu.member1.url, "Member1",  privateTxReceipt.contractAddress, contractAbi, besu.member1.privateKey, tessera.member1.publicKey, privacyGroupId);
     console.log(`Use the smart contracts 'set' function to update that value to ${newValue} .. - from member1 to member3`);
-    await setValueAtAddress(besu.member1.url, privateTxReceipt.contractAddress, newValue, contractAbi, besu.member1.privateKey, tessera.member1.publicKey, tessera.member3.publicKey);
+    await setValueAtAddress(besu.member1.url, privateTxReceipt.contractAddress, newValue, contractAbi, besu.member1.privateKey, tessera.member1.publicKey, privacyGroupId);
     //wait for the blocks to propogate to the other nodes
-    await new Promise(r => setTimeout(r, 20000));
+    await new Promise(r => setTimeout(r, 10000));
     console.log("Verify the private transaction is private by reading the value from all three members .. " )
-    await getValueAtAddress(besu.member1.url, "Member1",  privateTxReceipt.contractAddress, contractAbi, besu.member1.privateKey, tessera.member1.publicKey, tessera.member3.publicKey);
-    await getValueAtAddress(besu.member2.url, "Member2",  privateTxReceipt.contractAddress, contractAbi, besu.member2.privateKey, tessera.member2.publicKey, tessera.member1.publicKey);
-    await getValueAtAddress(besu.member3.url, "Member3",  privateTxReceipt.contractAddress, contractAbi, besu.member3.privateKey, tessera.member3.publicKey, tessera.member1.publicKey);
+    await getValueAtAddress(besu.member1.url, "Member1",  privateTxReceipt.contractAddress, contractAbi, besu.member1.privateKey, tessera.member1.publicKey, privacyGroupId)
+      .catch(() => { console.log("Member1 cannot obtain value") });
+    await getValueAtAddress(besu.member2.url, "Member2",  privateTxReceipt.contractAddress, contractAbi, besu.member2.privateKey, tessera.member2.publicKey, privacyGroupId)
+      .catch(() => { console.log("Member2 cannot obtain value") });
+    await getValueAtAddress(besu.member3.url, "Member3",  privateTxReceipt.contractAddress, contractAbi, besu.member3.privateKey, tessera.member3.publicKey, privacyGroupId)
+      .catch(() => { console.log("Member3 cannot obtain value") });
 
   })
  .catch(console.error);

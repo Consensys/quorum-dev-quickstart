@@ -1,11 +1,11 @@
-const Web3 = require("web3");
+const Web3 = require('web3');
+const Web3Quorum = require('web3js-quorum');
 const Tx = require("ethereumjs-tx");
 const PromisePool = require("async-promise-pool");
-const EEAClient = require('web3-eea');
 const { tessera, besu } = require("./keys.js");
 
 const chainId = 1337;
-const web3 = new EEAClient(new Web3(besu.member1.url), chainId);
+const web3 = new Web3Quorum(new Web3(besu.member1.url), chainId);
 
 /*
   Transactions are sent in batches.
@@ -27,10 +27,10 @@ const deployContractData =
 
 // get nonce of account in the privacy group
 function getPrivateNonce(account) {
-  return web3.priv.getTransactionCount({
-    ...privacyOptions,
-    from: account
-  });
+  return web3.priv.getTransactionCount(
+    account,
+    web3.utils.generatePrivacyGroup(privacyOptions)
+  );
 }
 
 // get public nonce of account
@@ -40,10 +40,10 @@ function getPublicNonce(account) {
 
 // distribute payload to participants
 function distributePayload(payload, nonce) {
-  return web3.priv.distributeRawTransaction({
+  return web3.priv.generateAndDistributeRawTransaction({
     ...privacyOptions,
     data: payload,
-    nonce
+    nonce,
   });
 }
 
@@ -77,7 +77,7 @@ function sendPMT(sender, enclaveKey, nonce) {
 
 function printPrivTxDetails(pmtRcpt) {
   return web3.priv
-    .getTransactionReceipt(pmtRcpt.transactionHash, besu.member1.privateKey)
+    .waitForTransactionReceipt(pmtRcpt.transactionHash)
     .then(privTxRcpt => {
       console.log(
         `=== Private TX ${privTxRcpt.transactionHash}\n` +
@@ -92,9 +92,9 @@ function printPrivTxDetails(pmtRcpt) {
 
 /*
   Example of sending private transactions in batch.
-  
+
   The basic steps are:
-  
+
   1. Find the expected public and private nonce for the sender account
   2. Ditribute the private transaction (incrementing the private nonce)
   3. Create a PMT for each private transaction (incrementing the public nonce)

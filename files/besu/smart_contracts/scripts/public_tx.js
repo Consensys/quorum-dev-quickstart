@@ -3,7 +3,6 @@ const fs = require('fs-extra');
 const Tx = require('ethereumjs-tx');
 const Web3 = require('web3');
 
-
 // member1 details
 const { tessera, besu } = require("./keys.js");
 const host = besu.ethsignerProxy.url;
