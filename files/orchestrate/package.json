@@ -1,6 +1,6 @@
 {
   "name": "codefi-orchestrate-quick-start",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Codefi Orchestrate Quick start",
   "config": {
     "services": "key-manager tx-sender tx-listener api",
@@ -16,7 +16,7 @@
     "generate-account": "dotenv ts-node src/generate-account",
     "get-accounts": "dotenv ts-node src/get-accounts",
     "register-chain": "dotenv ts-node src/register-chain",
-    "get-latest-block": "dotenv -- cross-var curl -X POST -H 'Authorization: Bearer %AUTH_TOKEN%' --data '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\", false],\"id\":1}' %API_HOST%/proxy/chains/%CHAIN_UUID%",
+    "get-latest-block": "dotenv -- cross-var curl -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer %AUTH_TOKEN%' --data '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\", false],\"id\":1}' %API_HOST%/proxy/chains/%CHAIN_UUID%",
     "create-faucet": "dotenv ts-node src/create-faucet",
     "register-contract": "dotenv ts-node src/register-contract",
     "get-catalog": "dotenv ts-node src/get-catalog",
