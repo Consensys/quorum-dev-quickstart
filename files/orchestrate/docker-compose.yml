@@ -32,7 +32,7 @@ x-default-variables: &default-variables
 
 x-container-common: &container-common
   restart: ${CONTAINER_RESTART-on-failure}
-  image: orchestrate:v21.1.5
+  image: orchestrate:v21.1.6
   networks:
     - orchestrate
     - quickstart
