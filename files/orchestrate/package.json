@@ -1,6 +1,6 @@
 {
   "name": "codefi-orchestrate-quick-start",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "Codefi Orchestrate Quick start",
   "config": {
     "services": "key-manager tx-sender tx-listener api",
