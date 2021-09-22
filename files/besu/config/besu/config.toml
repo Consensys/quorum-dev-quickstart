@@ -30,7 +30,7 @@ permissions-nodes-config-file-enabled=true
 permissions-nodes-config-file="/config/permissions_config.toml"
 
 # bootnodes
-bootnodes=["enode://c1979a8a48693db804316b5acebe35e11731e1fb1c9c21ff7268ab25db6f6e03390a429b83cf0ec0865a7205f2669ec1ace652a3def11e2e01571c74939cbe22@172.16.239.11:30303"]
+bootnodes=["enode://8208a3f344695d44e9cf2c023683cbea7b9343e2f70a5e804bd2c93858e945f8f91439eef96a4ab6c47ff06637d6fbe6472f96de1655a1bee57ea896654f3a22@172.16.239.11:30303"]
 
 
 # Discovery at boot is set to a list of static files, but will also discover new nodes should they be added
