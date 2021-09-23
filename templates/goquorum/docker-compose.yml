@@ -392,7 +392,7 @@ services:
       - ./config/quorum/passwords.txt:/config/passwords.txt
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
-      - ./config/quorum/networkFiles/validator1:/config/keys
+      - ./config/nodes/validator1:/config/keys
       - ./logs/quorum:/var/log/quorum/
     networks:
       quorum-dev-quickstart:
@@ -405,14 +405,14 @@ services:
       - 30303
       - 9545
     environment:
-      - NODE_ID=4
+      - NODE_ID=2
       - PRIVATE_CONFIG=ignore
       - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
     volumes:
       - ./config/quorum/passwords.txt:/config/passwords.txt
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
-      - ./config/quorum/networkFiles/validator2:/config/keys
+      - ./config/nodes/validator2:/config/keys
       - ./logs/quorum:/var/log/quorum/
     networks:
       quorum-dev-quickstart:
@@ -425,14 +425,14 @@ services:
       - 30303
       - 9545
     environment:
-      - NODE_ID=4
+      - NODE_ID=3
       - PRIVATE_CONFIG=ignore
       - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
     volumes:
       - ./config/quorum/passwords.txt:/config/passwords.txt
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
-      - ./config/quorum/networkFiles/validator3:/config/keys
+      - ./config/nodes/validator3:/config/keys
       - ./logs/quorum:/var/log/quorum/
     networks:
       quorum-dev-quickstart:
@@ -452,7 +452,7 @@ services:
       - ./config/quorum/passwords.txt:/config/passwords.txt
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
-      - ./config/quorum/networkFiles/validator4:/config/keys
+      - ./config/nodes/validator4:/config/keys
       - ./logs/quorum:/var/log/quorum/
     networks:
       quorum-dev-quickstart:
@@ -474,7 +474,7 @@ services:
       - ./config/quorum/passwords.txt:/config/passwords.txt
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
-      - ./config/quorum/networkFiles/rpcnode:/config/keys
+      - ./config/nodes/rpcnode:/config/keys
       - ./logs/quorum:/var/log/quorum/
     networks:
       quorum-dev-quickstart:
@@ -489,7 +489,7 @@ services:
       - TESSERA_CONFIG_TYPE="-09"
       - NODE_ID=6
     volumes:
-      - ./config/quorum/networkFiles/member1:/config/keys
+      - ./config/nodes/member1:/config/keys
       - member1volume:/data
       - ./logs/tessera:/var/log/tessera/
     networks:
@@ -513,7 +513,7 @@ services:
       - ./config/quorum/passwords.txt:/config/passwords.txt
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
-      - ./config/quorum/networkFiles/member1:/config/keys
+      - ./config/nodes/member1:/config/keys
       - member1volume:/data
       - ./logs/quorum:/var/log/quorum/
     networks:
@@ -528,7 +528,7 @@ services:
       - TESSERA_CONFIG_TYPE="-09"
       - NODE_ID=7
     volumes:
-      - ./config/quorum/networkFiles/member2:/config/keys
+      - ./config/nodes/member2:/config/keys
       - member2volume:/data
       - ./logs/tessera:/var/log/tessera/
     networks:
@@ -552,7 +552,7 @@ services:
       - ./config/quorum/passwords.txt:/config/passwords.txt
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
-      - ./config/quorum/networkFiles/member2:/config/keys
+      - ./config/nodes/member2:/config/keys
       - member2volume:/data
       - ./logs/quorum:/var/log/quorum/
     networks:
@@ -567,7 +567,7 @@ services:
       - TESSERA_CONFIG_TYPE="-09"
       - NODE_ID=8
     volumes:
-      - ./config/quorum/networkFiles/member3:/config/keys
+      - ./config/nodes/member3:/config/keys
       - member3volume:/data
       - ./logs/tessera:/var/log/tessera/
     networks:
@@ -591,7 +591,7 @@ services:
       - ./config/quorum/passwords.txt:/config/passwords.txt
       - ./config/quorum/${QUORUM_CONS_ALGO:-istanbul}Genesis.json:/config/genesis.json
       - ./config/quorum/support:/quorum
-      - ./config/quorum/networkFiles/member3:/config/keys
+      - ./config/nodes/member3:/config/keys
       - member3volume:/data
       - ./logs/quorum:/var/log/quorum/
     networks:
