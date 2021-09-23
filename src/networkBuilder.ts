@@ -5,7 +5,7 @@ import path from "path";
 import {Spinner} from "./spinner";
 
 export interface NetworkContext {
-    clientType: "goquorum" | "besu" | "qbft";
+    clientType: "goquorum" | "besu";
     nodeCount: number;
     privacy: boolean;
     monitoring: "splunk" | "elk" | "none";
@@ -20,8 +20,7 @@ export async function buildNetwork(context: NetworkContext): Promise<void> {
     let orchestrateOutputPath = "";
 
     try {
-        const blockchainClient = context.clientType === "qbft" ? "Besu & GoQuorum" :
-                                    context.clientType === "besu" ? "Besu" : "GoQuorum" ;
+        const blockchainClient = context.clientType === "besu" ? "Besu" : "GoQuorum" ;
 
         if (context.orchestrate) {
             spinner.text = `Installing Orchestrate quickstart with ` +

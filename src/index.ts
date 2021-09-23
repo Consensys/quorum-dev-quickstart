@@ -20,7 +20,7 @@ export async function main(): Promise<void> {
 
     if(process.argv.slice(2).length > 0){
       const args = await yargs(process.argv.slice(2)).options({
-        clientType: { type: 'string', demandOption: true, choices:['besu','goquorum','qbft'], describe: 'Ethereum client to use.' },
+        clientType: { type: 'string', demandOption: true, choices:['besu','goquorum'], describe: 'Ethereum client to use.' },
         privacy: { type: 'boolean', demandOption: true, default: false, describe: 'Enable support for private transactions' },
         orchestrate: { type: 'boolean', demandOption: false, default: false, describe: 'Try out Codefi Orchestrate?' },
         monitoring: { type: 'string', demandOption: false, default: 'none', describe: 'Enable support for monitoring with Splunk or ELK.' },

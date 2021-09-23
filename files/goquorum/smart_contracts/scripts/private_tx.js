@@ -25,7 +25,7 @@ async function createContract(client, fromPrivateKey, fromPublicKey, toPublicKey
   const web3quorum = new Web3Quorum(web3, {privateUrl: client.privateUrl}, true);
 
   // unlock the account so you can sign the tx; uses web3.eth.accounts.decrypt(keystoreJsonV3, password);
-  const accountKeyPath = path.resolve(__dirname, '../../','config/quorum/networkFiles', client.name ,'accountkey');
+  const accountKeyPath = path.resolve(__dirname, '../../','config/nodes', client.name ,'accountkey');
   const accountKey = JSON.parse(fs.readFileSync(accountKeyPath));
   const signingAccount = web3.eth.accounts.decrypt(accountKey, "");
 
