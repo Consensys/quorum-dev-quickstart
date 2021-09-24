@@ -16,7 +16,7 @@ x-besu-bootnode-def:
       --config-file=/config/config.toml \
       --p2p-host=$$(hostname -i) \
       --genesis-file=/config/genesis.json \
-      --node-private-key-file=/opt/besu/keys/key \
+      --node-private-key-file=/opt/besu/keys/nodekey \
       --min-gas-price=0 \
       --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} \
       --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} ;
@@ -37,7 +37,7 @@ x-besu-def:
       --config-file=/config/config.toml \
       --p2p-host=$$(hostname -i) \
       --genesis-file=/config/genesis.json \
-      --node-private-key-file=/opt/besu/keys/key \
+      --node-private-key-file=/opt/besu/keys/nodekey \
       --min-gas-price=0 \
       --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} \
       --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} ;
@@ -72,7 +72,7 @@ x-besu-tx-def:
       --config-file=/config/config.toml \
       --p2p-host=$$(hostname -i) \
       --genesis-file=/config/genesis.json \
-      --node-private-key-file=/opt/besu/keys/key \
+      --node-private-key-file=/opt/besu/keys/nodekey \
       --min-gas-price=0 \
       --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} \
       --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} ;
@@ -364,7 +364,7 @@ services:
       - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/validator1/keys:/opt/besu/keys
+      - ./config/nodes/validator1:/opt/besu/keys
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.11
@@ -382,7 +382,7 @@ services:
       - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/validator2/keys:/opt/besu/keys
+      - ./config/nodes/validator2:/opt/besu/keys
     depends_on:
       - validator1
     networks:
@@ -402,7 +402,7 @@ services:
       - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/validator3/keys:/opt/besu/keys
+      - ./config/nodes/validator3:/opt/besu/keys
     depends_on:
       - validator1
     networks:
@@ -422,7 +422,7 @@ services:
       - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/validator4/keys:/opt/besu/keys
+      - ./config/nodes/validator4:/opt/besu/keys
     depends_on:
       - validator1
     networks:
@@ -443,7 +443,7 @@ services:
       - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
+      - ./config/nodes/rpcnode:/opt/besu/keys
     depends_on:
       - validator1
     ports:
@@ -477,7 +477,7 @@ services:
     environment:
       - TESSERA_CONFIG_TYPE="-09"
     volumes:
-      - ./config/tessera/networkFiles/member1:/config/keys
+      - ./config/nodes/member1:/config/keys
       - member1tessera:/data
       - ./logs/tessera:/var/log/tessera/
     networks:
@@ -498,11 +498,11 @@ services:
         --config-file=/config/config.toml \
         --p2p-host=$$(hostname -i) \
         --genesis-file=/config/genesis.json \
-        --node-private-key-file=/opt/besu/keys/key \
+        --node-private-key-file=/opt/besu/keys/nodekey \
         --min-gas-price=0 \
         --privacy-enabled \
         --privacy-url=http://member1tessera:9101 \
-        --privacy-public-key-file=/config/tessera/tm.pub \
+        --privacy-public-key-file=/opt/besu/keys/tm.pub \
         --privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false} \
         --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} \
         --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} ;
@@ -514,8 +514,7 @@ services:
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/member1/keys:/opt/besu/keys
-      - ./config/tessera/networkFiles/member1/tm.pub:/config/tessera/tm.pub
+      - ./config/nodes/member1:/opt/besu/keys
     depends_on:
       - validator1
       - member1tessera
@@ -533,7 +532,7 @@ services:
     environment:
       - TESSERA_CONFIG_TYPE="-09"
     volumes:
-      - ./config/tessera/networkFiles/member2:/config/keys
+      - ./config/nodes/member2:/config/keys
       - member2tessera:/data
       - ./logs/tessera:/var/log/tessera/
     networks:
@@ -554,11 +553,11 @@ services:
         --config-file=/config/config.toml \
         --p2p-host=$$(hostname -i) \
         --genesis-file=/config/genesis.json \
-        --node-private-key-file=/opt/besu/keys/key \
+        --node-private-key-file=/opt/besu/keys/nodekey \
         --min-gas-price=0 \
         --privacy-enabled \
         --privacy-url=http://member2tessera:9101 \
-        --privacy-public-key-file=/config/tessera/tm.pub \
+        --privacy-public-key-file=/opt/besu/keys/tm.pub \
         --privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false} \
         --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} \
         --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} ;
@@ -571,8 +570,7 @@ services:
       - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/member2/keys:/opt/besu/keys
-      - ./config/tessera/networkFiles/member2/tm.pub:/config/tessera/tm.pub
+      - ./config/nodes/member2:/opt/besu/keys
     depends_on:
       - validator1
       - member2tessera
@@ -590,7 +588,7 @@ services:
     environment:
       - TESSERA_CONFIG_TYPE="-09"
     volumes:
-      - ./config/tessera/networkFiles/member3:/config/keys
+      - ./config/nodes/member3:/config/keys
       - member3tessera:/data
       - ./logs/tessera:/var/log/tessera/
     networks:
@@ -611,11 +609,11 @@ services:
         --config-file=/config/config.toml \
         --p2p-host=$$(hostname -i) \
         --genesis-file=/config/genesis.json \
-        --node-private-key-file=/opt/besu/keys/key \
+        --node-private-key-file=/opt/besu/keys/nodekey \
         --min-gas-price=0 \
         --privacy-enabled \
         --privacy-url=http://member3tessera:9101 \
-        --privacy-public-key-file=/config/tessera/tm.pub \
+        --privacy-public-key-file=/opt/besu/keys/tm.pub \
         --privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false} \
         --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} \
         --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} ;
@@ -628,8 +626,7 @@ services:
       - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
       - ./logs/besu:/tmp/besu
       - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/member3/keys:/opt/besu/keys
-      - ./config/tessera/networkFiles/member3/tm.pub:/config/tessera/tm.pub
+      - ./config/nodes/member3:/opt/besu/keys
     depends_on:
       - validator1
       - member3tessera

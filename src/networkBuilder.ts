@@ -20,10 +20,11 @@ export async function buildNetwork(context: NetworkContext): Promise<void> {
     let orchestrateOutputPath = "";
 
     try {
+        const blockchainClient = context.clientType === "besu" ? "Besu" : "GoQuorum" ;
+
         if (context.orchestrate) {
             spinner.text = `Installing Orchestrate quickstart with ` +
-                `${context.clientType === "besu" ? "Besu" : "GoQuorum"} clients to` +
-                `${context.outputPath}`;
+                `${blockchainClient} clients to` + `${context.outputPath}`;
 
             await installOrchestrateImages();
 
@@ -47,8 +48,7 @@ export async function buildNetwork(context: NetworkContext): Promise<void> {
         }
 
         spinner.text = `Installing ` +
-            `${context.clientType === "besu" ? "Besu" : "GoQuorum"} quickstart ` +
-            `to ${context.outputPath}`;
+            `${blockchainClient} quickstart ` +  `to ${context.outputPath}`;
         spinner.start();
 
         const commonTemplatePath = path.resolve(templatesDirPath, "common");
