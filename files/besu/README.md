@@ -63,7 +63,7 @@ The overall architecture diagrams to visually show components of the blockchain 
 ### i. POA Network <a name="poa-network"></a>
 
 This is the simplest of the networks available and will spin up a blockchain network comprising 4 validators, 1 RPC 
-node which has an [EthSinger](http://docs.ethsigner.consensys.net/) proxy container linked to it so you can optionally sign transactions. To view the progress 
+node which has an [EthSigner](http://docs.ethsigner.consensys.net/) proxy container linked to it so you can optionally sign transactions. To view the progress 
 of the network, the Alethio block explorer can be used and is available on `http://localhost:25000`. 
 Hyperledger Besu based Quorum also deploys monitoring solutions.
 You can choose to make metrics monitoring via Prometheus available on `http://localhost:9090`, 
