@@ -174,12 +174,13 @@ x-redis-def:
 
 x-elasticsearch-def:
   &elasticsearch-def
-  build: ./elasticsearch
+  image: docker.elastic.co/elasticsearch/elasticsearch:7.14.1
   environment:
     - bootstrap.memory_lock=true
     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     - "http.host=0.0.0.0"
     - "transport.host=127.0.0.1"
+    - "discovery.type=single-node"
   ulimits:
     memlock:
       soft: -1
@@ -192,7 +193,7 @@ x-elasticsearch-def:
 
 x-kibana-def:
   &kibana-def
-  image: docker.elastic.co/kibana/kibana:7.9.3
+  image: docker.elastic.co/kibana/kibana:7.14.1
   environment:
     ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
     XPACK_MONITORING_ENABLED: "true"
