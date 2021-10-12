@@ -73,7 +73,7 @@ x-ethlogger-def:
 x-quorum-def:
   &quorum-def
   restart: "on-failure"
-  image: quorumengineering/quorum:${QUORUM_VERSION:-2.7.0}
+  image: quorumengineering/quorum:${QUORUM_VERSION:-21.7.1}
   expose:
     - 30303
     - 8545
@@ -126,7 +126,7 @@ x-quorum-def:
 x-quorum-member-def:
   &quorum-member-def
   restart: "on-failure"
-  image: quorumengineering/quorum:${QUORUM_VERSION:-2.7.0}
+  image: quorumengineering/quorum:${QUORUM_VERSION:-21.7.1}
   expose:
     - 30303
     - 8545
@@ -195,7 +195,7 @@ x-quorum-member-def:
 {% if privacy %}
 x-tessera-def:
   &tessera-def
-  image: quorumengineering/tessera:${QUORUM_TESSERA_VERSION:-0.10.5}
+  image: quorumengineering/tessera:${QUORUM_TESSERA_VERSION:-21.7.2}
   expose:
     - 9000
     - 9080
@@ -481,7 +481,9 @@ services:
     environment:
       - TESSERA_CONFIG_TYPE="-09"
       - NODE_ID=6
+      - JAVA_OPTS="-Dlogback.configurationFile=/config/logs/logback.xml"
     volumes:
+      - ./config/tessera:/config/logs
       - ./config/nodes/member1:/config/keys
       - member1volume:/data
       - ./logs/tessera:/var/log/tessera/
@@ -518,7 +520,9 @@ services:
     environment:
       - TESSERA_CONFIG_TYPE="-09"
       - NODE_ID=7
+      - JAVA_OPTS="-Dlogback.configurationFile=/config/logs/logback.xml"
     volumes:
+      - ./config/tessera:/config/logs
       - ./config/nodes/member2:/config/keys
       - member2volume:/data
       - ./logs/tessera:/var/log/tessera/
@@ -555,7 +559,9 @@ services:
     environment:
       - TESSERA_CONFIG_TYPE="-09"
       - NODE_ID=8
+      - JAVA_OPTS="-Dlogback.configurationFile=/config/logs/logback.xml"
     volumes:
+      - ./config/tessera:/config/logs
       - ./config/nodes/member3:/config/keys
       - member3volume:/data
       - ./logs/tessera:/var/log/tessera/

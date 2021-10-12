@@ -234,7 +234,8 @@ x-filebeat-def:
     - redis
   volumes:
     - ./logs/besu/:/var/log/besu/
-
+    - ./logs/tessera/:/var/log/tessera/
+    
 x-metricbeat-def:
   &metricbeat-def
   build: ./metricbeat
@@ -477,7 +478,9 @@ services:
       - 9081:9080
     environment:
       - TESSERA_CONFIG_TYPE="-09"
+      - JAVA_OPTS="-Dlogback.configurationFile=/config/logs/logback.xml"
     volumes:
+      - ./config/tessera:/config/logs
       - ./config/nodes/member1:/config/keys
       - member1tessera:/data
       - ./logs/tessera:/var/log/tessera/
@@ -532,7 +535,9 @@ services:
       - 9082:9080
     environment:
       - TESSERA_CONFIG_TYPE="-09"
+      - JAVA_OPTS="-Dlogback.configurationFile=/config/logs/logback.xml"
     volumes:
+      - ./config/tessera:/config/logs
       - ./config/nodes/member2:/config/keys
       - member2tessera:/data
       - ./logs/tessera:/var/log/tessera/
@@ -588,7 +593,9 @@ services:
       - 9083:9080
     environment:
       - TESSERA_CONFIG_TYPE="-09"
+      - JAVA_OPTS="-Dlogback.configurationFile=/config/logs/logback.xml"
     volumes:
+      - ./config/tessera:/config/logs
       - ./config/nodes/member3:/config/keys
       - member3tessera:/data
       - ./logs/tessera:/var/log/tessera/
