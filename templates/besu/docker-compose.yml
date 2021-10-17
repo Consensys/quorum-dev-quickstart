@@ -83,7 +83,7 @@ x-besu-tx-def:
 {% if privacy %}
 x-tessera-def:
   &tessera-def
-  image: quorumengineering/tessera:${QUORUM_TESSERA_VERSION:-21.1.1}
+  image: quorumengineering/tessera:${TESSERA_VERSION:-latest}
   expose:
     - 9000
     - 9080
@@ -334,7 +334,7 @@ x-docker-logging:
 {% if not orchestrate %}
 x-ethsignerProxy-def:
   &ethsignerProxy-def
-  image: consensys/quorum-ethsigner:${QUORUM_ETHSIGNER_VERSION:-latest}
+  image: consensys/quorum-ethsigner:${ETHSIGNER_VERSION:-latest}
   command: [
     "--chain-id=1337",
     "--http-listen-host=0.0.0.0",

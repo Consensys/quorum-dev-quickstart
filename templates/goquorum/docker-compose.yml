@@ -73,7 +73,7 @@ x-ethlogger-def:
 x-quorum-def:
   &quorum-def
   restart: "on-failure"
-  image: quorumengineering/quorum:${QUORUM_VERSION:-21.7.1}
+  image: quorumengineering/quorum:${QUORUM_VERSION:-latest}
   expose:
     - 30303
     - 8545
@@ -126,7 +126,7 @@ x-quorum-def:
 x-quorum-member-def:
   &quorum-member-def
   restart: "on-failure"
-  image: quorumengineering/quorum:${QUORUM_VERSION:-21.7.1}
+  image: quorumengineering/quorum:${QUORUM_VERSION:-latest}
   expose:
     - 30303
     - 8545
@@ -195,7 +195,7 @@ x-quorum-member-def:
 {% if privacy %}
 x-tessera-def:
   &tessera-def
-  image: quorumengineering/tessera:${QUORUM_TESSERA_VERSION:-21.7.2}
+  image: quorumengineering/tessera:${TESSERA_VERSION:-latest}
   expose:
     - 9000
     - 9080
@@ -280,7 +280,7 @@ x-tessera-def:
 
 x-cakeshop-def:
   &cakeshop-def
-  image: quorumengineering/cakeshop:${QUORUM_CAKESHOP_VERSION:-0.11.0}
+  image: quorumengineering/cakeshop:${QUORUM_CAKESHOP_VERSION:-latest}
   expose:
     - 8999
   restart: "no"
