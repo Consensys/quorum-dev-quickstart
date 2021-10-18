@@ -46,7 +46,7 @@ scrape_configs:
     - job_name: validator4
       scrape_interval: 15s
       scrape_timeout: 10s
-      metrics_path: /debug/metrics/c
+      metrics_path: /debug/metrics/prometheus
       scheme: http
       static_configs:
         - targets: [ validator4:9545 ]
