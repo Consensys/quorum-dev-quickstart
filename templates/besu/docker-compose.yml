@@ -11,6 +11,9 @@ x-besu-bootnode-def:
     - /bin/bash
     - -c
     - |
+
+      cp "/config/${BESU_CONS_ALGO:-QBFT}genesis.json" /config/genesis.json
+
       /opt/besu/bin/besu public-key export --to=/tmp/bootnode_pubkey;
       /opt/besu/bin/besu \
       --config-file=/config/config.toml \
@@ -18,8 +21,9 @@ x-besu-bootnode-def:
       --genesis-file=/config/genesis.json \
       --node-private-key-file=/opt/besu/keys/nodekey \
       --min-gas-price=0 \
-      --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} \
-      --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} ;
+      --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} \
+      --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
+
 
 x-besu-def:
   &besu-def
@@ -32,6 +36,8 @@ x-besu-def:
     - -c
     - |
 
+      cp "/config/${BESU_CONS_ALGO:-QBFT}genesis.json" /config/genesis.json
+
       while [ ! -f "/opt/besu/public-keys/bootnode_pubkey" ]; do sleep 5; done ;
       /opt/besu/bin/besu \
       --config-file=/config/config.toml \
@@ -39,8 +45,8 @@ x-besu-def:
       --genesis-file=/config/genesis.json \
       --node-private-key-file=/opt/besu/keys/nodekey \
       --min-gas-price=0 \
-      --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} \
-      --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} ;
+      --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} \
+      --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
 
 x-besu-tx-def:
   &besu-tx-def
@@ -68,14 +74,17 @@ x-besu-tx-def:
 
 
       while [ ! -f "/opt/besu/public-keys/bootnode_pubkey" ]; do sleep 5; done ;
+
+      cp "/config/${BESU_CONS_ALGO:-QBFT}genesis.json" /config/genesis.json
+
       /opt/besu/bin/besu \
       --config-file=/config/config.toml \
       --p2p-host=$$(hostname -i) \
       --genesis-file=/config/genesis.json \
       --node-private-key-file=/opt/besu/keys/nodekey \
       --min-gas-price=0 \
-      --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} \
-      --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_API:-IBFT} ;
+      --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} \
+      --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
 
 
 
@@ -359,14 +368,9 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator1,service.version=${BESU_VERSION:-latest}
     volumes:
       - public-keys:/tmp/
-      - ./config/besu/config.toml:/config/config.toml
-      - ./config/besu/permissions_config.toml:/config/permissions_config.toml
-      - ./config/besu/static-nodes.json:/config/static-nodes.json
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
-      - ./logs/besu:/tmp/besu
-      - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/:/config
       - ./config/nodes/validator1:/opt/besu/keys
+      - ./logs/besu:/tmp/besu
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.11
@@ -377,14 +381,9 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator2,service.version=${BESU_VERSION:-latest}
     volumes:
       - public-keys:/opt/besu/public-keys/
-      - ./config/besu/config.toml:/config/config.toml
-      - ./config/besu/permissions_config.toml:/config/permissions_config.toml
-      - ./config/besu/static-nodes.json:/config/static-nodes.json
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
-      - ./logs/besu:/tmp/besu
-      - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/:/config
       - ./config/nodes/validator2:/opt/besu/keys
+      - ./logs/besu:/tmp/besu
     depends_on:
       - validator1
     networks:
@@ -397,14 +396,9 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator3,service.version=${BESU_VERSION:-latest}
     volumes:
       - public-keys:/opt/besu/public-keys/
-      - ./config/besu/config.toml:/config/config.toml
-      - ./config/besu/permissions_config.toml:/config/permissions_config.toml
-      - ./config/besu/static-nodes.json:/config/static-nodes.json
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
-      - ./logs/besu:/tmp/besu
-      - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/:/config
       - ./config/nodes/validator3:/opt/besu/keys
+      - ./logs/besu:/tmp/besu
     depends_on:
       - validator1
     networks:
@@ -417,14 +411,9 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator4,service.version=${BESU_VERSION:-latest}
     volumes:
       - public-keys:/opt/besu/public-keys/
-      - ./config/besu/config.toml:/config/config.toml
-      - ./config/besu/permissions_config.toml:/config/permissions_config.toml
-      - ./config/besu/static-nodes.json:/config/static-nodes.json
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
-      - ./logs/besu:/tmp/besu
-      - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/:/config
       - ./config/nodes/validator4:/opt/besu/keys
+      - ./logs/besu:/tmp/besu
     depends_on:
       - validator1
     networks:
@@ -438,14 +427,9 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=rpcnode,service.version=${BESU_VERSION:-latest}
     volumes:
       - public-keys:/opt/besu/public-keys/
-      - ./config/besu/config.toml:/config/config.toml
-      - ./config/besu/permissions_config.toml:/config/permissions_config.toml
-      - ./config/besu/static-nodes.json:/config/static-nodes.json
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
-      - ./logs/besu:/tmp/besu
-      - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/:/config
       - ./config/nodes/rpcnode:/opt/besu/keys
+      - ./logs/besu:/tmp/besu
     depends_on:
       - validator1
     ports:
@@ -508,17 +492,13 @@ services:
         --privacy-url=http://member1tessera:9101 \
         --privacy-public-key-file=/opt/besu/keys/tm.pub \
         --privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false} \
-        --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} \
-        --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} ;
+        --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} \
+        --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} ;
     volumes:
       - public-keys:/opt/besu/public-keys/
-      - ./config/besu/config.toml:/config/config.toml
-      - ./config/besu/permissions_config.toml:/config/permissions_config.toml
-      - ./config/besu/static-nodes.json:/config/static-nodes.json
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/tmp/besu
-      - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/:/config
       - ./config/nodes/member1:/opt/besu/keys
+      - ./logs/besu:/tmp/besu
     depends_on:
       - validator1
       - member1tessera
@@ -565,18 +545,13 @@ services:
         --privacy-url=http://member2tessera:9101 \
         --privacy-public-key-file=/opt/besu/keys/tm.pub \
         --privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false} \
-        --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} \
-        --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} ;
+        --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} \
+        --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} ;
     volumes:
       - public-keys:/opt/besu/public-keys/
-      - ./config/besu/config.toml:/config/config.toml
-      - ./config/besu/permissions_config.toml:/config/permissions_config.toml
-      - ./config/besu/static-nodes.json:/config/static-nodes.json
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
-      - ./logs/besu:/tmp/besu
-      - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/:/config
       - ./config/nodes/member2:/opt/besu/keys
+      - ./logs/besu:/tmp/besu
     depends_on:
       - validator1
       - member2tessera
@@ -623,18 +598,13 @@ services:
         --privacy-url=http://member3tessera:9101 \
         --privacy-public-key-file=/opt/besu/keys/tm.pub \
         --privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false} \
-        --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} \
-        --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_API:-IBFT} ;
+        --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} \
+        --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} ;
     volumes:
       - public-keys:/opt/besu/public-keys/
-      - ./config/besu/config.toml:/config/config.toml
-      - ./config/besu/permissions_config.toml:/config/permissions_config.toml
-      - ./config/besu/static-nodes.json:/config/static-nodes.json
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./config/besu/log-config-splunk.xml:/config/log-config-splunk.xml
-      - ./logs/besu:/tmp/besu
-      - ./config/besu/${BESU_CONS_ALGO:-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/:/config
       - ./config/nodes/member3:/opt/besu/keys
+      - ./logs/besu:/tmp/besu
     depends_on:
       - validator1
       - member3tessera
