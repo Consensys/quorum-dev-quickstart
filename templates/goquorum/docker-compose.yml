@@ -78,29 +78,36 @@ x-quorum-def:
     - 30303
     - 8545
     - 9545
-  labels:
-    com.quorum.consensus: ${QUORUM_CONSENSUS:-istanbul}
   healthcheck:
     test: ["CMD", "wget", "--spider", "--proxy", "off", "http://localhost:8545"]
     interval: 3s
     timeout: 3s
     retries: 10
     start_period: 5s
-  environment:
-    - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
   entrypoint:
     - /bin/sh
     - -c
     - |
-      CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints"
-      if [ "raft" == $$QUORUM_CONSENSUS ];
+      if [ "istanbul" == "$GOQUORUM_CONS_ALGO" ]; 
       then
-        CONSENSUS_ARGS="--raft --raftblocktime 300 --raftport 53000"
+        echo "Using istanbul for consensus algorithm..."
+        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints"
+        export QUORUM_API="istanbul"
+      elif [ "qbft" == "$GOQUORUM_CONS_ALGO" ]; 
+      then 
+        echo "Using qbft for consensus algorithm..."
+        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints"
+        export QUORUM_API="istanbul,qbft"
+      elif [ "raft" == "$GOQUORUM_CONS_ALGO" ]; 
+      then 
+        echo "Using raft for consensus algorithm..."
+        export CONSENSUS_ARGS="--raft --raftblocktime 300 --raftport 53000"
+        export QUORUM_API="raft"
       fi
 
       mkdir -p /config /data /var/log/quorum/;
       cp /quorum/passwords.txt /config/passwords.txt
-      cp /quorum/$${QUORUM_CONS_ALGO:-istanbul}Genesis.json /config/genesis.json
+      cp "/quorum/${GOQUORUM_CONS_ALGO}Genesis.json" /config/genesis.json
       cp -r /quorum/* /data;
       geth --datadir=/data init /config/genesis.json;
       cp /config/keys/accountkey /data/keystore/key;
@@ -114,9 +121,10 @@ x-quorum-def:
       --syncmode full --nousb \
       --metrics --pprof --pprofaddr 0.0.0.0 --pprofport 9545 \
       --networkid $${QUORUM_NETWORK_ID:-1337} \
-      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_CONSENSUS \
+      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
+      --ws --wsaddr 0.0.0.0 --wsport 8546 --wsorigins "*" --wsapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
       --port 30303 \
-      --identity node$${NODE_ID}-$$QUORUM_CONSENSUS \
+      --identity node$${NODE_ID}-$${GOQUORUM_CONS_ALGO} \
       --unlock 0 \
       --allow-insecure-unlock \
       --password /config/passwords.txt \
@@ -131,16 +139,12 @@ x-quorum-member-def:
     - 30303
     - 8545
     - 9545
-  labels:
-    com.quorum.consensus: ${QUORUM_CONSENSUS:-istanbul}
   healthcheck:
     test: ["CMD", "wget", "--spider", "--proxy", "off", "http://localhost:8545"]
     interval: 3s
     timeout: 3s
     retries: 10
     start_period: 5s
-  environment:
-    - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
   entrypoint:
     - /bin/sh
     - -c
@@ -158,15 +162,26 @@ x-quorum-member-def:
       done
       {% endif %}
 
-      CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints"
-      if [ "raft" == $$QUORUM_CONSENSUS ];
+      if [ "istanbul" == "$GOQUORUM_CONS_ALGO" ]; 
       then
-        CONSENSUS_ARGS="--raft --raftblocktime 300 --raftport 53000"
+        echo "Using istanbul for consensus algorithm..."
+        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints"
+        export QUORUM_API="istanbul"
+      elif [ "qbft" == "$GOQUORUM_CONS_ALGO" ]; 
+      then 
+        echo "Using qbft for consensus algorithm..."
+        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints"
+        export QUORUM_API="istanbul,qbft"
+      elif [ "raft" == "$GOQUORUM_CONS_ALGO" ]; 
+      then 
+        echo "Using raft for consensus algorithm..."
+        export CONSENSUS_ARGS="--raft --raftblocktime 300 --raftport 53000"
+        export QUORUM_API="raft"
       fi
 
       mkdir -p /config /data/dd /var/log/quorum/;
       cp /quorum/passwords.txt /config/passwords.txt
-      cp /quorum/$${QUORUM_CONS_ALGO:-istanbul}Genesis.json /config/genesis.json
+      cp "/quorum/${GOQUORUM_CONS_ALGO}Genesis.json" /config/genesis.json
       cp -r /quorum/* /data/dd/;
       geth --datadir=/data/dd init /config/genesis.json;
       cp /config/keys/accountkey /data/dd/keystore/key;
@@ -180,10 +195,10 @@ x-quorum-member-def:
       --syncmode full --nousb \
       --metrics --pprof --pprofaddr 0.0.0.0 --pprofport 9545 \
       --networkid $${QUORUM_NETWORK_ID:-1337} \
-      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_CONSENSUS \
-      --ws --wsaddr 0.0.0.0 --wsport 8546 --wsorigins "*" --wsapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_CONSENSUS \
+      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
+      --ws --wsaddr 0.0.0.0 --wsport 8546 --wsorigins "*" --wsapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
       --port 30303 \
-      --identity node$${NODE_ID}-$$QUORUM_CONSENSUS \
+      --identity node$${NODE_ID}-$${GOQUORUM_CONS_ALGO} \
       --ptm.timeout 5 --ptm.url $${QUORUM_PTM_URL} --ptm.http.writebuffersize 4096 --ptm.http.readbuffersize 4096 --ptm.tls.mode off \
       --unlock 0 \
       --allow-insecure-unlock \
@@ -390,7 +405,6 @@ services:
     environment:
       - NODE_ID=1
       - PRIVATE_CONFIG=ignore
-      - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
     volumes:
       - ./config/goquorum:/quorum
       - ./config/nodes/validator1:/config/keys
@@ -408,7 +422,6 @@ services:
     environment:
       - NODE_ID=2
       - PRIVATE_CONFIG=ignore
-      - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
     volumes:
       - ./config/goquorum:/quorum
       - ./config/nodes/validator2:/config/keys
@@ -426,7 +439,6 @@ services:
     environment:
       - NODE_ID=3
       - PRIVATE_CONFIG=ignore
-      - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
     volumes:
       - ./config/goquorum:/quorum
       - ./config/nodes/validator3:/config/keys
@@ -444,7 +456,6 @@ services:
     environment:
       - NODE_ID=4
       - PRIVATE_CONFIG=ignore
-      - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
     volumes:
       - ./config/goquorum:/quorum
       - ./config/nodes/validator4:/config/keys
@@ -464,7 +475,6 @@ services:
     environment:
       - NODE_ID=5
       - PRIVATE_CONFIG=ignore
-      - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
     volumes:
       - ./config/goquorum:/quorum
       - ./config/nodes/rpcnode:/config/keys
@@ -502,7 +512,6 @@ services:
       - member1tessera
     environment:
       - NODE_ID=6
-      - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
       - QUORUM_PTM_URL=http://member1tessera:9101
     volumes:
       - ./config/goquorum:/quorum
@@ -541,7 +550,6 @@ services:
       - member2tessera
     environment:
       - NODE_ID=7
-      - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
       - QUORUM_PTM_URL=http://member2tessera:9101
     volumes:
       - ./config/goquorum:/quorum
@@ -580,7 +588,6 @@ services:
       - member3tessera
     environment:
       - NODE_ID=8
-      - QUORUM_CONSENSUS=${QUORUM_CONS_ALGO:-istanbul}
       - QUORUM_PTM_URL=http://member3tessera:9101
     volumes:
       - ./config/goquorum:/quorum
