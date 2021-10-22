@@ -1,6 +1,8 @@
 # Orchestrate Quickstart
 
-Orchestrate is a platform that enables enterprises to easily build secure and reliable applications on Ethereum blockchains. 
+Orchestrate is a platform developed under the [BSL 1.1](LICENSE) license and written in Go. 
+
+Orchestrate enables enterprises to easily build secure and reliable applications on Ethereum blockchains. 
 It provides advanced features when connected to blockchain networks like:
 - Transaction management (transaction crafting, gas management, nonce management, and transaction listening)
 - Account management with private key storage in Hashicorp Vault
@@ -9,10 +11,6 @@ It provides advanced features when connected to blockchain networks like:
 - Multi-chain.
 
 For more information, refer to the Codefi Orchestrate official [Documentation](http://docs.orchestrate.consensys.net).
-
-| ⚠️ **Note**: Orchestrate is available free of charge for a trial period. To get access to the artifacts and continue, please create a free account [HERE](https://accounts.quorum.consensys.net/auth/realms/quorum/account)    |
-| ---
-
 
 | ⚠️ **Note**: If you have an existing Quorum quickstart running, please stop it before proceeding. The Orchestrate quickstart spins up an Ethereum client which serves as an RPC endpoint. If you have an existing RPC endpoint, please update the `NETWORK_ENDPOINT` in the `.env` file and comment out the eth_client container in the file `<output_folder>/orchestrate/scripts/deps/docker-compose.yml` |
 | ---
