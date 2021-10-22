@@ -30,3 +30,18 @@
       address: http://vault:8200
       token: "DevVaultToken"
       namespace: ''
+{% if clientType == "goquorum" %}
+- kind: Node
+  name: quorum-node
+  specs:
+    rpc:
+      addr: http://network_member1quorum_1:8545
+    tessera:
+      addr: http://network_member1tessera_1:9080
+{% else %}
+- kind: Node
+  name: besu-node
+  specs:
+    rpc:
+      addr: http://network_member1besu_1:8545
+{% endif %}
