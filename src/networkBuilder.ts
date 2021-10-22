@@ -1,4 +1,3 @@
-import {installOrchestrateImages} from "./service/orchestrate";
 import {renderTemplateDir, validateDirectoryExists, copyFilesDir} from "./fileRendering";
 import path from "path";
 
@@ -25,8 +24,6 @@ export async function buildNetwork(context: NetworkContext): Promise<void> {
         if (context.orchestrate) {
             spinner.text = `Installing Orchestrate quickstart with ` +
                 `${blockchainClient} clients to` + `${context.outputPath}`;
-
-            await installOrchestrateImages();
 
             spinner.start();
             const orchestrateTemplatePath = path.resolve(templatesDirPath, "orchestrate");

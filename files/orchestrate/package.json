@@ -4,8 +4,7 @@
   "description": "Codefi Orchestrate Quick start",
   "config": {
     "services": "api tx-sender tx-listener",
-    "deps": "vault postgres kafka",
-    "key-manager": "key-manager"
+    "deps": "vault postgres kafka"
   },
   "scripts": {
     "lint": "tslint -p . -c tslint.json",
@@ -33,8 +32,8 @@
     "orchestrate": "orchestrate --help",
     "generate-jwt": "docker-compose run generate-jwt",
     "up-network": "./network.sh up",
-    "up-deps": "docker-compose -f scripts/deps/docker-compose.yml up -d ${npm_package_config_deps}",
-    "up-key-manager": "docker-compose -f docker-compose.key-manager.yml up -d ${key-manager}",
+    "up-deps": "docker-compose -f docker-compose.deps.yml up -d ${npm_package_config_deps}",
+    "up-key-manager": "docker-compose -f docker-compose.qkm.yml up -d key-manager",
     "up-orchestrate": "docker-compose up -d ${npm_package_config_services}",
     "stop-orchestrate": "docker-compose stop ${npm_package_config_services}",
     "down-orchestrate": "docker-compose down --volumes --timeout 0",
