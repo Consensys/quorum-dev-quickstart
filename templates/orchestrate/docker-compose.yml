@@ -19,7 +19,7 @@ x-default-variables: &default-variables
 
 x-container-common: &container-common
   restart: ${CONTAINER_RESTART-on-failure}
-  image: consensys/orchestrate:v21.10.1-alpha2
+  image: consensys/orchestrate:v21.10.1-alpha.2
   networks:
   - orchestrate
   - deps
