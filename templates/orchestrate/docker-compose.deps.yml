@@ -13,8 +13,6 @@ services:
     restart: "no"
     cap_add:
     - IPC_LOCK
-    volumes:
-    - vault-token:/vault/token
     environment:
       VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_TOKEN-DevVaultToken}
       VAULT_ADDR: http://vault:8200
@@ -36,6 +34,7 @@ services:
       start_period: 5s
 
   zookeeper:
+    <<: *container-common
     image: confluentinc/cp-zookeeper:5.4.3
     ports:
     - ${ZOOKEEPER_EXTERNAL_PORT-2181}:2181
@@ -44,6 +43,7 @@ services:
       ZOOKEEPER_TICK_TIME: ${ZOOKEEPER_TICK_TIME-2000}
 
   kafka:
+    <<: *container-common
     image: confluentinc/cp-kafka:5.4.3
     depends_on:
     - zookeeper
@@ -65,6 +65,7 @@ services:
       start_period: 5s
 
   postgres:
+    <<: *container-common
     image: postgres:13.4-alpine
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-postgres}

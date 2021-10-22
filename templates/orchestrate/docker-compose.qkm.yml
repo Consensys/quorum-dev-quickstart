@@ -27,9 +27,10 @@ x-container-common: &container-common
   restart: ${CONTAINER_RESTART-on-failure}
   networks:
   - deps
+  - qkm
 
 services:
-  migration:
+  key-manager-migration:
     <<: *container-common
     image: consensys/quorum-key-manager:v21.9.2
     environment:
@@ -46,10 +47,10 @@ services:
     - 8080:8080
     - 8081:8081
     depends_on:
-    - migration
+    - key-manager-migration
     command: run
     volumes:
-    - ${./manifests}:/manifests:ro
+    - ${HOST_MANIFEST_PATH-./manifests}:/manifests:ro
 
 volumes:
   db-data:
