@@ -65,7 +65,7 @@ _privacyQuestion.transformerValidator = _getYesNoValidator(_privacyQuestion, _mo
 
 const _orchestrateQuestion: QuestionTree = {
     name: "orchestrate",
-    prompt: "Do you want to try out Codefi Orchestrate? Note: choosing yes will direct you to a login/registration page. [Y/n]",
+    prompt: "Do you want to try out Codefi Orchestrate? [Y/n]",
 
     transformerValidator: (rawInput: string, answers: AnswerMap) => {
         const normalizedInput = rawInput.toLowerCase();
@@ -78,7 +78,7 @@ const _orchestrateQuestion: QuestionTree = {
             if (answers.orchestrate) {
                 return _outputDirQuestion;
             } else {
-                return _privacyQuestion;
+                return _quorumKeyManagerQuestion;
             }
         } else {
             console.log(chalk.red("Sorry, but I didn't understand your answer. Please select Y or N,\n" +
@@ -86,6 +86,31 @@ const _orchestrateQuestion: QuestionTree = {
             return _orchestrateQuestion;
         }
     }
+};
+
+const _quorumKeyManagerQuestion: QuestionTree = {
+  name: "quorumKeyManager",
+  prompt: "Do you want to try out Quorum Key Manager? [Y/n]",
+
+  transformerValidator: (rawInput: string, answers: AnswerMap) => {
+    const normalizedInput = rawInput.toLowerCase();
+
+    if (!normalizedInput) {
+      answers.quorumKeyManager = true;
+      return _outputDirQuestion;
+    } else if (normalizedInput === "y" || normalizedInput === "n") {
+      answers.quorumKeyManager = normalizedInput === "y";
+      if (answers.quorumKeyManager) {
+        return _outputDirQuestion;
+      } else {
+        return _privacyQuestion;
+      }
+    } else {
+      console.log(chalk.red("Sorry, but I didn't understand your answer. Please select Y or N,\n" +
+        "or just hit enter if you want the default.\n"));
+      return _quorumKeyManagerQuestion;
+    }
+  }
 };
 
 const bannerText = String.raw`

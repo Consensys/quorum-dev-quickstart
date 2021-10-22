@@ -23,6 +23,7 @@ export async function main(): Promise<void> {
         clientType: { type: 'string', demandOption: true, choices:['besu','goquorum'], describe: 'Ethereum client to use.' },
         privacy: { type: 'boolean', demandOption: true, default: false, describe: 'Enable support for private transactions' },
         orchestrate: { type: 'boolean', demandOption: false, default: false, describe: 'Try out Codefi Orchestrate?' },
+        quorumKeyManager: { type: 'boolean', demandOption: false, default: false, describe: 'Try out Quorum Key Manager? ' },
         monitoring: { type: 'string', demandOption: false, default: 'none', describe: 'Enable support for monitoring with Splunk or ELK.' },
         outputPath: { type: 'string', demandOption: false, default: './quorum-test-network', describe: 'Location for config files.'}
       }).argv;
@@ -33,6 +34,7 @@ export async function main(): Promise<void> {
         monitoring: args.monitoring,
         privacy: args.privacy,
         orchestrate: args.orchestrate,
+        quorumKeyManager: args.quorumKeyManager,
       };
 
     } else{

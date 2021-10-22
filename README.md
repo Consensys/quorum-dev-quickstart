@@ -59,8 +59,10 @@ installed, then answer the following questions.
 Which Ethereum client would you like to run? Default: [1]
 	1. Hyperledger Besu
 	2. GoQuorum
-...
-  Do you want to try out Codefi Orchestrate? Note: choosing yes will direct you to a login/registration page. [Y/n]
+  ...
+  Do you want to try out Codefi Orchestrate? [Y/n]
+  ...
+  Do you want to try out Quorum Key Manager? [Y/n]
   ...
   Do you wish to enable support for private transactions? [Y/n]
   ...
@@ -85,7 +87,7 @@ $> cd quorum-test-network
 Alternatively, you can use cli options and skip the prompt above like so:
 
 ```
-npx quorum-dev-quickstart --clientType besu --outputPath ./quorum-test-network --monitoring default --privacy true --orchestrate false
+npx quorum-dev-quickstart --clientType besu --outputPath ./quorum-test-network --monitoring default --privacy true --orchestrate false --quorumKeyManager false
 ```
 
 The arguments ```--privacy``` and ```--clientType``` are required, the others contain defaults if left blank.
@@ -96,4 +98,5 @@ Follow the README.md file of select artifact:
 1. [Hyperledger Besu](./files/besu/README.md)
 2. [GoQuorum](./files/goquorum/README.md)
 3. [Codefi Orchestrate](./files/orchestrate/README.md)
+3. [Quorum Key Manager](./files/quorum-key-manager/README.md)
 
