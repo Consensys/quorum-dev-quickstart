@@ -1,10 +1,11 @@
 {
   "name": "codefi-orchestrate-quick-start",
-  "version": "3.1.2",
+  "version": "3.2.0",
   "description": "Codefi Orchestrate Quick start",
   "config": {
-    "services": "key-manager tx-sender tx-listener api",
-    "deps": "vault-init vault vault-agent postgres-api zookeeper kafka"
+    "services": "api tx-sender tx-listener",
+    "deps": "vault postgres kafka",
+    "key-manager": "key-manager"
   },
   "scripts": {
     "lint": "tslint -p . -c tslint.json",
@@ -33,21 +34,20 @@
     "generate-jwt": "docker-compose run generate-jwt",
     "up-network": "./network.sh up",
     "up-deps": "docker-compose -f scripts/deps/docker-compose.yml up -d ${npm_package_config_deps}",
+    "up-key-manager": "docker-compose -f docker-compose.key-manager.yml up -d ${key-manager}",
     "up-orchestrate": "docker-compose up -d ${npm_package_config_services}",
     "stop-orchestrate": "docker-compose stop ${npm_package_config_services}",
     "down-orchestrate": "docker-compose down --volumes --timeout 0",
-    "down-deps": "docker-compose -f scripts/deps/docker-compose.yml down --volumes --timeout 0",
+    "down-deps": "docker-compose -f docker-compose.deps.yml down --volumes --timeout 0",
     "down-network": "./network.sh down",
-    "up": "npm run up-deps && npm run up-network && npm run up-orchestrate",
+    "up": "npm run up-deps && npm run up-key-manager && npm run up-network && npm run up-orchestrate",
     "down": "npm run down-orchestrate ; npm run down-deps; npm run down-network",
     "start": "npm run up",
-    "stop": "npm run down",
-    "hashicorp-token-lookup": "bash scripts/deps/hashicorp/vault.sh token lookup",
-    "hashicorp-vault": "bash -x scripts/deps/hashicorp/vault.sh"
+    "stop": "npm run down"
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/ConsenSys/client/fr/core-stack/quick-start.git"
+    "url": "https://github.com/ConsenSys/quorum-dev-quickstart"
   },
   "keywords": [
     "Blockchain",

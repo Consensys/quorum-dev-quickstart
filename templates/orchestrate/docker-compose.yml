@@ -1,0 +1,144 @@
+version: '3.7'
+
+x-default-variables: &default-variables
+  API_URL: ${API_URL-http://api:8081}
+  API_METRICS_URL: ${API_METRICS_URL-http://api:8082}
+  KEY_MANAGER_URL: ${KEY_MANAGER_URL-http://key-manager:8081}
+  KEY_MANAGER_METRICS_URL: ${KEY_MANAGER_URL-http://key-manager:8082}
+  TX_SENDER_METRICS_URL: ${TX_SENDER_METRICS_URL-http://tx-sender:8082}
+  TX_LISTENER_METRICS_URL: ${TX_LISTENER_METRICS_URL-http://tx-listener:8082}
+  LOG_LEVEL: ${LOG_LEVEL-info}
+  LOG_FORMAT: ${LOG_FORMAT-text}
+  NONCE_MANAGER_TYPE: ${NONCE_MANAGER_TYPE-in-memory}
+  VAULT_ADDR: ${VAULT_ADDR-http://vault:8200}
+  MULTI_TENANCY_ENABLED: ${MULTI_TENANCY_ENABLED-false}
+  AUTH_JWT_CLAIMS_NAMESPACE: ${AUTH_JWT_CLAIMS_NAMESPACE-http://tenant.info/}
+  AUTH_JWT_CERTIFICATE: ${AUTH_JWT_CERTIFICATE-}
+  AUTH_API_KEY: ${AUTH_API_KEY-}
+  KAFKA_URL: ${KAFKA_URL-kafka:29092}
+  KAFKA_SASL_ENABLED: ${KAFKA_SASL_ENABLED-false}
+  KAFKA_SASL_MECHANISM: ${KAFKA_SASL_MECHANISM-PLAIN}
+  KAFKA_SASL_USER: ${KAFKA_SASL_USER-}
+  KAFKA_SASL_PASSWORD: ${KAFKA_SASL_PASSWORD-}
+  KAFKA_TLS_ENABLED: ${KAFKA_TLS_ENABLED-false}
+  KAFKA_TLS_INSECURE_SKIP_VERIFY: ${KAFKA_TLS_INSECURE_SKIP_VERIFY-false}
+  DB_TLS_SSLMODE: ${DB_TLS_SSLMODE-}
+  DB_TLS_CERT: ${DB_TLS_CERT-}
+  DB_TLS_KEY: ${DB_TLS_KEY-}
+  DB_TLS_CA: ${DB_TLS_CA-}
+  METRICS_MODULES: ${METRICS_MODULES-}
+  VAULT_TOKEN_FILE: ${VAULT_TOKEN_FILE-/vault/token/.vault-token}
+  ETH_CLIENT_RETRY_MAX_ELAPSED_TIME: 5s
+
+x-container-common: &container-common
+  restart: ${CONTAINER_RESTART-on-failure}
+  image: orchestrate:v21.1.5
+  networks:
+    - orchestrate
+    - quickstart
+
+x-proxy-common: &proxy-common
+  PROXY_MAXIDLECONNSPERHOST: ${PROXY_MAXIDLECONNSPERHOST-}
+  PROXY_CACHE_TTL: ${PROXY_CACHE_TTL-}
+
+x-api-common: &api-common
+  API_STORE_TYPE: ${API_STORE_TYPE-}
+  DB_HOST: postgres-api
+
+x-key-manager-common: &key-manager-common
+  KEY_MANAGER_TYPE: ${KEY_MANAGER_TYPE-}
+
+services:
+  api-migration-init:
+    <<: *container-common
+    environment:
+      <<: *default-variables
+      <<: *api-common
+    restart: 'no'
+    command: api migrate init
+
+  api-migration:
+    <<: *container-common
+    environment:
+      <<: *default-variables
+      <<: *api-common
+    restart: 'no'
+    depends_on:
+      - api-migration-init
+      - key-manager
+    command: api migrate up
+
+  api:
+    <<: *container-common
+    ports:
+      - 8031:8081
+      - 8032:8082
+    environment:
+      <<: *default-variables
+      <<: *api-common
+      <<: *proxy-common
+    depends_on:
+      - api-migration
+      - key-manager
+    command: api run
+    labels:
+      filebeat: "false"
+
+  key-manager:
+    <<: *container-common
+    ports:
+      - 8091:8081
+      - 8092:8082
+    environment:
+      <<: *default-variables
+      <<: *key-manager-common
+    entrypoint: ["/bin/sh","-c"]
+    command:
+    - |
+      /bin/sh /wait_for_token.sh
+      /go/bin/main key-manager run
+    volumes:
+      - vault-token:/vault/token
+      - ./scripts/deps/hashicorp/wait_for_token.sh:/wait_for_token.sh
+
+  tx-sender:
+    <<: *container-common
+    ports:
+      - 8062:8082
+    environment:
+      <<: *default-variables
+      SECRET_STORE: ${SECRET_STORE-hashicorp}
+    depends_on:
+      - api
+    command: tx-sender run
+
+  tx-listener:
+    ports:
+      - 8082:8082
+    <<: *container-common
+    environment:
+      <<: *default-variables
+    depends_on:
+      - api
+    command: tx-listener run
+
+  generate-jwt:
+    <<: *container-common
+    environment:
+      <<: *default-variables
+      AUTH_JWT_PRIVATE_KEY: ${AUTH_JWT_PRIVATE_KEY-}
+    command: utils generate-jwt --tenant=${TENANT_ID-_} --expiration=${EXPIRATION-24h}
+    restart: "no"
+
+volumes:
+  vault-token:
+    external:
+      name: deps_vault-token
+
+networks:
+  orchestrate:
+    external:
+      name: deps_orchestrate
+  quickstart:
+    external:
+      name: network_quorum-dev-quickstart
