@@ -32,7 +32,7 @@ export async function buildNetwork(context: NetworkContext): Promise<void> {
     try {
         const blockchainClient = context.clientType === "besu" ? "Besu" : "GoQuorum" ;
 
-        if (projectToolName != "") {
+        if (projectToolName !== "") {
             spinner.text = `Installing ${projectToolName} quickstart with ` +
                 `${blockchainClient} clients to` + `${context.outputPath}`;
 
@@ -83,7 +83,7 @@ export async function buildNetwork(context: NetworkContext): Promise<void> {
 
         await spinner.succeed(`Installation complete.`);
 
-        if (projectToolName != "") {
+        if (projectToolName !== "") {
             console.log();
             console.log(`To start ${projectToolName}, run 'npm install' and 'npm start' in the directory, '${projectToolOutputPath}'`);
             console.log(`For more information on the Orchestrate, see 'README.md' in the directory, '${projectToolOutputPath}'`);
