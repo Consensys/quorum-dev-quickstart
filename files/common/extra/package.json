@@ -1,0 +1,12 @@
+{
+  "name": "@consensys-software/generate_node_details",
+  "version": "1.0.0",
+  "description": "Example script to create nodekeys and address for a Quorum node",
+  "scripts": {},
+  "license": "Apache-2.0",
+  "dependencies": {
+    "secp256k1": "^4.0.0",
+    "keccak": "^3.0.0",
+    "web3": "^1.6.0"
+  }
+}
