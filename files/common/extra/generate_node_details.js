@@ -3,12 +3,8 @@ const keccak = require('keccak')
 const { randomBytes } = require('crypto')
 const fs = require('fs')
 const Web3 = require('web3');
+const Wallet = require('ethereumjs-wallet');
  
-let web3 = new Web3('http://localhost:8545')
-let account = web3.eth.accounts.create();
-var V3KeyStore = web3.eth.accounts.encrypt(account.privateKey, "Password");
-console.log(JSON.stringify(V3KeyStore));
-
 function generatePrivateKey() {
   let privKey
   do {
@@ -36,33 +32,33 @@ function generateNodeData() {
   let privateKey = generatePrivateKey()
   let publicKey = derivePublicKey(privateKey)
   let address = deriveAddress(publicKey)
-  return {
-    privateKey : privateKey,
-    publicKey: publicKey,
-    address: address,
-  }
+  console.log("keys created, writing to file...")
+  fs.writeFileSync("nodekey", privateKey.toString('hex'));
+  fs.writeFileSync("nodekey.pub", publicKey.toString('hex'));
+  fs.writeFileSync("address", address.toString('hex'));
 }
 
-function generateV3Keystore(host, password) {
-  let web3 = new Web3(host)
-  let account = web3.eth.accounts.create();
-  var V3KeyStore = web3.eth.accounts.encrypt(account.privateKey, password);
+async function main(password) {
+
+  // generate nodekeys
+  generateNodeData();
+
+  // generate account
+  const wallet = Wallet['default'].generate();
+  const v3keystore = await wallet.toV3(password);
+  console.log("account created, writing to file...")
+  fs.writeFileSync("accountkey", JSON.stringify(v3keystore));
+  fs.writeFileSync("account.key", wallet.getPrivateKeyString());
+  fs.writeFileSync("account.password", password);
   return {
-    privateKey: account.privateKey,
-    keystore: JSON.stringify(V3KeyStore),
+    privateKey: wallet.getPrivateKeyString(),
+    keystore: JSON.stringify(v3keystore),
     password: password
   }
 }
 
-keydata = generateNodeData();
-console.log("keys created, writing to file...")
-fs.writeFileSync("nodekey", keydata.privateKey.toString('hex'));
-fs.writeFileSync("nodekey.pub", keydata.publicKey.toString('hex'));
-fs.writeFileSync("address", keydata.address.toString('hex'));
-
-// Ensure you run this with a running node ie 'http://localhost:8545'
-account = generateV3Keystore('http://localhost:8545', 'Password');
-console.log("account created, writing to file...")
-fs.writeFileSync("account", account.keystore);
-fs.writeFileSync("account.key", account.privateKey);
-fs.writeFileSync("account.password", account.password);
+try {
+  main('Password');
+} catch {
+  console.error(e)
+}
