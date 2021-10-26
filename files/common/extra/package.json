@@ -7,7 +7,7 @@
   "dependencies": {
     "secp256k1": "^4.0.0",
     "keccak": "^3.0.0",
-    "web3": "^1.6.0",
-    "ethereumjs-wallet": "^1.0.2"
+    "ethereumjs-wallet": "^1.0.2",
+    "yargs": "^17.2.1"
   }
 }

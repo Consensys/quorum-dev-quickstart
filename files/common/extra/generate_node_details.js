@@ -2,9 +2,9 @@ const secp256k1 = require('secp256k1')
 const keccak = require('keccak')
 const { randomBytes } = require('crypto')
 const fs = require('fs')
-const Web3 = require('web3');
 const Wallet = require('ethereumjs-wallet');
- 
+const yargs = require('yargs/yargs');
+
 function generatePrivateKey() {
   let privKey
   do {
@@ -58,7 +58,11 @@ async function main(password) {
 }
 
 try {
-  main('Password');
+  const args = yargs(process.argv.slice(2)).options({
+    password: { type: 'string', demandOption: false, default: '', describe: 'Password for the account' }
+  }).argv;
+  main(args.password);
 } catch {
   console.error(e)
 }
+
