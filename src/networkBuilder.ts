@@ -50,8 +50,6 @@ export async function buildNetwork(context: NetworkContext): Promise<void> {
 
             projectToolOutputPath = context.outputPath;
             context.outputPath += "/network";
-            context.privacy = true;
-            context.monitoring = "none";
             context.nodeCount = 3;
         }
 

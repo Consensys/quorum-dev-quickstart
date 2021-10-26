@@ -52,10 +52,6 @@ services:
     volumes:
     - ${HOST_MANIFEST_PATH-./manifests}:/manifests:ro
 
-volumes:
-  db-data:
-    driver: local
-
 networks:
   qkm:
     name: qkm_quorum-dev-quickstart

@@ -72,18 +72,18 @@ const _orchestrateQuestion: QuestionTree = {
 
         if (!normalizedInput) {
             answers.orchestrate = true;
-            return _outputDirQuestion;
         } else if (normalizedInput === "y" || normalizedInput === "n") {
             answers.orchestrate = normalizedInput === "y";
-            if (answers.orchestrate) {
-                return _outputDirQuestion;
-            } else {
-                return _quorumKeyManagerQuestion;
-            }
         } else {
             console.log(chalk.red("Sorry, but I didn't understand your answer. Please select Y or N,\n" +
                 "or just hit enter if you want the default.\n"));
             return _orchestrateQuestion;
+        }
+
+        if (answers.orchestrate) {
+          return _privacyQuestion;
+        } else {
+          return _quorumKeyManagerQuestion;
         }
     }
 };
@@ -97,19 +97,15 @@ const _quorumKeyManagerQuestion: QuestionTree = {
 
     if (!normalizedInput) {
       answers.quorumKeyManager = true;
-      return _outputDirQuestion;
     } else if (normalizedInput === "y" || normalizedInput === "n") {
       answers.quorumKeyManager = normalizedInput === "y";
-      if (answers.quorumKeyManager) {
-        return _outputDirQuestion;
-      } else {
-        return _privacyQuestion;
-      }
     } else {
       console.log(chalk.red("Sorry, but I didn't understand your answer. Please select Y or N,\n" +
         "or just hit enter if you want the default.\n"));
       return _quorumKeyManagerQuestion;
     }
+
+    return _privacyQuestion;
   }
 };
 

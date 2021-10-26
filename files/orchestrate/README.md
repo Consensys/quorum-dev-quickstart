@@ -1,7 +1,5 @@
 # Orchestrate Quickstart
 
-Orchestrate is a platform developed under the [BSL 1.1](LICENSE) license and written in Go. 
-
 Orchestrate enables enterprises to easily build secure and reliable applications on Ethereum blockchains. 
 It provides advanced features when connected to blockchain networks like:
 - Transaction management (transaction crafting, gas management, nonce management, and transaction listening)
@@ -9,6 +7,8 @@ It provides advanced features when connected to blockchain networks like:
 - Smart contract registry
 - Public and private transactions
 - Multi-chain.
+
+Orchestrate is a platform developed under the [BSL 1.1](LICENSE) license and written in Go. 
 
 For more information, refer to the Codefi Orchestrate official [Documentation](http://docs.orchestrate.consensys.net).
 
@@ -362,9 +362,23 @@ PegaSys Orchestrate is compatible with **Quorum Tessera** for private transactio
 <!-- - [Hyperledger Besu](../besu/README.md) -->
 <!-- - [GoQuorum](../goquorum/README.md) -->
 
-#### Quorum Tessera 
+#### EEA Private Transaction (only available for Besu network with privacy enabled)
 
-To send a private transaction in Quorum Tessera, run:
+To send a private transaction in Besu, run:
+
+```bash
+$> npm run send-eea-private-tx
+```
+
+After a few seconds (depending on block time), you see the transaction private receipt in the consumer
+output on the first terminal.
+
+> For more information about EEA private transactions, refer to the [Besu privacy documentation](https://besu.hyperledger.org/en/stable/Concepts/Privacy/Private-Transactions/).
+
+
+#### Go-Quorum Tessera (only available for go-quorum network with privacy enabled)
+
+To send a private transaction in Go-Quorum, run:
 
 ```bash
 $> npm run send-tessera-private-tx

@@ -1,11 +1,11 @@
 # Quorum Key Manager Quickstart
 
-Quorum Key Manager (QKM) is a key management service developed under the [BSL 1.1](LICENSE) license and written in Go. 
-
-Quorum Key Manager exposes an HTTP API service to manage your secrets, keys and Ethereum accounts. QKM supports the integration with
+Quorum Key Manager (QKM) is a key management service that exposes an HTTP API service to manage your secrets, keys and Ethereum accounts. QKM supports the integration with
 *AWS Key Management Service*, *Azure Key Vault* and *HashiCorp Vault*. 
 
 In addition, using the JSON-RPC interface of the QKM, you can connect to your Ethereum nodes to sign your transaction using the Ethereum account stored in your secure key vault.
+
+Quorum Key Manager is developed under the [BSL 1.1](LICENSE) license and written in Go. 
 
 For more information, refer to the Quorum Key Manager official [Documentation](https://docs.quorum-key-manager.consensys.net/).
 
