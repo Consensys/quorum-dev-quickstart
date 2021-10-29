@@ -1,4 +1,3 @@
-import {installOrchestrateImages} from "./service/orchestrate";
 import {renderTemplateDir, validateDirectoryExists, copyFilesDir} from "./fileRendering";
 import path from "path";
 
@@ -11,26 +10,35 @@ export interface NetworkContext {
     monitoring: "splunk" | "elk" | "none";
     outputPath: string;
     orchestrate: boolean;
+    quorumKeyManager: boolean;
 }
 
 export async function buildNetwork(context: NetworkContext): Promise<void> {
     const templatesDirPath = path.resolve(__dirname, "..", "templates");
     const filesDirPath = path.resolve(__dirname, "..", "files");
     const spinner = new Spinner("");
-    let orchestrateOutputPath = "";
+    let projectToolName = "";
+    let projectToolPath = "";
+    let projectToolOutputPath = "";
+
+    if (context.orchestrate) {
+      projectToolName = "Orchestrate";
+      projectToolPath = "orchestrate";
+    } else if (context.quorumKeyManager) {
+      projectToolName = "Quorum Key Manager";
+      projectToolPath = "quorum-key-manager";
+    }
 
     try {
         const blockchainClient = context.clientType === "besu" ? "Besu" : "GoQuorum" ;
 
-        if (context.orchestrate) {
-            spinner.text = `Installing Orchestrate quickstart with ` +
+        if (projectToolName !== "") {
+            spinner.text = `Installing ${projectToolName} quickstart with ` +
                 `${blockchainClient} clients to` + `${context.outputPath}`;
 
-            await installOrchestrateImages();
-
             spinner.start();
-            const orchestrateTemplatePath = path.resolve(templatesDirPath, "orchestrate");
-            const orchestrateFilesPath = path.resolve(filesDirPath, "orchestrate");
+            const orchestrateTemplatePath = path.resolve(templatesDirPath, projectToolPath);
+            const orchestrateFilesPath = path.resolve(filesDirPath, projectToolPath);
 
             if (validateDirectoryExists(orchestrateTemplatePath)) {
                 renderTemplateDir(orchestrateTemplatePath, context);
@@ -40,10 +48,8 @@ export async function buildNetwork(context: NetworkContext): Promise<void> {
                 copyFilesDir(orchestrateFilesPath, context);
             }
 
-            orchestrateOutputPath = context.outputPath;
+            projectToolOutputPath = context.outputPath;
             context.outputPath += "/network";
-            context.privacy = true;
-            context.monitoring = "none";
             context.nodeCount = 3;
         }
 
@@ -75,10 +81,10 @@ export async function buildNetwork(context: NetworkContext): Promise<void> {
 
         await spinner.succeed(`Installation complete.`);
 
-        if (context.orchestrate) {
+        if (projectToolName !== "") {
             console.log();
-            console.log(`To start Orchestrate, run 'npm install' and 'npm start' in the directory, '${orchestrateOutputPath}'`);
-            console.log(`For more information on the Orchestrate, see 'README.md' in the directory, '${orchestrateOutputPath}'`);
+            console.log(`To start ${projectToolName}, run 'npm install' and 'npm start' in the directory, '${projectToolOutputPath}'`);
+            console.log(`For more information on the Orchestrate, see 'README.md' in the directory, '${projectToolOutputPath}'`);
         } else {
             console.log();
             console.log(`To start your test network, run 'run.sh' in the directory, '${context.outputPath}'`);

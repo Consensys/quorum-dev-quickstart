@@ -1,0 +1,138 @@
+version: '3.7'
+
+x-default-variables: &default-variables
+  API_URL: ${API_URL-http://api:8081}
+  API_METRICS_URL: ${API_METRICS_URL-http://api:8082}
+  TX_SENDER_METRICS_URL: ${TX_SENDER_METRICS_URL-http://tx-sender:8082}
+  TX_LISTENER_METRICS_URL: ${TX_LISTENER_METRICS_URL-http://tx-listener:8082}
+  ETH_CLIENT_RETRY_MAX_ELAPSED_TIME: 5s
+  LOG_LEVEL: ${LOG_LEVEL-}
+  LOG_FORMAT: ${LOG_FORMAT-}
+  LOG_TIMESTAMP: ${LOG_TIMESTAMP-true}
+  NONCE_MANAGER_TYPE: ${NONCE_MANAGER_TYPE-in-memory}
+  MULTI_TENANCY_ENABLED: ${MULTI_TENANCY_ENABLED-false}
+  AUTH_JWT_CLAIMS_NAMESPACE: ${AUTH_JWT_CLAIMS_NAMESPACE-orchestrate.namespace}
+  AUTH_JWT_CERT: ${AUTH_JWT_CERT-}
+  AUTH_API_KEY: ${AUTH_API_KEY-}
+  AUTH_JWT_ISSUER_URL: ${AUTH_JWT_ISSUER_URL-}
+  METRICS_MODULES: ${METRICS_MODULES-}
+
+x-container-common: &container-common
+  restart: ${CONTAINER_RESTART-on-failure}
+  image: consensys/orchestrate:v21.10.1-alpha.2
+  networks:
+  - orchestrate
+  - deps
+  - qkm
+  - network
+
+x-proxy-common: &proxy-common
+  PROXY_MAXIDLECONNSPERHOST: ${PROXY_MAXIDLECONNSPERHOST-}
+  PROXY_CACHE_TTL: ${PROXY_CACHE_TTL-}
+
+x-db-common: &db-common
+  DB_TLS_SSLMODE: ${DB_TLS_SSLMODE-}
+  DB_TLS_CERT: ${DB_TLS_CERT-}
+  DB_TLS_KEY: ${DB_TLS_KEY-}
+  DB_TLS_CA: ${DB_TLS_CA-}
+  DB_HOST: ${DB_HOST-postgres}
+  DB_PORT: ${DB_PORT-}
+  DB_DATABASE: ${DB_DATABASE-}
+  DB_POOLSIZE: ${DB_POOLSIZE-}
+  DB_POOL_TIMEOUT: ${DB_POOL_TIMEOUT-}
+
+x-kafka-common: &kafka-common
+  KAFKA_URL: ${KAFKA_URL-kafka:29092}
+  KAFKA_SASL_ENABLED: ${KAFKA_SASL_ENABLED-false}
+  KAFKA_SASL_MECHANISM: ${KAFKA_SASL_MECHANISM-PLAIN}
+  KAFKA_SASL_USER: ${KAFKA_SASL_USER-}
+  KAFKA_SASL_PASSWORD: ${KAFKA_SASL_PASSWORD-}
+  KAFKA_TLS_ENABLED: ${KAFKA_TLS_ENABLED-false}
+  KAFKA_TLS_INSECURE_SKIP_VERIFY: ${KAFKA_TLS_INSECURE_SKIP_VERIFY-false}
+  KAFKA_NUM_CONSUMERS: ${KAFKA_NUM_CONSUMERS-}
+
+x-key-manager-common: &key-manager-common
+  KEY_MANAGER_URL: ${KEY_MANAGER_URL-http://key-manager:8080}
+  KEY_MANAGER_METRICS_URL: ${KEY_MANAGER_URL-http://key-manager:8081}
+  KEY_MANAGER_STORE_NAME: ${KEY_MANAGER_STORE_NAME-orchestrate-eth}
+  KEY_MANAGER_TLS_SKIP_VERIFY: ${KEY_MANAGER_TLS_SKIP_VERIFY-}
+  KEY_MANAGER_API_KEY: ${KEY_MANAGER_API_KEY-}
+  KEY_MANAGER_CLIENT_TLS_CERT: ${KEY_MANAGER_CLIENT_TLS_CERT-}
+  KEY_MANAGER_CLIENT_TLS_KEY: ${KEY_MANAGER_CLIENT_TLS_KEY-}
+
+services:
+  api-migration-init:
+    <<: *container-common
+    environment:
+      <<: *default-variables
+      <<: *db-common
+    command: api migrate init
+
+  api-migration:
+    <<: *container-common
+    environment:
+      <<: *default-variables
+      <<: *db-common
+    depends_on:
+    - api-migration-init
+    command: api migrate up
+
+  api:
+    <<: *container-common
+    ports:
+    - 8031:8081
+    - 8032:8082
+    environment:
+      <<: *default-variables
+      <<: *db-common
+      <<: *kafka-common
+      <<: *proxy-common
+      <<: *key-manager-common
+    depends_on:
+    - api-migration
+    command: api run
+
+  tx-sender:
+    <<: *container-common
+    ports:
+    - 8062:8082
+    environment:
+      <<: *default-variables
+      <<: *kafka-common
+      <<: *key-manager-common
+    depends_on:
+    - api
+    command: tx-sender run
+
+  tx-listener:
+    ports:
+    - 8082:8082
+    <<: *container-common
+    environment:
+      <<: *default-variables
+      <<: *kafka-common
+    restart: "on-failure"
+    depends_on:
+    - api
+    command: tx-listener run
+
+  generate-jwt:
+    <<: *container-common
+    environment:
+      <<: *default-variables
+      AUTH_JWT_PRIVATE_KEY: ${AUTH_JWT_PRIVATE_KEY-}
+    command: utils generate-jwt --tenant=${TENANT_ID-_} --expiration=${EXPIRATION-24h}
+    restart: "no"
+
+networks:
+  orchestrate:
+    name: orchestrate_quorum-dev-quickstart
+  deps:
+    external:
+      name: deps_quorum-dev-quickstart
+  qkm:
+    external:
+      name: qkm_quorum-dev-quickstart
+  network:
+    external:
+      name: network_quorum-dev-quickstart

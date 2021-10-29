@@ -1,6 +1,6 @@
 # Orchestrate Quickstart
 
-Orchestrate is a platform that enables enterprises to easily build secure and reliable applications on Ethereum blockchains. 
+Orchestrate enables enterprises to easily build secure and reliable applications on Ethereum blockchains. 
 It provides advanced features when connected to blockchain networks like:
 - Transaction management (transaction crafting, gas management, nonce management, and transaction listening)
 - Account management with private key storage in Hashicorp Vault
@@ -8,11 +8,9 @@ It provides advanced features when connected to blockchain networks like:
 - Public and private transactions
 - Multi-chain.
 
+Orchestrate is a platform developed under the [BSL 1.1](LICENSE) license and written in Go. 
+
 For more information, refer to the Codefi Orchestrate official [Documentation](http://docs.orchestrate.consensys.net).
-
-| ⚠️ **Note**: Orchestrate is available free of charge for a trial period. To get access to the artifacts and continue, please create a free account [HERE](https://accounts.quorum.consensys.net/auth/realms/quorum/account)    |
-| ---
-
 
 | ⚠️ **Note**: If you have an existing Quorum quickstart running, please stop it before proceeding. The Orchestrate quickstart spins up an Ethereum client which serves as an RPC endpoint. If you have an existing RPC endpoint, please update the `NETWORK_ENDPOINT` in the `.env` file and comment out the eth_client container in the file `<output_folder>/orchestrate/scripts/deps/docker-compose.yml` |
 | ---
@@ -364,9 +362,23 @@ PegaSys Orchestrate is compatible with **Quorum Tessera** for private transactio
 <!-- - [Hyperledger Besu](../besu/README.md) -->
 <!-- - [GoQuorum](../goquorum/README.md) -->
 
-#### Quorum Tessera 
+#### EEA Private Transaction (only available for Besu network with privacy enabled)
 
-To send a private transaction in Quorum Tessera, run:
+To send a private transaction in Besu, run:
+
+```bash
+$> npm run send-eea-private-tx
+```
+
+After a few seconds (depending on block time), you see the transaction private receipt in the consumer
+output on the first terminal.
+
+> For more information about EEA private transactions, refer to the [Besu privacy documentation](https://besu.hyperledger.org/en/stable/Concepts/Privacy/Private-Transactions/).
+
+
+#### Go-Quorum Tessera (only available for go-quorum network with privacy enabled)
+
+To send a private transaction in Go-Quorum, run:
 
 ```bash
 $> npm run send-tessera-private-tx

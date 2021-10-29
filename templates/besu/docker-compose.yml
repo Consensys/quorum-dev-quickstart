@@ -244,7 +244,7 @@ x-filebeat-def:
   volumes:
     - ./logs/besu/:/var/log/besu/
     - ./logs/tessera/:/var/log/tessera/
-    
+
 x-metricbeat-def:
   &metricbeat-def
   build: ./metricbeat
@@ -340,7 +340,6 @@ x-docker-logging:
 
 {% endif %}
 
-{% if not orchestrate %}
 x-ethsignerProxy-def:
   &ethsignerProxy-def
   image: consensys/quorum-ethsigner:${ETHSIGNER_VERSION:-latest}
@@ -357,8 +356,6 @@ x-ethsignerProxy-def:
   ]
   ports:
     - 8545
-
-{% endif %}
 
 services:
 
@@ -439,7 +436,6 @@ services:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.15
 
-{% if not orchestrate %}
   ethsignerProxy:
     << : *ethsignerProxy-def
     volumes:
@@ -453,7 +449,6 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.40
-{% endif %}
 
 {% if privacy %}
   member1tessera:
@@ -617,7 +612,6 @@ services:
 
 {% endif %}
 
-{% if not orchestrate %}
   explorer:
     build: block-explorer-light/.
     image: quorum-dev-quickstart/block-explorer-light:develop
@@ -628,7 +622,6 @@ services:
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.31
-{% endif %}
 
 {% if monitoring != "splunk" %}
   prometheus:

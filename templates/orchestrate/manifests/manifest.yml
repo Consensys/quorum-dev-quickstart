@@ -1,0 +1,10 @@
+kind: Ethereum
+version: 0.0.1
+name: orchestrate-eth
+specs:
+  keystore: HashicorpKeys
+  specs:
+    mountPoint: quorum
+    address: http://vault:8200
+    token: "DevVaultToken"
+    namespace: ''

@@ -13,7 +13,7 @@ export const start = async () => {
   try {
     const client = new OrchestrateClient(process.env.API_HOST!);
 
-    const signature = await client.sign(
+    const signature = await client.signMessage(
       process.env.FROM_ACCOUNT!,
       convertToHex(process.env.DATA_TO_SIGN!),
       process.env.AUTH_TOKEN
