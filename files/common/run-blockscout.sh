@@ -11,29 +11,14 @@
 # an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-NO_LOCK_REQUIRED=false
+NO_LOCK_REQUIRED=true
 
 . ./.env
 . ./.common.sh
 
-echo "${bold}*************************************"
-echo "Quorum Dev Quickstart "
-echo "*************************************${normal}"
-echo "Stopping network"
-echo "----------------------------------"
+HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}
 
-
-echo "Stopping blockscout if running..."
-if [[ ! -z `docker ps -a | grep quorum-dev-quickstart-blockscout` ]]; then
-  docker-compose -f docker-compose.blockscout.yml stop
-fi
-
-
-docker-compose stop
+docker-compose -f docker-compose.blockscout.yml up --detach
 sleep 60
 
-if [ -f "docker-compose-deps.yml" ]; then
-    echo "Stopping dependencies..."
-    docker-compose -f docker-compose-deps.yml stop
-fi
-
+echo "Blockscout service endpoint                 : http://${HOST}:26000"

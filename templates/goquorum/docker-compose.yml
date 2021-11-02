@@ -718,6 +718,7 @@ services:
 
 networks:
   quorum-dev-quickstart:
+    name: quorum-dev-quickstart
     driver: bridge
     ipam:
       driver: default
