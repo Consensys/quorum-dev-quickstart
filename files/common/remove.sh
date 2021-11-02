@@ -26,6 +26,13 @@ echo "${bold}*************************************"
 echo "Quorum Dev Quickstart "
 echo "*************************************${normal}"
 echo "Stop and remove network..."
+
+echo "Stopping blockscout if running..."
+if [[ ! -z `docker ps -a | grep quorum-dev-quickstart-blockscout` ]]; then
+  docker-compose -f docker-compose.blockscout.yml down -v
+  docker-compose -f docker-compose.blockscout.yml rm -sfv
+fi
+
 docker-compose down -v
 docker-compose rm -sfv
 
