@@ -91,12 +91,12 @@ x-quorum-def:
       if [ "istanbul" == "$GOQUORUM_CONS_ALGO" ]; 
       then
         echo "Using istanbul for consensus algorithm..."
-        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints"
+        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
         export QUORUM_API="istanbul"
       elif [ "qbft" == "$GOQUORUM_CONS_ALGO" ]; 
       then 
         echo "Using qbft for consensus algorithm..."
-        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints"
+        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
         export QUORUM_API="istanbul,qbft"
       elif [ "raft" == "$GOQUORUM_CONS_ALGO" ]; 
       then 
@@ -119,10 +119,10 @@ x-quorum-def:
       --verbosity 5 \
       $$CONSENSUS_ARGS \
       --syncmode full --nousb \
-      --metrics --pprof --pprofaddr 0.0.0.0 --pprofport 9545 \
+      --metrics --pprof --pprof.addr 0.0.0.0 --pprof.port 9545 \
       --networkid $${QUORUM_NETWORK_ID:-1337} \
-      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
-      --ws --wsaddr 0.0.0.0 --wsport 8546 --wsorigins "*" --wsapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
+      --http --http.addr 0.0.0.0 --http.port 8545 --http.corsdomain "*" --http.vhosts "*" --http.api admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
+      --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.origins "*" --ws.api admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
       --port 30303 \
       --identity node$${NODE_ID}-$${GOQUORUM_CONS_ALGO} \
       --unlock 0 \
@@ -165,12 +165,12 @@ x-quorum-member-def:
       if [ "istanbul" == "$GOQUORUM_CONS_ALGO" ]; 
       then
         echo "Using istanbul for consensus algorithm..."
-        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints"
+        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
         export QUORUM_API="istanbul"
       elif [ "qbft" == "$GOQUORUM_CONS_ALGO" ]; 
       then 
         echo "Using qbft for consensus algorithm..."
-        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --minerthreads 1 --miner.gasprice 0 --emitcheckpoints"
+        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
         export QUORUM_API="istanbul,qbft"
       elif [ "raft" == "$GOQUORUM_CONS_ALGO" ]; 
       then 
@@ -193,10 +193,10 @@ x-quorum-member-def:
       --verbosity 5 \
       $$CONSENSUS_ARGS \
       --syncmode full --nousb \
-      --metrics --pprof --pprofaddr 0.0.0.0 --pprofport 9545 \
+      --metrics --pprof --pprof.addr 0.0.0.0 --pprof.port 9545 \
       --networkid $${QUORUM_NETWORK_ID:-1337} \
-      --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --rpccorsdomain "*" --rpcvhosts "*" --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
-      --ws --wsaddr 0.0.0.0 --wsport 8546 --wsorigins "*" --wsapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
+      --http --http.addr 0.0.0.0 --http.port 8545 --http.corsdomain "*" --http.vhosts "*" --http.api admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
+      --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.origins "*" --ws.api admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
       --port 30303 \
       --identity node$${NODE_ID}-$${GOQUORUM_CONS_ALGO} \
       --ptm.timeout 5 --ptm.url $${QUORUM_PTM_URL} --ptm.http.writebuffersize 4096 --ptm.http.readbuffersize 4096 --ptm.tls.mode off \
