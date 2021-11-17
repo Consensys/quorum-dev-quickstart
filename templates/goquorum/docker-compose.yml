@@ -112,6 +112,7 @@ x-quorum-def:
       geth --datadir=/data init /config/genesis.json;
       cp /config/keys/accountkey /data/keystore/key;
       cp /config/keys/nodekey /data/geth/nodekey;
+      export ADDRESS=$$(grep -o '"address": *"[^"]*"' /config/keys/accountkey | grep -o '"[^"]*"$$' | sed 's/"//g')
       geth \
       --datadir /data \
       --nodiscover \
@@ -125,7 +126,7 @@ x-quorum-def:
       --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.origins "*" --ws.api admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
       --port 30303 \
       --identity node$${NODE_ID}-$${GOQUORUM_CONS_ALGO} \
-      --unlock 0 \
+      --unlock $${ADDRESS} \
       --allow-insecure-unlock \
       --password /config/passwords.txt \
       &> /var/log/quorum/geth-$$HOSTNAME-$$(hostname -i).log | tee -a /var/log/quorum/geth-$$HOSTNAME-$$(hostname -i).log
@@ -186,6 +187,7 @@ x-quorum-member-def:
       geth --datadir=/data/dd init /config/genesis.json;
       cp /config/keys/accountkey /data/dd/keystore/key;
       cp /config/keys/nodekey /data/dd/geth/nodekey;
+      export ADDRESS=$$(grep -o '"address": *"[^"]*"' /config/keys/accountkey | grep -o '"[^"]*"$$' | sed 's/"//g')
       geth \
       --datadir /data/dd \
       --nodiscover \
@@ -200,7 +202,7 @@ x-quorum-member-def:
       --port 30303 \
       --identity node$${NODE_ID}-$${GOQUORUM_CONS_ALGO} \
       --ptm.timeout 5 --ptm.url $${QUORUM_PTM_URL} --ptm.http.writebuffersize 4096 --ptm.http.readbuffersize 4096 --ptm.tls.mode off \
-      --unlock 0 \
+      --unlock $${ADDRESS} \
       --allow-insecure-unlock \
       --password /config/passwords.txt \
       &> /var/log/quorum/geth-$$(hostname -i).log | tee -a /var/log/quorum/geth-$$(hostname -i).log
