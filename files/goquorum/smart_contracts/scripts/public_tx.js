@@ -45,6 +45,7 @@ async function createContract(host) {
   console.log(account);
 
   const rawTxOptions = {
+    chainId: 1337,
     nonce: "0x00",
     from: account.address,
     to: null, //public tx
