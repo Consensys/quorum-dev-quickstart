@@ -34,6 +34,7 @@ async function createContract(client, fromPrivateKey, fromPublicKey, toPublicKey
   const txCount = await web3.eth.getTransactionCount(`0x${accountAddress}`);
 
   const txOptions = {
+    chainId,
     nonce: txCount,
     gasPrice: 0, //ETH per unit of gas
     gasLimit: 0x24A22, //max number of gas units the tx is allowed to use

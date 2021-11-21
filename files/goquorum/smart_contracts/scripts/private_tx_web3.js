@@ -15,6 +15,7 @@ const contractAbi = contractJson.abi;
 async function getValueAtAddress(host, nodeName="node", deployedContractAbi, deployedContractAddress){
   const web3 = new Web3(host);
   const contractInstance = new web3.eth.Contract(deployedContractAbi, deployedContractAddress);
+  contractInstance.defaultCommon.customChain = {name: 'GoQuorum', chainId: 1337};
   const res = await contractInstance.methods.get().call().catch(() => {});
   console.log(nodeName + " obtained value at deployed contract is: "+ res);
   return res
