@@ -268,7 +268,7 @@ x-splunk-def:
     - SPLUNK_START_ARGS=--accept-license
     - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
     - SPLUNK_PASSWORD=quickstart
-    - SPLUNK_APPS_URL=https://github.com/splunkdlt/splunk-app-quorum/releases/download/1.0.7/splunk-app-quorum-v1.0.7.tgz
+    - SPLUNK_APPS_URL=https://github.com/splunkdlt/splunk-app-quorum/releases/download/1.0.8/splunk-app-quorum-v1.0.8.tgz
   ports:
     - 8000:8000
     - 8088:8088
