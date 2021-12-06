@@ -88,18 +88,18 @@ x-quorum-def:
     - /bin/sh
     - -c
     - |
-      if [ "istanbul" == "$GOQUORUM_CONS_ALGO" ]; 
+      if [ "istanbul" == "$GOQUORUM_CONS_ALGO" ];
       then
         echo "Using istanbul for consensus algorithm..."
         export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
         export QUORUM_API="istanbul"
-      elif [ "qbft" == "$GOQUORUM_CONS_ALGO" ]; 
-      then 
+      elif [ "qbft" == "$GOQUORUM_CONS_ALGO" ];
+      then
         echo "Using qbft for consensus algorithm..."
         export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
         export QUORUM_API="istanbul,qbft"
-      elif [ "raft" == "$GOQUORUM_CONS_ALGO" ]; 
-      then 
+      elif [ "raft" == "$GOQUORUM_CONS_ALGO" ];
+      then
         echo "Using raft for consensus algorithm..."
         export CONSENSUS_ARGS="--raft --raftblocktime 300 --raftport 53000"
         export QUORUM_API="raft"
@@ -163,18 +163,18 @@ x-quorum-member-def:
       done
       {% endif %}
 
-      if [ "istanbul" == "$GOQUORUM_CONS_ALGO" ]; 
+      if [ "istanbul" == "$GOQUORUM_CONS_ALGO" ];
       then
         echo "Using istanbul for consensus algorithm..."
         export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
         export QUORUM_API="istanbul"
-      elif [ "qbft" == "$GOQUORUM_CONS_ALGO" ]; 
-      then 
+      elif [ "qbft" == "$GOQUORUM_CONS_ALGO" ];
+      then
         echo "Using qbft for consensus algorithm..."
         export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
         export QUORUM_API="istanbul,qbft"
-      elif [ "raft" == "$GOQUORUM_CONS_ALGO" ]; 
-      then 
+      elif [ "raft" == "$GOQUORUM_CONS_ALGO" ];
+      then
         echo "Using raft for consensus algorithm..."
         export CONSENSUS_ARGS="--raft --raftblocktime 300 --raftport 53000"
         export QUORUM_API="raft"
@@ -294,6 +294,63 @@ x-tessera-def:
           /tessera/bin/tessera -configfile /data/tm/tessera-config-09.json &> /var/log/tessera/tessera-$$HOSTNAME.log | tee -a /var/log/tessera/tessera-$$HOSTNAME.log
 
 {% endif %}
+
+
+
+  {% if blockscout %}
+
+x-blockscout-ref:
+  &blockscout-def
+  image: consensys/blockscout:e3d5778
+  container_name: blockscout
+  restart: "no"
+  environment:
+    - PORT=4000
+    - DATABASE_URL=ecto://postgres:postgres@blockscoutpostgres/postgres?ssl=false
+    - POSTGRES_PASSWORD=postgres
+    - POSTGRES_USER=postgres
+    - NETWORK=quickstart
+    - NETWORK=Dev Quickstart
+    - SUBNETWORK=Quorum
+    - CHAIN_ID=1337
+    - COIN=ETH
+    - ETHEREUM_JSONRPC_VARIANT=geth
+    - ETHEREUM_JSONRPC_TRANSPORT=http
+    - ETHEREUM_JSONRPC_HTTP_URL=http://rpcnode:8545
+    - ETHEREUM_JSONRPC_WS_URL=ws://rpcnode:8546
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      cd /opt/app/;
+      echo $$MIX_ENV && mix do ecto.create, ecto.migrate; mix phx.server;
+  depends_on:
+    - blockscoutpostgres
+  links:
+    - blockscoutpostgres
+  ports:
+    - 26000:4000
+
+x-blockscoutpostgres-ref:
+  &blockscoutpostgres-def
+  image: postgres:13.4-alpine
+  restart: "on-failure"
+  container_name: blockscoutpostgres
+  environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres
+  volumes:
+    - blockscoutpostgres:/var/lib/postgresql/data
+  ports:
+    - 5432
+  healthcheck:
+    test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+    interval: 5s
+    timeout: 10s
+    retries: 5
+
+{% endif %}
+
 
 x-cakeshop-def:
   &cakeshop-def
@@ -626,6 +683,22 @@ services:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.31
 
+{% if blockscout %}
+  blockscout:
+    << : *blockscout-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.51
+
+  blockscoutpostgres:
+    << : *blockscoutpostgres-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.52
+
+{% endif %}
+
+
   prometheus:
     image: "prom/prometheus"
     volumes:
@@ -736,3 +809,4 @@ volumes:
   ethlogger:
   prometheus:
   grafana:
+  blockscoutpostgres:

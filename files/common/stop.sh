@@ -23,12 +23,6 @@ echo "Stopping network"
 echo "----------------------------------"
 
 
-echo "Stopping blockscout if running..."
-if [[ ! -z `docker ps -a | grep quorum-dev-quickstart-blockscout` ]]; then
-  docker-compose -f docker-compose.blockscout.yml stop
-fi
-
-
 docker-compose stop
 sleep 60
 

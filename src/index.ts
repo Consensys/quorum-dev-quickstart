@@ -25,6 +25,7 @@ export async function main(): Promise<void> {
         orchestrate: { type: 'boolean', demandOption: false, default: false, describe: 'Try out Codefi Orchestrate?' },
         quorumKeyManager: { type: 'boolean', demandOption: false, default: false, describe: 'Try out Quorum Key Manager? ' },
         monitoring: { type: 'string', demandOption: false, default: 'none', describe: 'Enable support for monitoring with Splunk or ELK.' },
+        blockscout: { type: 'boolean', demandOption: false, default: false, describe: 'Enable support for monitoring the network with Blockscout' },
         outputPath: { type: 'string', demandOption: false, default: './quorum-test-network', describe: 'Location for config files.'}
       }).argv;
 
@@ -32,6 +33,7 @@ export async function main(): Promise<void> {
         clientType: args.clientType,
         outputPath: args.outputPath,
         monitoring: args.monitoring,
+        blockscout: args.blockscout,
         privacy: args.privacy,
         orchestrate: args.orchestrate,
         quorumKeyManager: args.quorumKeyManager,

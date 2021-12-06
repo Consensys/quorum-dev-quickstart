@@ -87,8 +87,6 @@ x-besu-tx-def:
       --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
 
 
-
-
 {% if privacy %}
 x-tessera-def:
   &tessera-def
@@ -337,6 +335,60 @@ x-docker-logging:
       tag: "{% raw %}{{.Name}}-{{.ID}}{% endraw %}"
       splunk-sourcetype: "docker:logging"
       splunk-source: quorum-quickstart
+
+{% endif %}
+
+{% if blockscout %}
+
+x-blockscout-ref:
+  &blockscout-def
+  image: consensys/blockscout:e3d5778
+  container_name: blockscout
+  restart: "no"
+  environment:
+    - PORT=4000
+    - DATABASE_URL=ecto://postgres:postgres@blockscoutpostgres/postgres?ssl=false
+    - POSTGRES_PASSWORD=postgres
+    - POSTGRES_USER=postgres
+    - NETWORK=quickstart
+    - NETWORK=Dev Quickstart
+    - SUBNETWORK=Quorum
+    - CHAIN_ID=1337
+    - COIN=ETH
+    - ETHEREUM_JSONRPC_VARIANT=besu
+    - ETHEREUM_JSONRPC_TRANSPORT=http
+    - ETHEREUM_JSONRPC_HTTP_URL=http://rpcnode:8545
+    - ETHEREUM_JSONRPC_WS_URL=ws://rpcnode:8546
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      cd /opt/app/;
+      echo $$MIX_ENV && mix do ecto.create, ecto.migrate; mix phx.server;
+  depends_on:
+    - blockscoutpostgres
+  links:
+    - blockscoutpostgres
+  ports:
+    - 26000:4000
+
+x-blockscoutpostgres-ref:
+  &blockscoutpostgres-def
+  image: postgres:13.4-alpine
+  restart: "on-failure"
+  container_name: blockscoutpostgres
+  environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres
+  volumes:
+    - blockscoutpostgres:/var/lib/postgresql/data
+  ports:
+    - 5432
+  healthcheck:
+    test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+    interval: 5s
+    timeout: 10s
+    retries: 5
 
 {% endif %}
 
@@ -623,6 +675,21 @@ services:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.31
 
+{% if blockscout %}
+  blockscout:
+    << : *blockscout-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.51
+
+  blockscoutpostgres:
+    << : *blockscoutpostgres-def
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.52
+
+{% endif %}
+
 {% if monitoring != "splunk" %}
   prometheus:
     image: "prom/prometheus"
@@ -734,10 +801,9 @@ volumes:
   member1tessera:
   member2tessera:
   member3tessera:
-
   splunk:
-
   ethlogger:
+  blockscoutpostgres:
 
 networks:
   quorum-dev-quickstart:

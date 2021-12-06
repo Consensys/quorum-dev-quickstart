@@ -45,13 +45,20 @@ const _outputDirQuestion: QuestionTree = {
     }
 };
 
+const _blockscoutQuestion: QuestionTree = {
+    name: "blockscout",
+    prompt: "Do you wish to enable support for monitoring your network with Blockscout? [N/y]",
+};
+// have to add this below the definition because of the self reference..
+_blockscoutQuestion.transformerValidator = _getYesNoValidator(_blockscoutQuestion, _outputDirQuestion, "n");
+
 const _monitoringQuestion: QuestionTree = {
     name: "monitoring",
     prompt: "Do you wish to enable support for logging with Splunk or ELK (Elasticsearch, Logstash & Kibana)? Default: [1]",
     options: [
-      { label: "None", value: "none", nextQuestion: _outputDirQuestion, default: true },
-      { label: "Splunk", value: "splunk", nextQuestion: _outputDirQuestion },
-      { label: "ELK", value: "elk", nextQuestion: _outputDirQuestion }
+      { label: "None", value: "none", nextQuestion: _blockscoutQuestion, default: true },
+      { label: "Splunk", value: "splunk", nextQuestion: _blockscoutQuestion },
+      { label: "ELK", value: "elk", nextQuestion: _blockscoutQuestion }
     ]
 };
 
