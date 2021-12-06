@@ -8,6 +8,7 @@ export interface NetworkContext {
     nodeCount: number;
     privacy: boolean;
     monitoring: "splunk" | "elk" | "none";
+    blockscout: boolean;
     outputPath: string;
     orchestrate: boolean;
     quorumKeyManager: boolean;

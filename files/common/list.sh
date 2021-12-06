@@ -68,6 +68,9 @@ echo "----------------------------------"
 echo "JSON-RPC HTTP service endpoint                 : http://${HOST}:8545"
 echo "JSON-RPC WebSocket service endpoint            : ws://${HOST}:8546"
 echo "Web block explorer address                     : http://${HOST}:25000/"
+if [ ! -z `docker-compose -f docker-compose.yml ps -q blockscout 2> /dev/null` ]; then
+echo "Blockscout address                             : http://${HOST}:26000/"
+fi
 if [ ! -z `docker-compose -f docker-compose.yml ps -q prometheus 2> /dev/null` ]; then
 echo "Prometheus address                             : http://${HOST}:9090/graph"
 fi
