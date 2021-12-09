@@ -21,8 +21,8 @@ x-besu-bootnode-def:
       --genesis-file=/config/genesis.json \
       --node-private-key-file=/opt/besu/keys/nodekey \
       --min-gas-price=0 \
-      --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} \
-      --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
+      --rpc-http-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} \
+      --rpc-ws-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
 
 
 x-besu-def:
@@ -45,8 +45,8 @@ x-besu-def:
       --genesis-file=/config/genesis.json \
       --node-private-key-file=/opt/besu/keys/nodekey \
       --min-gas-price=0 \
-      --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} \
-      --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
+      --rpc-http-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} \
+      --rpc-ws-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
 
 x-besu-tx-def:
   &besu-tx-def
@@ -83,8 +83,8 @@ x-besu-tx-def:
       --genesis-file=/config/genesis.json \
       --node-private-key-file=/opt/besu/keys/nodekey \
       --min-gas-price=0 \
-      --rpc-http-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} \
-      --rpc-ws-api=EEA,WEB3,ETH,NET,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
+      --rpc-http-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} \
+      --rpc-ws-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
 
 
 {% if privacy %}
@@ -342,7 +342,7 @@ x-docker-logging:
 
 x-blockscout-ref:
   &blockscout-def
-  image: consensys/blockscout:e3d5778
+  image: consensys/blockscout:v4.0.0-beta
   container_name: blockscout
   restart: "no"
   environment:
@@ -358,6 +358,7 @@ x-blockscout-ref:
     - ETHEREUM_JSONRPC_VARIANT=besu
     - ETHEREUM_JSONRPC_TRANSPORT=http
     - ETHEREUM_JSONRPC_HTTP_URL=http://rpcnode:8545
+    - ETHEREUM_JSONRPC_TRACE_URL=http://rpcnode:8545
     - ETHEREUM_JSONRPC_WS_URL=ws://rpcnode:8546
   entrypoint:
     - /bin/sh

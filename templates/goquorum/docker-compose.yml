@@ -122,8 +122,8 @@ x-quorum-def:
       --syncmode full --nousb \
       --metrics --pprof --pprof.addr 0.0.0.0 --pprof.port 9545 \
       --networkid $${QUORUM_NETWORK_ID:-1337} \
-      --http --http.addr 0.0.0.0 --http.port 8545 --http.corsdomain "*" --http.vhosts "*" --http.api admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
-      --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.origins "*" --ws.api admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
+      --http --http.addr 0.0.0.0 --http.port 8545 --http.corsdomain "*" --http.vhosts "*" --http.api admin,trace,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
+      --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.origins "*" --ws.api admin,trace,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
       --port 30303 \
       --identity node$${NODE_ID}-$${GOQUORUM_CONS_ALGO} \
       --unlock $${ADDRESS} \
@@ -197,8 +197,8 @@ x-quorum-member-def:
       --syncmode full --nousb \
       --metrics --pprof --pprof.addr 0.0.0.0 --pprof.port 9545 \
       --networkid $${QUORUM_NETWORK_ID:-1337} \
-      --http --http.addr 0.0.0.0 --http.port 8545 --http.corsdomain "*" --http.vhosts "*" --http.api admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
-      --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.origins "*" --ws.api admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
+      --http --http.addr 0.0.0.0 --http.port 8545 --http.corsdomain "*" --http.vhosts "*" --http.api admin,trace,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
+      --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.origins "*" --ws.api admin,trace,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$$QUORUM_API \
       --port 30303 \
       --identity node$${NODE_ID}-$${GOQUORUM_CONS_ALGO} \
       --ptm.timeout 5 --ptm.url $${QUORUM_PTM_URL} --ptm.http.writebuffersize 4096 --ptm.http.readbuffersize 4096 --ptm.tls.mode off \
@@ -301,7 +301,7 @@ x-tessera-def:
 
 x-blockscout-ref:
   &blockscout-def
-  image: consensys/blockscout:e3d5778
+  image: consensys/blockscout:v4.0.0-beta
   container_name: blockscout
   restart: "no"
   environment:
@@ -317,6 +317,7 @@ x-blockscout-ref:
     - ETHEREUM_JSONRPC_VARIANT=geth
     - ETHEREUM_JSONRPC_TRANSPORT=http
     - ETHEREUM_JSONRPC_HTTP_URL=http://rpcnode:8545
+    - ETHEREUM_JSONRPC_TRACE_URL=http://rpcnode:8545
     - ETHEREUM_JSONRPC_WS_URL=ws://rpcnode:8546
   entrypoint:
     - /bin/sh
