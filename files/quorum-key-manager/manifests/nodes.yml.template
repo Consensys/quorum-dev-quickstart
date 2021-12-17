@@ -5,11 +5,13 @@
       addr: http://quorum1:8545
     tessera:
       addr: http://tessera1:9080
+
 - kind: Node
   name: besu-node
   specs:
     rpc:
       addr: http://validator1:8545
+
 - kind: Node
   name: geth-node
   specs:

@@ -1,35 +1,21 @@
-- kind: HashicorpSecrets
-  name: hashicorp-secrets
+- kind: Vault
+  type: hashicorp
+  name: hashicorp-quorum
   specs:
-    mountPoint: quorum
+    mount_point: quorum
     address: http://vault:8200
-    token: "DevVaultToken"
+    token: DevVaultToken
     namespace: ''
-- kind: HashicorpKeys
-  name: hashicorp-keys
+- kind: Store
+  type: key
+  name: keystore
   specs:
-    mountPoint: quorum
-    address: http://vault:8200
-    token: "DevVaultToken"
-    namespace: ''
-- kind: LocalKeys
-  name: local-keys
-  specs:
-    secretstore: HashicorpSecrets
-    specs:
-      mountPoint: quorum
-      address: http://vault:8200
-      token: "DevVaultToken"
-      namespace: ''
-- kind: Ethereum
+    vault: hashicorp-quorum
+- kind: Store
+  type: ethereum
   name: eth-accounts
   specs:
-    keystore: HashicorpKeys
-    specs:
-      mountPoint: quorum
-      address: http://vault:8200
-      token: "DevVaultToken"
-      namespace: ''
+    key_store: keystore
 {% if clientType == "goquorum" %}
 - kind: Node
   name: quorum-node

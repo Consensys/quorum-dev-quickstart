@@ -32,14 +32,14 @@ x-container-common: &container-common
 services:
   key-manager-migration:
     <<: *container-common
-    image: consensys/quorum-key-manager:v21.9.2
+    image: consensys/quorum-key-manager:v21.12.0
     environment:
       <<: *default-variables
     command: migrate up
 
   key-manager:
     <<: *container-common
-    image: consensys/quorum-key-manager:v21.9.2
+    image: consensys/quorum-key-manager:v21.12.0
     environment:
       <<: *default-variables
       MANIFEST_PATH: ${MANIFEST_PATH-/manifests}
