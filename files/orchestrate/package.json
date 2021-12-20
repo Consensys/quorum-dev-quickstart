@@ -1,6 +1,6 @@
 {
   "name": "codefi-orchestrate-quick-start",
-  "version": "3.2.0",
+  "version": "4.0.0",
   "description": "Codefi Orchestrate Quick start",
   "config": {
     "services": "api tx-sender tx-listener",
@@ -77,7 +77,7 @@
     "ethers": "~5.0.15",
     "husky": "~4.2.5",
     "lint-staged": "~10.2.2",
-    "pegasys-orchestrate": "^5.0.0",
+    "pegasys-orchestrate": "^6.0.1",
     "prettier": "~2.0.5",
     "rimraf": "~3.0.2",
     "truffle": "~5.1.47",

@@ -12,8 +12,8 @@ export const start = async () => {
         chainRule: process.env.CHAIN_UUID!,
         creditorAccount: process.env.FAUCET_ACCOUNT!,
         cooldown: "10s",
-        amount: "60000000000000000",
-        maxBalance: "100000000000000000",
+        amount: "0xD529AE9E860000",
+        maxBalance: "0x16345785D8A0000",
       },
       process.env.AUTH_TOKEN
     );

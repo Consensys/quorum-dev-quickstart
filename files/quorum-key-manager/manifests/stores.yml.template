@@ -1,0 +1,55 @@
+- kind: Store
+  type: secret
+  name: hashicorp-secrets
+  # allowed_tenants: []
+  specs:
+    vault: hashicorp-kv-v2
+
+- kind: Store
+  type: key
+  name: hashicorp-keys
+  # allowed_tenants: []
+  specs:
+    vault: hashicorp-quorum
+
+- kind: Store
+  type: secret
+  name: akv-secrets
+  # allowed_tenants: []
+  specs:
+    vault: akv-europe
+
+- kind: Store
+  type: key
+  name: akv-keys
+  # allowed_tenants: []
+  specs:
+    vault: akv-europe
+
+- kind: Store
+  type: secret
+  name: aws-secrets
+  # allowed_tenants: []
+  specs:
+    vault: aws-europe
+
+- kind: Store
+  type: key
+  name: aws-keys
+  # allowed_tenants: []
+  specs:
+    vault: aws-europe
+
+- kind: Store
+  type: key
+  name: local-keys
+  # allowed_tenants: []
+  specs:
+    secret_store: hashicorp-secrets
+
+- kind: Store
+  type: ethereum
+  name: eth-accounts
+  # allowed_tenants: []
+  specs:
+    key_store: hashicorp-keys

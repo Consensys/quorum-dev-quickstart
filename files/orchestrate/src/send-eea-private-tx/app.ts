@@ -12,7 +12,7 @@ export const start = async () => {
       params: {
         contractName: 'Counter',
         from: process.env.FROM_ACCOUNT!,
-        protocol: ProtocolType.Orion,
+        protocol: ProtocolType.EEA,
         privateFrom: process.env.TESSERA1_MEMBER_KEY,  // Tessera node 1 public key (the registered chain)
         privateFor: [process.env.TESSERA2_MEMBER_KEY!] // Tessera node 2 public key
       }
