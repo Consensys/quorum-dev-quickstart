@@ -135,4 +135,4 @@ networks:
       name: qkm_quorum-dev-quickstart
   network:
     external:
-      name: network_quorum-dev-quickstart
+      name: quorum-dev-quickstart
