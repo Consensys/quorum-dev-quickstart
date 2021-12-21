@@ -1,3 +1,3 @@
 # Quorum Dev Quickstart
 
-Please go to our [official docs](https://docs.goquorum.consensys.net/en/latest/Tutorials/Quorum-Dev-Quickstart/Using-the-Quickstart/)
+Please go to our [official docs](https://consensys.net/docs/goquorum/en/latest/tutorials/quorum-dev-quickstart/getting-started/)
