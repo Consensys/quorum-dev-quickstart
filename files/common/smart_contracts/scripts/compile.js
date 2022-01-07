@@ -24,7 +24,7 @@ const input = {
 	settings: {
 		outputSelection: {
 			'*': {
-				'*': [ '*' ]
+				'*': [ '*', 'evm.bytecode'  ]
 			}
 		}
 	}

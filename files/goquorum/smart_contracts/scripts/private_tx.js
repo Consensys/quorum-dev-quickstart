@@ -12,8 +12,7 @@ const contractJsonPath = path.resolve(__dirname, '../','contracts','SimpleStorag
 const contractJson = JSON.parse(fs.readFileSync(contractJsonPath));
 const contractBytecode = contractJson.evm.bytecode.object
 const contractAbi = contractJson.abi;
-const contractBinPath = path.resolve(__dirname, '../','contracts','SimpleStorage.bin');
-const contractBin = fs.readFileSync(contractBinPath);
+
 // initialize the default constructor with a value `47 = 0x2F`; this value is appended to the bytecode
 const contractConstructorInit = "000000000000000000000000000000000000000000000000000000000000002F";
 
@@ -39,7 +38,7 @@ async function createContract(client, fromPrivateKey, fromPublicKey, toPublicKey
     gasPrice: 0, //ETH per unit of gas
     gasLimit: 0x24A22, //max number of gas units the tx is allowed to use
     value: 0,
-    data: '0x'+contractBin+contractConstructorInit,
+    data: '0x'+contractBytecode+contractConstructorInit,
     from: signingAccount,
     isPrivate: true,
     privateKey: fromPrivateKey,
