@@ -98,7 +98,7 @@ Use cases:
 
 Once the network is up and running you can make public transactions on the chain and interact with the smart contract at its deployed address, 
 and you can also make private transaction between members and verify that other nodes do not see it.
-Under the smart_contracts folder there is a `SimpleStorage` contract which we use for both as an example.
+Under the smart_contracts folder there is a `SimpleStorage` contract which we use for both as an example. The `SimpleStorage` contract will store a value and emit an event with that stored value, you can either observe the events or call the `get` function on the contract to get the value.
 
 For the public transaction:
 ```
@@ -109,7 +109,7 @@ node scripts/public_tx.js
 which creates an account and then deploys the contract with the account's address. It also initializes the default constructor 
 with a value (47). Once done, it will call the `get` function on the contract to check the value at the address, and 
 you should see it return the value. Then it will call the `set` function on the contract and update the value (123) 
-and then verify the address to make sure its been updated.
+and then verify the address to make sure its been updated. It will then call `getPastEvents("allEvents", { fromBlock: 0, toBlock: 'latest' })` to fetch all the historical events for that contract, this confirm that events have been emited for both the constructor and the set.
 
 ```
 node scripts/public_tx.js 
@@ -131,7 +131,7 @@ Obtained value at deployed contract is: 47
 Use the smart contracts 'set' function to update that value to 123 .. 
 Verify the updated value that was set .. 
 Obtained value at deployed contract is: 123
-
+Obtained all value events from deployed contract : [47,123]
 ```
 
 
