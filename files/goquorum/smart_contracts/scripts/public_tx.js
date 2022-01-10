@@ -14,8 +14,8 @@ const accountAddress = quorum.member1.accountAddress;
 const contractJsonPath = path.resolve(__dirname, '../','contracts','SimpleStorage.json');
 const contractJson = JSON.parse(fs.readFileSync(contractJsonPath));
 const contractAbi = contractJson.abi;
-const contractBinPath = path.resolve(__dirname, '../','contracts','SimpleStorage.bin');
-const contractBin = fs.readFileSync(contractBinPath);
+const contractBytecode = contractJson.evm.bytecode.object
+
 // initialize the default constructor with a value `47 = 0x2F`; this value is appended to the bytecode
 const contractConstructorInit = "000000000000000000000000000000000000000000000000000000000000002F";
 
@@ -27,11 +27,28 @@ async function getValueAtAddress(host, deployedContractAbi, deployedContractAddr
   return res
 }
 
+async function getAllPastEvents(host, deployedContractAbi, deployedContractAddress){
+  const web3 = new Web3(host);
+  const contractInstance = new web3.eth.Contract(deployedContractAbi, deployedContractAddress);
+  const res = await contractInstance.getPastEvents("allEvents", {
+    fromBlock: 0,
+    toBlock: 'latest'
+  })
+
+  const amounts = res.map(x => {
+    return x.returnValues._amount
+  });
+
+  console.log("Obtained all value events from deployed contract : [" + amounts + "]");
+  return res
+}
+
 // You need to use the accountAddress details provided to Quorum to send/interact with contracts
 async function setValueAtAddress(host, accountAddress, value, deployedContractAbi, deployedContractAddress){
   const web3 = new Web3(host);
   const contractInstance = new web3.eth.Contract(deployedContractAbi, deployedContractAddress);
   const res = await contractInstance.methods.set(value).send({from: accountAddress, gasPrice: "0x0", gasLimit: "0x24A22"});
+  console.log("Set value on contract at : " + res.transactionHash);
   // verify the updated value
   // const readRes = await contractInstance.methods.get().call();
   // console.log("Obtained value at deployed contract is: "+ readRes);
@@ -50,9 +67,9 @@ async function createContract(host) {
     from: account.address,
     to: null, //public tx
     value: "0x00",
-    data: '0x'+contractBin+contractConstructorInit,
+    data: '0x'+contractBytecode+contractConstructorInit,
     gasPrice: "0x0", //ETH per unit of gas
-    gasLimit: "0x24A22" //max number of gas units the tx is allowed to use
+    gasLimit: "0x2CA51" //max number of gas units the tx is allowed to use
   };
   console.log("Creating transaction...");
   const tx = new Tx(rawTxOptions);
@@ -76,6 +93,7 @@ async function main(){
     await setValueAtAddress(host, accountAddress, 123, contractAbi, tx.contractAddress );
     console.log("Verify the updated value that was set .. " )
     await getValueAtAddress(host, contractAbi, tx.contractAddress);
+    await getAllPastEvents(host, contractAbi, tx.contractAddress);
   })
   .catch(console.error);
 }

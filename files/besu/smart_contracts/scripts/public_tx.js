@@ -9,12 +9,12 @@ const host = besu.ethsignerProxy.url;
 const accountAddress = besu.ethsignerProxy.accountAddress;
 
 // abi and bytecode generated from simplestorage.sol:
-// > solcjs --bin --abi simplestorage.sol
+// node scripts/compile.js
 const contractJsonPath = path.resolve(__dirname, '../','contracts','SimpleStorage.json');
 const contractJson = JSON.parse(fs.readFileSync(contractJsonPath));
 const contractAbi = contractJson.abi;
-const contractBinPath = path.resolve(__dirname, '../','contracts','SimpleStorage.bin');
-const contractBin = fs.readFileSync(contractBinPath);
+const contractBytecode = contractJson.evm.bytecode.object
+
 // initialize the default constructor with a value `47 = 0x2F`; this value is appended to the bytecode
 const contractConstructorInit = "000000000000000000000000000000000000000000000000000000000000002F";
 
@@ -23,6 +23,22 @@ async function getValueAtAddress(host, deployedContractAbi, deployedContractAddr
   const contractInstance = new web3.eth.Contract(deployedContractAbi, deployedContractAddress);
   const res = await contractInstance.methods.get().call();
   console.log("Obtained value at deployed contract is: "+ res);
+  return res
+}
+
+async function getAllPastEvents(host, deployedContractAbi, deployedContractAddress){
+  const web3 = new Web3(host);
+  const contractInstance = new web3.eth.Contract(deployedContractAbi, deployedContractAddress);
+  const res = await contractInstance.getPastEvents("allEvents", {
+    fromBlock: 0,
+    toBlock: 'latest'
+  })
+
+  const amounts = res.map(x => {
+    return x.returnValues._amount
+  });
+
+  console.log("Obtained all value events from deployed contract : [" + amounts + "]");
   return res
 }
 
@@ -37,7 +53,7 @@ async function setValueAtAddress(host, accountAddress, value, deployedContractAb
   return res
 }
 
-async function createContract(host, contractBin, contractInit) {
+async function createContract(host) {
   const web3 = new Web3(host);
   // make an account and sign the transaction with the account's private key; you can alternatively use an exsiting account
   const account = web3.eth.accounts.create();
@@ -48,9 +64,9 @@ async function createContract(host, contractBin, contractInit) {
     from: account.address,
     to: null, //public tx
     value: "0x00",
-    data: '0x'+contractBin+contractInit,
+    data: '0x'+contractBytecode+contractConstructorInit,
     gasPrice: "0x0", //ETH per unit of gas
-    gasLimit: "0x24A22" //max number of gas units the tx is allowed to use
+    gasLimit: "0x2CA51" //max number of gas units the tx is allowed to use
   };
   console.log("Creating transaction...");
   const tx = new Tx(rawTxOptions);
@@ -66,7 +82,7 @@ async function createContract(host, contractBin, contractInit) {
 
 async function main(){
   let newValue = 123;
-  createContract(host, contractBin, contractConstructorInit)
+  createContract(host)
   .then(async function(tx){
     console.log("Contract deployed at address: " + tx.contractAddress);
     console.log("Use the smart contracts 'get' function to read the contract's constructor initialized value .. " )
@@ -75,6 +91,7 @@ async function main(){
     await setValueAtAddress(host, accountAddress, newValue, contractAbi, tx.contractAddress );
     console.log("Verify the updated value that was set .. " )
     await getValueAtAddress(host, contractAbi, tx.contractAddress);
+    await getAllPastEvents(host, contractAbi, tx.contractAddress);
   })
   .catch(console.error);
 }
