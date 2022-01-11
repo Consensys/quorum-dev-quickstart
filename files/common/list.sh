@@ -37,7 +37,7 @@ if [ $elk_setup == true ]; then
     done
 
     echo "Setting up the index patterns in kibana ..."
-    if [ -z `docker-compose -f docker-compose.yml ps -q cakeshop 2>/dev/null` ] ; then
+    if [ -z `docker ps -q --filter 'label=consensus=goquorum' 2> /dev/null ` ] ; then
       curl --silent --output /dev/null -X POST "http://${HOST}:5601/api/saved_objects/index-pattern/besu" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"attributes": {"title": "besu-*","timeFieldName": "@timestamp"}}'
       curl --silent --output /dev/null -X POST "http://${HOST}:5601/api/saved_objects/index-pattern/metricbeat" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"attributes": {"title": "metricbeat-*","timeFieldName": "@timestamp"}}'
       curl --silent --output /dev/null -X POST "http://${HOST}:5601/api/saved_objects/_import" -H 'kbn-xsrf: true' --form file=@./config/kibana/besu_overview_dashboard.ndjson
@@ -75,9 +75,8 @@ if [ ! -z `docker-compose -f docker-compose.yml ps -q prometheus 2> /dev/null` ]
 echo "Prometheus address                             : http://${HOST}:9090/graph"
 fi
 grafana_url="http://${HOST}:3000/d/XE4V0WGZz/besu-overview?orgId=1&refresh=10s&from=now-30m&to=now&var-system=All"
-if [ ! -z `docker-compose -f docker-compose.yml ps -q cakeshop 2> /dev/null` ]; then
+if [ ! -z `docker ps -q --filter 'label=consensus=goquorum' 2> /dev/null ` ]; then
 grafana_url="http://${HOST}:3000/d/a1lVy7ycin9Yv/goquorum-overview?orgId=1&refresh=10s&from=now-30m&to=now&var-system=All"
-echo "Cakeshop toolkit address                       : http://${HOST}:8999"
 fi
 if [ ! -z `docker-compose -f docker-compose.yml ps -q grafana 2> /dev/null` ]; then
 echo "Grafana address                                : $grafana_url"
