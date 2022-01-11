@@ -352,35 +352,6 @@ x-blockscoutpostgres-ref:
 
 {% endif %}
 
-
-x-cakeshop-def:
-  &cakeshop-def
-  image: quorumengineering/cakeshop:${QUORUM_CAKESHOP_VERSION:-latest}
-  expose:
-    - 8999
-  restart: "no"
-  healthcheck:
-    test: ["CMD", "wget", "--spider", "--proxy=off", "http://localhost:8999/actuator/health"]
-    interval: 5s
-    timeout: 5s
-    retries: 20
-    start_period: 5s
-  entrypoint:
-    - /bin/sh
-    - -c
-    - |
-      rm -rf /qdata/cakeshop/local
-      mkdir -p /qdata/cakeshop/local
-      cp /quorum/application.properties /qdata/cakeshop/local/application.properties
-{% if privacy %}
-      cp /quorum/8nodes_quorum_docker.json /qdata/cakeshop/local/cakeshop.json
-{% else %}
-      cp /quorum/5nodes_quorum_docker.json /qdata/cakeshop/local/cakeshop.json
-{% endif %}
-      java -Xms128M -Xmx128M -Dspring.config.additional-location=file:/qdata/cakeshop/local/ -Dcakeshop.config.dir=/qdata/cakeshop -jar /cakeshop/cakeshop.war
-      ;;
-
-
 {% if monitoring == "elk" %}
 x-redis-def:
   &redis-def
@@ -465,6 +436,8 @@ services:
     environment:
       - NODE_ID=1
       - PRIVATE_CONFIG=ignore
+    labels:
+      - "consensus=goquorum"
     volumes:
       - ./config/goquorum:/quorum
       - ./config/nodes/validator1:/config/keys
@@ -661,17 +634,6 @@ services:
 {% endif %}
 
 {% if not orchestrate %}
-  cakeshop:
-    << : *cakeshop-def
-    hostname: cakeshop
-    ports:
-      - "8999:8999"
-    volumes:
-      - cakeshop:/data
-      - ./config/cakeshop:/quorum
-    networks:
-      quorum-dev-quickstart:
-        ipv4_address: 172.16.239.30
 
   explorer:
     build: block-explorer-light
@@ -802,7 +764,6 @@ networks:
       - subnet: 172.16.239.0/24
 
 volumes:
-  cakeshop:
   member1volume:
   member2volume:
   member3volume:
