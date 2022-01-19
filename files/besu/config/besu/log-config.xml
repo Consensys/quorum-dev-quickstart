@@ -9,7 +9,7 @@
     <Console name="Console" target="SYSTEM_OUT">
       <PatternLayout alwaysWriteExceptions="false" pattern='{"timestamp":"%d{ISO8601}","container":"${hostName}","level":"%level","thread":"%t","class":"%c{1}","message":"%msg","throwable":"%enc{%throwable}{JSON}"}%n'/>
     </Console>
-    <RollingFile name="RollingFile" fileName="/tmp/besu/besu-${env:HOSTNAME}.log" filePattern="/temp/besu/besu-${env:HOSTNAME}.log" >
+    <RollingFile name="RollingFile" fileName="/tmp/besu/besu-${env:HOSTNAME}.log" filePattern="/tmp/besu/besu-${env:HOSTNAME}.log" >
       <PatternLayout alwaysWriteExceptions="false" pattern='{"timestamp":"%d{ISO8601}","container":"${hostName}","level":"%level","thread":"%t","class":"%c{1}","message":"%msg","throwable":"%enc{%throwable}{JSON}"}%n'/>
       <Policies>
         <SizeBasedTriggeringPolicy size="10 MB" />
