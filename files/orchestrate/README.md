@@ -1,22 +1,23 @@
 # Orchestrate Quickstart
 
-Orchestrate enables enterprises to easily build secure and reliable applications on Ethereum blockchains. 
+Orchestrate enables enterprises to easily build secure and reliable applications on Ethereum blockchains.
 It provides advanced features when connected to blockchain networks like:
+
 - Transaction management (transaction crafting, gas management, nonce management, and transaction listening)
 - Account management with private key storage in Hashicorp Vault
 - Smart contract registry
 - Public and private transactions
 - Multi-chain.
 
-Orchestrate is a platform developed under the [BSL 1.1](LICENSE) license and written in Go. 
+Orchestrate is a platform developed under the [BSL 1.1](LICENSE) license and written in Go.
 
 For more information, refer to the Codefi Orchestrate official [Documentation](http://docs.orchestrate.consensys.net).
 
 | ⚠️ **Note**: If you have an existing Quorum quickstart running, please stop it before proceeding. The Orchestrate quickstart spins up an Ethereum client which serves as an RPC endpoint. If you have an existing RPC endpoint, please update the `NETWORK_ENDPOINT` in the `.env` file and comment out the eth_client container in the file `<output_folder>/orchestrate/scripts/deps/docker-compose.yml` |
 | ---
 
-
 ## Table of Contents
+
 1. [Prerequisites](#prerequisites)
 2. [Environment setup](#environment-setup)
 3. [Tutorial](#tutorial)
@@ -27,16 +28,14 @@ For more information, refer to the Codefi Orchestrate official [Documentation](h
    5. [Signing](#orchestrate-signing)
    6. [Multitenancy](#orchestrate-multitenancy)
 
-
 ## Prerequisites
 
 To run these tutorials, you must have the following installed:
 
 - [Docker and Docker-compose](https://docs.docker.com/compose/install/)
 
-| ⚠️ **Note**: If on MacOS or Windows, please ensure that you allow docker to use upto 4G of memory or 6G if running Privacy examples under the _Resources_ section. The [Docker for Mac](https://docs.docker.com/docker-for-mac/) and [Docker Desktop](https://docs.docker.com/docker-for-windows/) sites have details on how to do this at the "Resources" heading       |
+| ⚠️ **Note**: If on MacOS or Windows, please ensure that you allow docker to use upto 4G of memory or 6G if running Privacy examples under the _Resources_ section. The [Docker for Mac](https://docs.docker.com/docker-for-mac/) and [Docker Desktop](https://docs.docker.com/docker-for-windows/) sites have details on how to do this at the "Resources" heading |
 | ---
-
 
 | ⚠️ **Note**: This has only been tested on Windows 10 Build 18362 and Docker >= 17.12.2
 | ---
@@ -45,19 +44,20 @@ To run these tutorials, you must have the following installed:
 - On Windows we recommend running all commands from GitBash
 - [Nodejs](https://nodejs.org/en/download/) or [Yarn](https://yarnpkg.com/cli/node)
 
-
 ## Environment setup
 
 **Install the Orchestrate CLI**
+
 ```
-$> npm install 
+$> npm install
 ```
 
 See Orchestrate CLI help:
+
 ```
 $> npm run orchestrate -- help
 ```
- 
+
 **To start services and the dependencies:**
 
 ```
@@ -72,13 +72,14 @@ $> npm run down
 
 ## Tutorial
 
-This tutorial will show you how to connect Orchestrate to a blockchain network and use the Contract Registry to deploy 
+This tutorial will show you how to connect Orchestrate to a blockchain network and use the Contract Registry to deploy
 smart contracts, send transactions etc.
 
 ### a. Register chains <a name="orchestrate-chains"></a>
 
 ##### Connect to the blockchain network
-Now that you have Orchestrate up and running and an account created, it's time to connect Orchestrate to a blockchain 
+
+Now that you have Orchestrate up and running and an account created, it's time to connect Orchestrate to a blockchain
 network, by using the REST APIs
 
 ```
@@ -100,19 +101,22 @@ $> npm run register-chain
 }
 
 ```
-The Chain Unique Identifier (uuid) is displayed in the JSON result. Copy this value and add it to the `.env` file as 
+
+The Chain Unique Identifier (uuid) is displayed in the JSON result. Copy this value and add it to the `.env` file as
 the value for the `CHAIN_UUID` variable, like so: `CHAIN_UUID=35e2a951-1f9f-4ad0-9d14-199f5b330dc2`
 
 Once done, verify that the chain JSON-RPC is being proxied by Orchestrate
+
 ```
 $> npm run get-latest-block
 ```
-and the response should be details about the latest mined block on your chain
 
+and the response should be details about the latest mined block on your chain
 
 ### b. Account management <a name="orchestrate-accounts"></a>
 
 ##### Create an Ethereum account that serves as your **Network Faucet**
+
 ```
 $> npm run generate-account
 ...
@@ -122,14 +126,16 @@ $> npm run generate-account
   ...
 }
 ```
+
 (please note the account value will be different in your case)
 
-Copy the output of this command and add it to the `.env` file as the value for the `FAUCET_ACCOUNT` variable, like so: 
+Copy the output of this command and add it to the `.env` file as the value for the `FAUCET_ACCOUNT` variable, like so:
 `FAUCET_ACCOUNT=0x90494000f242D9e41Cd635939536Aa7aA869CfCF`
 
-
 ##### List accounts stored in Hashicorp Vault
+
 The faucet account's private key is stored in Hashicorp Vault and it's Ethereum address can be obtained by
+
 ```
 $> npm run get-accounts
 ...
@@ -140,16 +146,18 @@ $> npm run get-accounts
   }
 ]
 ```
+
 (please note the key value will be different in your case)
 
 ##### Configure a [Faucet](https://docs.orchestrate.pegasys.tech)
-Note: On paid gas networks (for example, public networks such as Ethereum mainnet or Rinkeby and also some private networks, 
-such as the Ethereum one used in this quickstart), an Ethereum account must have a positive ETH balance to pay transactions 
+
+Note: On paid gas networks (for example, public networks such as Ethereum mainnet or Rinkeby and also some private networks,
+such as the Ethereum one used in this quickstart), an Ethereum account must have a positive ETH balance to pay transactions
 fees for mining. Orchestrate provides a faucet to automatically provide the required ETH to accounts managed by Orchestrate
 
 A faucet is defined using a name, a creditor account used to credit other accounts, and a chain identified by its UUID.
 
-The following command uses the CHAIN, CHAIN_UUID and FAUCET_ACCOUNT values from the .env file to create a faucet. 
+The following command uses the CHAIN, CHAIN_UUID and FAUCET_ACCOUNT values from the .env file to create a faucet.
 Here the faucet is named using the chain name suffixed by -faucet.
 
 ```
@@ -169,21 +177,21 @@ $> npm run create-faucet
 }
 ```
 
-The next thing to do is to add some ETH to your faucet account - this is done by connect Metamask to your Ethereum 
-clients RPC endpoint ie. `http://localhost:8545`. Then import one of the genesis account's private keys and transfer 1 
+The next thing to do is to add some ETH to your faucet account - this is done by connect Metamask to your Ethereum
+clients RPC endpoint ie. `http://localhost:8545`. Then import one of the genesis account's private keys and transfer 1
 or 2 ETH from one of the test accounts to your `FAUCET_ACCOUNT` address.
 
-![Image metamask_faucet](/files/common/static/metamask-faucet-transfer.png)
-
+![Image metamask_faucet](./network/static/metamask-faucet-transfer.png)
 
 ### c. Deploy contracts and send transactions <a name="orchestrate-contracts"></a>
 
+##### Register the smart contract
 
-##### Register the smart contract 
-Orchestrate provides a contract registry which you can use to deploy contracts on your registered networks. But first 
+Orchestrate provides a contract registry which you can use to deploy contracts on your registered networks. But first
 you have to create, compile, and add your contract to the registry.
 
-So, first we compile the contracts 
+So, first we compile the contracts
+
 ```
 $> npm run compile
 ...
@@ -199,9 +207,10 @@ Compiling your contracts...
 ```
 
 Then we send it to the Contract Registry
+
 ```
 $> npm run register-contract
-... 
+...
 {
   name: 'Counter',
   tag: 'latest',
@@ -229,16 +238,17 @@ $> npm run register-contract
 ```
 
 To query the Contract Registry for a list of Smart Contracts:
+
 ```
 $> npm run get-catalog
 ...
 [ 'Counter' ]
 ```
 
-##### Create an account to send transactions 
+##### Create an account to send transactions
 
-Generate an account to be used for sending transactions to the smart contact. The generated account is stored by the 
- Hashicorp Vault service.
+Generate an account to be used for sending transactions to the smart contact. The generated account is stored by the
+Hashicorp Vault service.
 
 ```
 $> npm run generate-account
@@ -250,26 +260,29 @@ $> npm run generate-account
 }
 ```
 
-Note: The generated account is automatically funded by the faucet service configured previously. Copy the account address 
+Note: The generated account is automatically funded by the faucet service configured previously. Copy the account address
 and set the `FROM_ACCOUNT` value with this address in `.env` file, like so: `FROM_ACCOUNT=0xF0156f5949e4667E5396D41ff22616EDc21f0150`
 
-##### Deploy the contract and send contract transactions 
+##### Deploy the contract and send contract transactions
 
-Orchestrate manages blockchain transactions that are asynchronous by nature due to blockchain mining time. Orchestrate 
-provides an event consumer to process transaction receipts when they are generated, and uses Apache Kafka to handle these 
+Orchestrate manages blockchain transactions that are asynchronous by nature due to blockchain mining time. Orchestrate
+provides an event consumer to process transaction receipts when they are generated, and uses Apache Kafka to handle these
 asynchronous communications.
 
 In the next steps, we send two kinds of transactions:
+
 - Create the contract on the chain
 - Interact with the contract by send a transaction to it
 
-You have to run a consumer script to listen to the transaction receipt events and see them happen on the network. In your 
+You have to run a consumer script to listen to the transaction receipt events and see them happen on the network. In your
 current terminal, start the consumer and let the consumer run in the foreground:
+
 ```
 $> npm run consume
 ```
 
 In another terminal session, deploy the smart contract
+
 ```
 $> npm run deploy
 ...
@@ -288,7 +301,8 @@ Transaction request sent successfully {
 ```
 
 After a few seconds (depending on block time), you see the receipt related to the contract creation transaction in the consumer terminal.
-``` 
+
+```
 Message received ! {
   envelopeId: 'b98f148c-0c83-4e8f-9d75-8ac3aabb3355',
   offset: '1',
@@ -314,14 +328,16 @@ Receipt: {
   "privacyGroupId": undefined
 }
 ```
-Copy the contractAddress in the receipt and set the TO_ACCOUNT value with this address in .env file, like so: 
+
+Copy the contractAddress in the receipt and set the TO_ACCOUNT value with this address in .env file, like so:
 `TO_ACCOUNT=0xA94F5374fCE5EDBC8E2A8697C15331677D6EBF0B`
 
-
 ##### Send a Transaction to the Smart Contract
+
 > **Important:** Before moving forward, ensure the FROM_ACCOUNT and TO_ACCOUNT are set in the .env file.
 
 On the second terminal, send the transaction:
+
 ```
 > npm run send-tx
 ...
@@ -344,14 +360,15 @@ Transaction request sent successfully {
   },
   createdAt: '2020-08-11T00:11:
 ```
-After a few seconds you will see the transaction request id, and the transaction receipt in the consumer output on the 
+
+After a few seconds you will see the transaction request id, and the transaction receipt in the consumer output on the
 first terminal as before
 
 This concludes the first tutorial on how to deploy contracts and send transactions.
 
 ### d. Send private transactions <a name="orchestrate-priv-transactions"></a>
 
-PegaSys Orchestrate is compatible with **Quorum Tessera** for private transactions. Private transactions are only available within participants of the consortium. 
+PegaSys Orchestrate is compatible with **Quorum Tessera** for private transactions. Private transactions are only available within participants of the consortium.
 
 <!-- In order to be able to follow next part of the tutorial you have to setup your selected network: -->
 <!-- ``` -->
@@ -375,7 +392,6 @@ output on the first terminal.
 
 > For more information about EEA private transactions, refer to the [Besu privacy documentation](https://besu.hyperledger.org/en/stable/Concepts/Privacy/Private-Transactions/).
 
-
 #### Go-Quorum Tessera (only available for go-quorum network with privacy enabled)
 
 To send a private transaction in Go-Quorum, run:
@@ -395,6 +411,7 @@ Using Orchestrate and accounts store in the key vault you can sign any kind of d
 or not a signature corresponds to a certain sender.
 
 To sign the payload data defined in our `.env` file `DATA_TO_SIGN=....`:
+
 ```
 $> npm run sign-payload
 ...
@@ -402,6 +419,7 @@ $> npm run sign-payload
 ```
 
 Taking previous replace `[SIGNATURE]` in `.env` file before running next command;
+
 ```
 $> npm run verify-signature
 ...
@@ -411,6 +429,7 @@ Signature was verified successfully
 #### Sign typed data
 
 At last if you want to sign typed data:
+
 ```
 $> npm run sign-typed-data
 ...
@@ -419,21 +438,22 @@ $> npm run sign-typed-data
 
 ### f. Multitenancy <a name="orchestrate-multitenancy"></a>
 
-Multi-tenancy enables serving multiple blockchain applications with a single Orchestrate instance. Resources including 
-transaction streams, access to the blockchain network, private keys, and smart contracts are isolated to the tenant that 
+Multi-tenancy enables serving multiple blockchain applications with a single Orchestrate instance. Resources including
+transaction streams, access to the blockchain network, private keys, and smart contracts are isolated to the tenant that
 owns them. [See more](https://docs.orchestrate.pegasys.tech/en/stable/Concepts/Multi-Tenancy/)
 
-Orchestrate uses the OpenID Connect(OIDC) authentication protocol. JSON Web Tokens (JWTs) with custom claims control 
+Orchestrate uses the OpenID Connect(OIDC) authentication protocol. JSON Web Tokens (JWTs) with custom claims control
 access to tenant resources.
 
-
 ##### Enabling multi-tenancy
+
 To enable multi-tenancy we need to modify the following variables from our local environment file `.env` as it is described
 in the [documentation](https://docs.orchestrate.pegasys.tech/en/latest/Howto/Configure/MultiTenancy/)
 
 ##### Testing the JWT token
-Once you have obtained a valid token, please replace it to the `[TENANT_AUTH_TOKEN]` value in the `.env` file. Following that, if you 
-go through the first [Contracts & Transactions tutorial](#orchestrate-contracts), you should observer that every request 
+
+Once you have obtained a valid token, please replace it to the `[TENANT_AUTH_TOKEN]` value in the `.env` file. Following that, if you
+go through the first [Contracts & Transactions tutorial](#orchestrate-contracts), you should observer that every request
 now gets sent using the generated JWT.
 
 > **Note:**: In some sample cases we need to prefix the token by `Bearer` to be correctly decoded by the Orchestrate services.
