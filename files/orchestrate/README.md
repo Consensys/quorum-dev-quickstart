@@ -407,15 +407,15 @@ output on the first terminal.
 
 ### e. Signing <a name="orchestrate-singing"></a>
 
-Using Orchestrate and accounts store in the key vault you can sign any kind of data and/or typed data. In addition verifying whether
+Using Orchestrate and accounts store in the key vault you can sign messages and/or typed data. In addition verifying whether
 or not a signature corresponds to a certain sender.
 
-To sign the payload data defined in our `.env` file `DATA_TO_SIGN=....`:
+To sign data defined in our `.env` file `DATA_TO_SIGN=....` using EIP-191 standard we run :
 
 ```
-$> npm run sign-payload
+$> npm run sign-message
 ...
-0x98e7f3b87d9094f7f4f27dbc9e61f95efedb2ccc95506647a1f8d3a84d257b5b3b67cb175ecf3dc22125a7d6a067f32fd176b1f8b0c1991a2670c86db97c035100
+0x6eddbe4e12d435b79128dd51556a820b52e93cdb308dec5191818f9839f519c955b9aac8a4af5046f651ad9a0da5dc36171568a65696966baf8c916539c1003d1b
 ```
 
 Taking previous replace `[SIGNATURE]` in `.env` file before running next command;
