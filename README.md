@@ -100,3 +100,14 @@ Follow the README.md file of select artifact:
 3. [Codefi Orchestrate](./files/orchestrate/README.md)
 3. [Quorum Key Manager](./files/quorum-key-manager/README.md)
 
+## Troubleshooting
+
+### Besu only - `java.io.IOException: Permission denied` for volumes
+
+The `besu` containers use user `besu` mapped to user:group 1000. On your local machine, if your userid is not 1000, you will see this error. To fix this either run as user 1000 or map
+the container's user 1000 to your local user id so permissions will work like so in the compose file
+
+```
+image: some:img
+user: $(id -u):$(id -g)
+```

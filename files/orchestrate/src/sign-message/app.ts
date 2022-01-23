@@ -15,7 +15,7 @@ export const start = async () => {
 
     const signature = await client.signMessage(
       process.env.FROM_ACCOUNT!,
-      convertToHex(process.env.DATA_TO_SIGN!),
+      { message: convertToHex(process.env.DATA_TO_SIGN!) },
       process.env.AUTH_TOKEN
     );
 

@@ -25,7 +25,7 @@
     "send-tx": "dotenv ts-node src/send-tx",
     "send-eea-private-tx": "dotenv ts-node src/send-eea-private-tx",
     "send-tessera-private-tx": "dotenv ts-node src/send-tessera-private-tx",
-    "sign-payload": "dotenv ts-node src/sign-payload",
+    "sign-message": "dotenv ts-node src/sign-message",
     "verify-signature": "dotenv ts-node src/verify-signature",
     "sign-typed-data": "dotenv ts-node src/sign-typed-data",
     "gasprice-retry": "dotenv ts-node src/gasprice-retry",
@@ -70,14 +70,14 @@
   "devDependencies": {
     "@openzeppelin/contracts": "~3.1.0",
     "@types/uuid": "^8.0.0",
-    "axios": "~0.19.2",
+    "axios": "^0.25.0",
     "cross-var": "~1.1.0",
     "dotenv": "~8.2.0",
     "dotenv-cli": "~3.1.0",
-    "ethers": "~5.0.15",
-    "husky": "~4.2.5",
+    "ethers": "^5.5.3",
+    "husky": "^4.3.8",
     "lint-staged": "~10.2.2",
-    "pegasys-orchestrate": "^6.0.1",
+    "pegasys-orchestrate": "^6.1.0",
     "prettier": "~2.0.5",
     "rimraf": "~3.0.2",
     "truffle": "~5.1.47",
@@ -102,6 +102,5 @@
       "tslint",
       "git add"
     ]
-  },
-  "dependencies": {}
+  }
 }
