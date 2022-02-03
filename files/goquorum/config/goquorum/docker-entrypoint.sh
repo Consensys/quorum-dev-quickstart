@@ -4,7 +4,14 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-GOQUORUM_CONS_ALGO=`echo "${GOQUORUM_CONS_ALGO}" | tr '[:lower:]'`
+GOQUORUM_CONS_ALGO=`echo "${GOQUORUM_CONS_ALGO:qbft}" | tr '[:lower:]'`
+
+if [[ ! -d /data/geth ]];
+then
+    echo "Initializing geth data directory with ${GOQUORUM_CONS_ALGO}Genesis.json ..."
+    geth --verbosity 1 --datadir=/data init /data/${GOQUORUM_CONS_ALGO}Genesis.json; 
+fi
+
 
 if [ "istanbul" == "$GOQUORUM_CONS_ALGO" ];
 then
@@ -23,11 +30,7 @@ then
     export QUORUM_API="raft"
 fi
 
-if [[ ! -d /data/geth ]];
-then
-    echo "Initializing geth data directory ..."
-    geth --datadir=/data init /data/${GOQUORUM_CONS_ALGO}Genesis.json;
-fi
+mkdir -p /data/keystore/
 
 cp /config/keys/accountkey /data/keystore/key;
 cp /config/keys/nodekey /data/geth/nodekey;
@@ -37,25 +40,33 @@ export ADDRESS=$(grep -o '"address": *"[^"]*"' /config/keys/accountkey | grep -o
 
 if [[ ! -z ${QUORUM_PTM:-} ]];
 then
-    echo "Checking tessera is up ..."
-    for i in $(seq 1 100)
-    do
-    if [ "I'm up!" == "$(wget --timeout 10 -qO- --proxy off ${QUORUM_PTM}:9000/upcheck)" ];
-        then break
-    else
-        echo "Waiting for Tessera..."
-        sleep 10
-    fi
-    done
+    echo -n "Checking tessera is up ... "
     
+    curl \
+        --connect-timeout 5 \
+        --max-time 10 \
+        --retry 5 \
+        --retry-connrefused \
+        --retry-delay 0 \
+        --retry-max-time 60 \
+        --silent \
+        --fail \
+        "${QUORUM_PTM}:9000/upcheck"
+    echo ""
+
     ADDITIONAL_ARGS="${ADDITIONAL_ARGS:-} --ptm.timeout 5 --ptm.url http://${QUORUM_PTM}:9101 --ptm.http.writebuffersize 4096 --ptm.http.readbuffersize 4096 --ptm.tls.mode off"
 fi
 
-geth \
+touch /var/log/quorum/geth-$(hostname -i).log
+chmod 777 /var/log/quorum/geth-$(hostname -i).log
+
+cat /proc/1/fd/1 /proc/1/fd/2 > /var/log/quorum/geth-$(hostname -i).log &
+
+exec geth \
 --datadir /data \
 --nodiscover \
 --permissioned \
---verbosity 3 \
+--verbosity 5 \
 $CONSENSUS_ARGS \
 --syncmode full --nousb \
 --metrics --pprof --pprof.addr 0.0.0.0 --pprof.port 9545 \
@@ -68,4 +79,4 @@ $CONSENSUS_ARGS \
 --allow-insecure-unlock \
 --password /data/passwords.txt \
 ${ADDITIONAL_ARGS:-} \
-2>&1 | tee -a /var/log/quorum/geth-$(hostname -i).log
+2>&1
