@@ -4,14 +4,20 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-GOQUORUM_CONS_ALGO=`echo "${GOQUORUM_CONS_ALGO:qbft}" | tr '[:lower:]'`
+GOQUORUM_CONS_ALGO=`echo "${GOQUORUM_CONS_ALGO:-qbft}" | tr '[:lower:]'`
+GENESIS_FILE=${GENESIS_FILE:-"/data/${GOQUORUM_CONS_ALGO}-${GOQUORUM_GENESIS_MODE}-genesis.json"}
 
-if [[ ! -d /data/geth ]];
-then
-    echo "Initializing geth data directory with ${GOQUORUM_CONS_ALGO}Genesis.json ..."
-    geth --verbosity 1 --datadir=/data init /data/${GOQUORUM_CONS_ALGO}Genesis.json; 
-fi
+mkdir -p /data
+cp -R /config/* /data
 
+
+echo "Applying ${GENESIS_FILE} ..."
+geth --verbosity 1 --datadir=/data init ${GENESIS_FILE}; 
+
+mkdir -p /data/keystore/
+
+cp /config/keys/accountkey /data/keystore/key;
+cp /config/keys/nodekey /data/geth/nodekey;
 
 if [ "istanbul" == "$GOQUORUM_CONS_ALGO" ];
 then
@@ -30,10 +36,7 @@ then
     export QUORUM_API="raft"
 fi
 
-mkdir -p /data/keystore/
 
-cp /config/keys/accountkey /data/keystore/key;
-cp /config/keys/nodekey /data/geth/nodekey;
 
 export ADDRESS=$(grep -o '"address": *"[^"]*"' /config/keys/accountkey | grep -o '"[^"]*"$' | sed 's/"//g')
 
@@ -66,7 +69,7 @@ exec geth \
 --datadir /data \
 --nodiscover \
 --permissioned \
---verbosity 5 \
+--verbosity 3 \
 $CONSENSUS_ARGS \
 --syncmode full --nousb \
 --metrics --pprof --pprof.addr 0.0.0.0 --pprof.port 9545 \

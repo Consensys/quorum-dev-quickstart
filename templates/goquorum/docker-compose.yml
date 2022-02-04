@@ -167,7 +167,11 @@ x-tessera-def:
                 }
               ]
             },
-            "alwaysSendTo": []
+            "alwaysSendTo": [],
+            "features": {
+              "enableRemoteKeyValidation": false,
+              "enablePrivacyEnhancements": true
+            }
           }
       EOF
           cat /data/tm/tessera-config-09.json
@@ -314,6 +318,7 @@ services:
       - 9545
     environment:
       - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=standard
     volumes:
       - ./config/nodes/validator1:/config/keys
       - ./logs/quorum:/var/log/quorum/
@@ -329,6 +334,7 @@ services:
       - 9545
     environment:
       - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=standard
     volumes:
       - ./config/nodes/validator2:/config/keys
       - ./logs/quorum:/var/log/quorum/
@@ -344,6 +350,7 @@ services:
       - 9545
     environment:
       - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=standard
     volumes:
       - ./config/nodes/validator3:/config/keys
       - ./logs/quorum:/var/log/quorum/
@@ -359,6 +366,7 @@ services:
       - 9545
     environment:
       - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=standard
     volumes:
       - ./config/nodes/validator4:/config/keys
       - ./logs/quorum:/var/log/quorum/
@@ -376,6 +384,7 @@ services:
       - 9545
     environment:
       - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=standard
     volumes:
       - ./config/nodes/rpcnode:/config/keys
       - ./logs/quorum:/var/log/quorum/
@@ -413,6 +422,7 @@ services:
       - member1tessera
     environment:
       - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=enhanced
       - QUORUM_PTM=member1tessera
     volumes:
       - ./config/nodes/member1:/config/keys
@@ -450,6 +460,7 @@ services:
       - member2tessera
     environment:
       - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=enhanced
       - QUORUM_PTM=member2tessera
     volumes:
       - ./config/nodes/member2:/config/keys
@@ -487,6 +498,7 @@ services:
       - member3tessera
     environment:
       - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=enhanced
       - QUORUM_PTM=member3tessera
     volumes:
       - ./config/nodes/member3:/config/keys
