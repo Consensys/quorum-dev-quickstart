@@ -63,7 +63,7 @@ fi
 touch /var/log/quorum/geth-$(hostname -i).log
 chmod 777 /var/log/quorum/geth-$(hostname -i).log
 
-cat /proc/1/fd/1 /proc/1/fd/2 > /var/log/quorum/geth-$(hostname -i).log &
+cat /proc/1/fd/2 /proc/1/fd/1 > /var/log/quorum/geth-$(hostname -i).log &
 
 exec geth \
 --datadir /data \
