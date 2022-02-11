@@ -24,7 +24,6 @@ echo "----------------------------------"
 
 
 docker-compose stop
-sleep 60
 
 if [ -f "docker-compose-deps.yml" ]; then
     echo "Stopping dependencies..."
