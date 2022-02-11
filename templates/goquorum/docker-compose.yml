@@ -96,6 +96,8 @@ x-tessera-def:
     context: config/tessera
     args:
       TESSERA_VERSION: ${TESSERA_VERSION:-latest}
+  environment:
+    TESSERA_MODE: tessera
   expose:
     - 9000
     - 9080

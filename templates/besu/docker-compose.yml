@@ -90,7 +90,12 @@ x-besu-tx-def:
 {% if privacy %}
 x-tessera-def:
   &tessera-def
-  image: quorumengineering/tessera:${TESSERA_VERSION:-latest}
+  build: 
+    context: config/tessera
+    args:
+      TESSERA_VERSION: ${TESSERA_VERSION:-latest}
+  environment:
+    TESSERA_MODE: orion
   expose:
     - 9000
     - 9080
@@ -102,75 +107,6 @@ x-tessera-def:
     timeout: 3s
     retries: 20
     start_period: 5s
-  entrypoint:
-    - /bin/sh
-    - -c
-    - |
-      mkdir -p /var/log/tessera/;
-      mkdir -p /data/tm/;
-      cp /config/keys/tm.* /data/tm/ ;
-
-          cat <<EOF > /data/tm/tessera-config-09.json
-          {
-            "mode": "orion",
-            "useWhiteList": false,
-            "jdbc": {
-              "username": "sa",
-              "password": "",
-              "url": "jdbc:h2:./data/tm/db;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0",
-              "autoCreateTables": true
-            },
-            "serverConfigs":[
-            {
-              "app":"ThirdParty",
-              "enabled": true,
-              "serverAddress": "http://$$(hostname -i):9080",
-              "communicationType" : "REST"
-            },
-            {
-              "app":"Q2T",
-              "enabled": true,
-              "serverAddress": "http://$$(hostname -i):9101",
-              "sslConfig": {
-                "tls": "OFF"
-              },
-              "communicationType" : "REST"
-            },
-            {
-              "app":"P2P",
-              "enabled": true,
-              "serverAddress": "http://$$(hostname -i):9000",
-              "sslConfig": {
-                "tls": "OFF"
-              },
-              "communicationType" : "REST"
-            }
-            ],
-            "peer": [
-                {
-                    "url": "http://member1tessera:9000"
-                },
-                {
-                    "url": "http://member2tessera:9000"
-                },
-                {
-                    "url": "http://member3tessera:9000"
-                }
-            ],
-            "keys": {
-              "passwords": [],
-              "keyData": [
-                {
-                  "config": $$(cat /data/tm/tm.key),
-                  "publicKey": "$$(cat /data/tm/tm.pub)"
-                }
-              ]
-            },
-            "alwaysSendTo": []
-          }
-      EOF
-          cat /data/tm/tessera-config-09.json
-          /tessera/bin/tessera -configfile /data/tm/tessera-config-09.json &> /var/log/tessera/tessera-$$HOSTNAME.log | tee -a /var/log/tessera/tessera-$$HOSTNAME.log
 
 {% endif %}
 
@@ -508,13 +444,8 @@ services:
     << : *tessera-def
     ports:
       - 9081:9080
-    environment:
-      - TESSERA_CONFIG_TYPE="-09"
-      - JAVA_OPTS="-Dlogback.configurationFile=/config/logs/logback.xml"
     volumes:
-      - ./config/tessera:/config/logs
       - ./config/nodes/member1:/config/keys
-      - member1tessera:/data
       - ./logs/tessera:/var/log/tessera/
     networks:
       quorum-dev-quickstart:
@@ -561,13 +492,8 @@ services:
     << : *tessera-def
     ports:
       - 9082:9080
-    environment:
-      - TESSERA_CONFIG_TYPE="-09"
-      - JAVA_OPTS="-Dlogback.configurationFile=/config/logs/logback.xml"
     volumes:
-      - ./config/tessera:/config/logs
       - ./config/nodes/member2:/config/keys
-      - member2tessera:/data
       - ./logs/tessera:/var/log/tessera/
     networks:
       quorum-dev-quickstart:
@@ -614,13 +540,8 @@ services:
     << : *tessera-def
     ports:
       - 9083:9080
-    environment:
-      - TESSERA_CONFIG_TYPE="-09"
-      - JAVA_OPTS="-Dlogback.configurationFile=/config/logs/logback.xml"
     volumes:
-      - ./config/tessera:/config/logs
       - ./config/nodes/member3:/config/keys
-      - member3tessera:/data
       - ./logs/tessera:/var/log/tessera/
     networks:
       quorum-dev-quickstart:
@@ -798,9 +719,6 @@ volumes:
   public-keys:
   prometheus:
   grafana:
-  member1tessera:
-  member2tessera:
-  member3tessera:
   splunk:
   ethlogger:
   blockscoutpostgres:

@@ -3,6 +3,8 @@
 mkdir -p /var/log/tessera/;
 mkdir -p /data/tm/;
 
+envsubst < /data/tessera-config-template.json > /data/tessera-config.json
+
 cat /data/tessera-config.json
 
 touch /var/log/tessera/tessera-$(hostname -i).log
