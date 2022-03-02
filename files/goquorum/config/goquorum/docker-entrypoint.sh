@@ -1,5 +1,6 @@
 #!/bin/sh
 
+set -x
 set -o errexit
 set -o nounset
 set -o pipefail
@@ -12,33 +13,57 @@ cp -R /config/* /data
 
 
 echo "Applying ${GENESIS_FILE} ..."
-geth --verbosity 1 --datadir=/data init ${GENESIS_FILE}; 
+geth --verbosity 8 --datadir=/data init ${GENESIS_FILE}; 
 
 mkdir -p /data/keystore/
 
 cp /config/keys/accountkey /data/keystore/key;
 cp /config/keys/nodekey /data/geth/nodekey;
 
+export ADDRESS=$(grep -o '"address": *"[^"]*"' /config/keys/accountkey | grep -o '"[^"]*"$' | sed 's/"//g')
+
 if [ "istanbul" == "$GOQUORUM_CONS_ALGO" ];
 then
     echo "Using istanbul for consensus algorithm..."
-    export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
+    if [ "true" == "${IS_VALIDATOR:-false}" ];
+    then
+        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
+    else
+        export CONSENSUS_ARGS=" "
+    fi
+
     export QUORUM_API="istanbul"
 elif [ "qbft" == "$GOQUORUM_CONS_ALGO" ];
 then
     echo "Using qbft for consensus algorithm..."
-    export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
+    if [ "true" == "${IS_VALIDATOR:-false}" ];
+    then
+        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
+    else
+        export CONSENSUS_ARGS=" "
+    fi
     export QUORUM_API="istanbul,qbft"
 elif [ "raft" == "$GOQUORUM_CONS_ALGO" ];
 then
     echo "Using raft for consensus algorithm..."
-    export CONSENSUS_ARGS="--raft --raftblocktime 300 --raftport 53000"
+    if [ "true" == "${IS_VALIDATOR:-false}"  ];
+    then
+        export CONSENSUS_ARGS="--raft --raftblocktime 300 --raftport 53000"
+    else
+        export CONSENSUS_ARGS=" "
+    fi
     export QUORUM_API="raft"
+elif [ "clique" == "$GOQUORUM_CONS_ALGO" ];
+then
+    echo "Using clique for consensus algorithm..."
+    if [ "true" == "${IS_VALIDATOR:-false}"  ];
+    then
+        export CONSENSUS_ARGS="--mine --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
+    else
+        export CONSENSUS_ARGS=" "
+    fi
+    export QUORUM_API="clique"
 fi
-
-
-
-export ADDRESS=$(grep -o '"address": *"[^"]*"' /config/keys/accountkey | grep -o '"[^"]*"$' | sed 's/"//g')
 
 
 if [[ ! -z ${QUORUM_PTM:-} ]];
@@ -69,9 +94,9 @@ exec geth \
 --datadir /data \
 --nodiscover \
 --permissioned \
---verbosity 3 \
+--verbosity 8 \
 $CONSENSUS_ARGS \
---syncmode full --nousb \
+--syncmode full \
 --metrics --pprof --pprof.addr 0.0.0.0 --pprof.port 9545 \
 --networkid ${QUORUM_NETWORK_ID:-1337} \
 --http --http.addr 0.0.0.0 --http.port 8545 --http.corsdomain "*" --http.vhosts "*" --http.api admin,trace,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$QUORUM_API \
