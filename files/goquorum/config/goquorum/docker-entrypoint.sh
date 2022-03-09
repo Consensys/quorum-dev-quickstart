@@ -16,7 +16,7 @@ geth --verbosity 1 --datadir=/data init ${GENESIS_FILE};
 
 mkdir -p /data/keystore/
 
-cp /config/keys/accountkey /data/keystore/key;
+cp /config/keys/accountKeystore /data/keystore/key;
 cp /config/keys/nodekey /data/geth/nodekey;
 
 if [ "istanbul" == "$GOQUORUM_CONS_ALGO" ];
@@ -38,7 +38,7 @@ fi
 
 
 
-export ADDRESS=$(grep -o '"address": *"[^"]*"' /config/keys/accountkey | grep -o '"[^"]*"$' | sed 's/"//g')
+export ADDRESS=$(grep -o '"address": *"[^"]*"' /config/keys/accountKeystore | grep -o '"[^"]*"$' | sed 's/"//g')
 
 
 if [[ ! -z ${QUORUM_PTM:-} ]];
