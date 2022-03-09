@@ -38,7 +38,7 @@ fi
 
 
 
-export ADDRESS=$(grep -o '"address": *"[^"]*"' /config/keys/accountkey | grep -o '"[^"]*"$' | sed 's/"//g')
+export ADDRESS=$(grep -o '"address": *"[^"]*"' /config/keys/accountKeystore | grep -o '"[^"]*"$' | sed 's/"//g')
 
 
 if [[ ! -z ${QUORUM_PTM:-} ]];
