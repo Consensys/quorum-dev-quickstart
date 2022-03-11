@@ -74,8 +74,8 @@ $CONSENSUS_ARGS \
 --syncmode full --nousb \
 --metrics --pprof --pprof.addr 0.0.0.0 --pprof.port 9545 \
 --networkid ${QUORUM_NETWORK_ID:-1337} \
---http --http.addr 0.0.0.0 --http.port 8545 --http.corsdomain "*" --http.vhosts "*" --http.api admin,eth,debug,miner,net,txpool,personal,web3,$QUORUM_API \
---ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.origins "*" --ws.api admin,eth,debug,miner,net,txpool,personal,web3,$QUORUM_API \
+--http --http.addr 0.0.0.0 --http.port 8545 --http.corsdomain "*" --http.vhosts "*" --http.api admin,eth,debug,miner,net,txpool,personal,web3,quorumExtension,$QUORUM_API \
+--ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.origins "*" --ws.api admin,eth,debug,miner,net,txpool,personal,web3,quorumExtension,$QUORUM_API \
 --port 30303 \
 --identity ${HOSTNAME}-${GOQUORUM_CONS_ALGO} \
 --unlock ${ADDRESS} \
