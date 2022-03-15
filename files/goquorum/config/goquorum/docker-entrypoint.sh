@@ -12,11 +12,11 @@ cp -R /config/* /data
 
 
 echo "Applying ${GENESIS_FILE} ..."
-geth --verbosity $VERBOSITY --datadir=/data init ${GENESIS_FILE}; 
+geth --nousb --verbosity $VERBOSITY --datadir=/data init ${GENESIS_FILE}; 
 
 mkdir -p /data/keystore/
 
-cp /config/keys/accountkey /data/keystore/key;
+cp /config/keys/accountKeystore /data/keystore/key;
 cp /config/keys/nodekey /data/geth/nodekey;
 
 export ADDRESS=$(grep -o '"address": *"[^"]*"' /config/keys/accountkey | grep -o '"[^"]*"$' | sed 's/"//g')
@@ -30,7 +30,7 @@ elif [ "qbft" == "$GOQUORUM_CONS_ALGO" ];
 then
     echo "Using qbft for consensus algorithm..."
     export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
-    export QUORUM_API="istanbul,qbft"
+    export QUORUM_API="istanbul"
 elif [ "raft" == "$GOQUORUM_CONS_ALGO" ];
 then
     echo "Using raft for consensus algorithm..."
@@ -81,8 +81,8 @@ $CONSENSUS_ARGS \
 --syncmode full \
 --metrics --pprof --pprof.addr 0.0.0.0 --pprof.port 9545 \
 --networkid ${QUORUM_NETWORK_ID:-1337} \
---http --http.addr 0.0.0.0 --http.port 8545 --http.corsdomain "*" --http.vhosts "*" --http.api admin,trace,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$QUORUM_API \
---ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.origins "*" --ws.api admin,trace,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,$QUORUM_API \
+--http --http.addr 0.0.0.0 --http.port 8545 --http.corsdomain "*" --http.vhosts "*" --http.api admin,eth,debug,miner,net,txpool,personal,web3,quorumExtension,$QUORUM_API \
+--ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.origins "*" --ws.api admin,eth,debug,miner,net,txpool,personal,web3,quorumExtension,$QUORUM_API \
 --port 30303 \
 --identity ${HOSTNAME}-${GOQUORUM_CONS_ALGO} \
 --unlock ${ADDRESS} \

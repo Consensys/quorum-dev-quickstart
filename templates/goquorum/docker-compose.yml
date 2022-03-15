@@ -294,7 +294,7 @@ services:
   validator4:
     << : *quorum-def
     ports:
-      - 22004:8545/tcp
+      - 21004:8545/tcp
       - 30303
       - 9545
     environment:

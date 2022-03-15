@@ -283,6 +283,10 @@ services:
 
   validator1:
     << : *besu-def
+    ports:
+      - 21001:8545/tcp
+      - 30303
+      - 9545
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator1,service.version=${BESU_VERSION:-latest}
     labels:
@@ -297,6 +301,10 @@ services:
 
   validator2:
     << : *besu-def
+    ports:
+      - 21002:8545/tcp
+      - 30303
+      - 9545    
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator2,service.version=${BESU_VERSION:-latest}
     labels:
@@ -313,6 +321,10 @@ services:
 
   validator3:
     << : *besu-def
+    ports:
+      - 21003:8545/tcp
+      - 30303
+      - 9545    
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator3,service.version=${BESU_VERSION:-latest}
     labels:
@@ -329,6 +341,10 @@ services:
 
   validator4:
     << : *besu-def
+    ports:
+      - 21004:8545/tcp
+      - 30303
+      - 9545    
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator4,service.version=${BESU_VERSION:-latest}
     labels:
