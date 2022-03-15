@@ -252,7 +252,6 @@ services:
     environment:
       - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
       - GOQUORUM_GENESIS_MODE=standard
-      - IS_VALIDATOR=true
     volumes:
       - ./config/nodes/validator1:/config/keys
       - ./logs/quorum:/var/log/quorum/
@@ -269,7 +268,6 @@ services:
     environment:
       - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
       - GOQUORUM_GENESIS_MODE=standard
-      - IS_VALIDATOR=true
     volumes:
       - ./config/nodes/validator2:/config/keys
       - ./logs/quorum:/var/log/quorum/
@@ -286,7 +284,6 @@ services:
     environment:
       - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
       - GOQUORUM_GENESIS_MODE=standard
-      - IS_VALIDATOR=true
     volumes:
       - ./config/nodes/validator3:/config/keys
       - ./logs/quorum:/var/log/quorum/
@@ -303,7 +300,6 @@ services:
     environment:
       - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
       - GOQUORUM_GENESIS_MODE=standard
-      - IS_VALIDATOR=true
     volumes:
       - ./config/nodes/validator4:/config/keys
       - ./logs/quorum:/var/log/quorum/
@@ -322,6 +318,7 @@ services:
     environment:
       - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
       - GOQUORUM_GENESIS_MODE=standard
+      - ADDITIONAL_ARGS=--gcmode=archive # For blockscout https://docs.blockscout.com/for-developers/information-and-settings/client-settings-parity-geth-ganache
     volumes:
       - ./config/nodes/rpcnode:/config/keys
       - ./logs/quorum:/var/log/quorum/

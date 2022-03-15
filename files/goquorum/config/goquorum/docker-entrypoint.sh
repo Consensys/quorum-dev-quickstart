@@ -1,19 +1,18 @@
 #!/bin/sh
 
-set -x
 set -o errexit
 set -o nounset
 set -o pipefail
 
 GOQUORUM_CONS_ALGO=`echo "${GOQUORUM_CONS_ALGO:-qbft}" | tr '[:lower:]'`
 GENESIS_FILE=${GENESIS_FILE:-"/data/${GOQUORUM_CONS_ALGO}-${GOQUORUM_GENESIS_MODE}-genesis.json"}
-
+VERBOSITY=${VERBOSITY:-3}
 mkdir -p /data
 cp -R /config/* /data
 
 
 echo "Applying ${GENESIS_FILE} ..."
-geth --verbosity 8 --datadir=/data init ${GENESIS_FILE}; 
+geth --verbosity $VERBOSITY --datadir=/data init ${GENESIS_FILE}; 
 
 mkdir -p /data/keystore/
 
@@ -25,45 +24,28 @@ export ADDRESS=$(grep -o '"address": *"[^"]*"' /config/keys/accountkey | grep -o
 if [ "istanbul" == "$GOQUORUM_CONS_ALGO" ];
 then
     echo "Using istanbul for consensus algorithm..."
-    if [ "true" == "${IS_VALIDATOR:-false}" ];
-    then
-        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
-    else
-        export CONSENSUS_ARGS=" "
-    fi
-
+    export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
     export QUORUM_API="istanbul"
 elif [ "qbft" == "$GOQUORUM_CONS_ALGO" ];
 then
     echo "Using qbft for consensus algorithm..."
-    if [ "true" == "${IS_VALIDATOR:-false}" ];
-    then
-        export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
-    else
-        export CONSENSUS_ARGS=" "
-    fi
+    export CONSENSUS_ARGS="--istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
     export QUORUM_API="istanbul,qbft"
 elif [ "raft" == "$GOQUORUM_CONS_ALGO" ];
 then
     echo "Using raft for consensus algorithm..."
-    if [ "true" == "${IS_VALIDATOR:-false}"  ];
-    then
-        export CONSENSUS_ARGS="--raft --raftblocktime 300 --raftport 53000"
-    else
-        export CONSENSUS_ARGS=" "
-    fi
+    export CONSENSUS_ARGS="--raft --raftblocktime 300 --raftport 53000"
     export QUORUM_API="raft"
 elif [ "clique" == "$GOQUORUM_CONS_ALGO" ];
 then
     echo "Using clique for consensus algorithm..."
-    if [ "true" == "${IS_VALIDATOR:-false}"  ];
-    then
-        export CONSENSUS_ARGS="--mine --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
-    else
-        export CONSENSUS_ARGS=" "
-    fi
+    export CONSENSUS_ARGS="--mine --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints"
     export QUORUM_API="clique"
 fi
+
+
+export ADDRESS=$(grep -o '"address": *"[^"]*"' /config/keys/accountkey | grep -o '"[^"]*"$' | sed 's/"//g')
+
 
 
 if [[ ! -z ${QUORUM_PTM:-} ]];
@@ -94,7 +76,7 @@ exec geth \
 --datadir /data \
 --nodiscover \
 --permissioned \
---verbosity 8 \
+--verbosity $VERBOSITY \
 $CONSENSUS_ARGS \
 --syncmode full \
 --metrics --pprof --pprof.addr 0.0.0.0 --pprof.port 9545 \
