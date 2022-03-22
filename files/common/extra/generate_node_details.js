@@ -47,9 +47,9 @@ async function main(password) {
   const wallet = Wallet['default'].generate();
   const v3keystore = await wallet.toV3(password);
   console.log("account created, writing to file...")
-  fs.writeFileSync("accountkey", JSON.stringify(v3keystore));
-  fs.writeFileSync("account.key", wallet.getPrivateKeyString());
-  fs.writeFileSync("account.password", password);
+  fs.writeFileSync("accountKeystore", JSON.stringify(v3keystore));
+  fs.writeFileSync("accountPrivateKey", wallet.getPrivateKeyString());
+  fs.writeFileSync("accountPassword", password);
   return {
     privateKey: wallet.getPrivateKeyString(),
     keystore: JSON.stringify(v3keystore),

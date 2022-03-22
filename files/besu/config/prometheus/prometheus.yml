@@ -59,6 +59,14 @@ scrape_configs:
       static_configs:
         - targets: [ rpcnode:9545 ]
 
+    - job_name: newnode
+      scrape_interval: 15s
+      scrape_timeout: 10s
+      metrics_path: /metrics
+      scheme: http
+      static_configs:
+        - targets: [ newnode:9545 ]        
+
     - job_name: member1besu
       scrape_interval: 15s
       scrape_timeout: 10s
