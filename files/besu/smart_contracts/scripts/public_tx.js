@@ -1,20 +1,18 @@
 const path = require('path');
 const fs = require('fs-extra');
-const Tx = require('ethereumjs-tx');
 const Web3 = require('web3');
 
 // member1 details
 const { tessera, besu } = require("./keys.js");
-const host = besu.ethsignerProxy.url;
-const accountAddress = besu.ethsignerProxy.accountAddress;
+const host = besu.member1.url;
+const accountAddress = besu.member1.accountAddress;
 
 // abi and bytecode generated from simplestorage.sol:
-// node scripts/compile.js
+// > solcjs --bin --abi simplestorage.sol
 const contractJsonPath = path.resolve(__dirname, '../','contracts','SimpleStorage.json');
 const contractJson = JSON.parse(fs.readFileSync(contractJsonPath));
 const contractAbi = contractJson.abi;
 const contractBytecode = contractJson.evm.bytecode.object
-
 // initialize the default constructor with a value `47 = 0x2F`; this value is appended to the bytecode
 const contractConstructorInit = "000000000000000000000000000000000000000000000000000000000000002F";
 
@@ -47,6 +45,7 @@ async function setValueAtAddress(host, accountAddress, value, deployedContractAb
   const web3 = new Web3(host);
   const contractInstance = new web3.eth.Contract(deployedContractAbi, deployedContractAddress);
   const res = await contractInstance.methods.set(value).send({from: accountAddress, gasPrice: "0x0", gasLimit: "0x24A22"});
+  console.log("Set value on contract at : " + res.transactionHash);
   // verify the updated value
   // const readRes = await contractInstance.methods.get().call();
   // console.log("Obtained value at deployed contract is: "+ readRes);
@@ -59,36 +58,34 @@ async function createContract(host) {
   const account = web3.eth.accounts.create();
   console.log(account);
 
-  const rawTxOptions = {
-    nonce: "0x00",
+  const txn = {
+    chainId: 1337,
+    nonce: await web3.eth.getTransactionCount(account.address),       // 0x00 because this is a new account
     from: account.address,
-    to: null, //public tx
+    to: null,            //public tx
     value: "0x00",
     data: '0x'+contractBytecode+contractConstructorInit,
-    gasPrice: "0x0", //ETH per unit of gas
-    gasLimit: "0x2CA51" //max number of gas units the tx is allowed to use
+    gasPrice: "0x0",     //ETH per unit of gas
+    gas: "0x2CA51"  //max number of gas units the tx is allowed to use
   };
-  console.log("Creating transaction...");
-  const tx = new Tx(rawTxOptions);
-  console.log("Signing transaction...");
-  tx.sign(Buffer.from(account.privateKey.substring(2), "hex"));
-  console.log("Sending transaction...");
-  var serializedTx = tx.serialize();
-  const pTx = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex').toString("hex"));
-  console.log("tx transactionHash: " + pTx.transactionHash);
-  console.log("tx contractAddress: " + pTx.contractAddress);
-  return pTx;
+
+  console.log("create and sign the txn")
+  const signedTx = await web3.eth.accounts.signTransaction(txn, account.privateKey);
+  console.log("sending the txn")
+  const txReceipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+  console.log("tx transactionHash: " + txReceipt.transactionHash);
+  console.log("tx contractAddress: " + txReceipt.contractAddress);
+  return txReceipt;
 };
 
 async function main(){
-  let newValue = 123;
   createContract(host)
   .then(async function(tx){
     console.log("Contract deployed at address: " + tx.contractAddress);
     console.log("Use the smart contracts 'get' function to read the contract's constructor initialized value .. " )
     await getValueAtAddress(host, contractAbi, tx.contractAddress);
-    console.log(`Use the smart contracts 'set' function to update that value to ${newValue} ...` );
-    await setValueAtAddress(host, accountAddress, newValue, contractAbi, tx.contractAddress );
+    console.log("Use the smart contracts 'set' function to update that value to 123 .. " );
+    await setValueAtAddress(host, accountAddress, 123, contractAbi, tx.contractAddress );
     console.log("Verify the updated value that was set .. " )
     await getValueAtAddress(host, contractAbi, tx.contractAddress);
     await getAllPastEvents(host, contractAbi, tx.contractAddress);
