@@ -55,7 +55,7 @@ async function createContract(client, fromPrivateKey, fromPublicKey, toPublicKey
 async function getValueAtAddress(client, nodeName="node", deployedContractAddress, contractAbi) {
   const web3 = new Web3(client.url)
   const web3quorum = new Web3Quorum(web3, {privateUrl: client.privateUrl}, true);
-  const contractInstance = new web3.eth.Contract(contractAbi, deployedContractAddress);
+  const contractInstance = new web3quorum.eth.Contract(contractAbi, deployedContractAddress);
   const res = await contractInstance.methods.get().call().catch(() => {});
   console.log(nodeName + " obtained value at deployed contract is: "+ res);
   return res;
@@ -64,7 +64,7 @@ async function getValueAtAddress(client, nodeName="node", deployedContractAddres
 async function setValueAtAddress(client, deployedContractAddress, value, contractAbi, fromPrivateKey, fromPublicKey, toPublicKey) {
   const web3 = new Web3(client.url)
   const web3quorum = new Web3Quorum(web3, {privateUrl: client.privateUrl}, true);
-  const contractInstance = new web3.eth.Contract(contractAbi, deployedContractAddress);
+  const contractInstance = new web3quorum.eth.Contract(contractAbi, deployedContractAddress);
   const res = await contractInstance.methods.set(value).send({from: client.accountAddress, privateFor: [toPublicKey], gasLimit: "0x24A22"});
   return res;
 };
