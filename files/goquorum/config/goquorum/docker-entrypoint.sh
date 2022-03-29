@@ -71,7 +71,7 @@ exec geth \
 --permissioned \
 --verbosity 3 \
 $CONSENSUS_ARGS \
---syncmode full --nousb \
+--syncmode full --nousb --revertreason \
 --metrics --pprof --pprof.addr 0.0.0.0 --pprof.port 9545 \
 --networkid ${QUORUM_NETWORK_ID:-1337} \
 --http --http.addr 0.0.0.0 --http.port 8545 --http.corsdomain "*" --http.vhosts "*" --http.api admin,eth,debug,miner,net,txpool,personal,web3,quorumExtension,$QUORUM_API \

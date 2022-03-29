@@ -15,6 +15,8 @@ const contractAbi = contractJson.abi;
 const contractBytecode = contractJson.evm.bytecode.object
 // initialize the default constructor with a value `47 = 0x2F`; this value is appended to the bytecode
 const contractConstructorInit = "000000000000000000000000000000000000000000000000000000000000002F";
+const contractConstructorUpdate = "000000000000000000000000000000000000000000000000000000000000001F";
+
 
 async function getValueAtAddress(host, deployedContractAbi, deployedContractAddress){
   const web3 = new Web3(host);
@@ -31,11 +33,9 @@ async function getAllPastEvents(host, deployedContractAbi, deployedContractAddre
     fromBlock: 0,
     toBlock: 'latest'
   })
-
   const amounts = res.map(x => {
     return x.returnValues._amount
   });
-
   console.log("Obtained all value events from deployed contract : [" + amounts + "]");
   return res
 }
@@ -43,13 +43,27 @@ async function getAllPastEvents(host, deployedContractAbi, deployedContractAddre
 // You need to use the accountAddress details provided to Quorum to send/interact with contracts
 async function setValueAtAddress(host, accountAddress, value, deployedContractAbi, deployedContractAddress){
   const web3 = new Web3(host);
-  const contractInstance = new web3.eth.Contract(deployedContractAbi, deployedContractAddress);
-  const res = await contractInstance.methods.set(value).send({from: accountAddress, gasPrice: "0x0", gasLimit: "0x24A22"});
-  console.log("Set value on contract at : " + res.transactionHash);
-  // verify the updated value
-  // const readRes = await contractInstance.methods.get().call();
-  // console.log("Obtained value at deployed contract is: "+ readRes);
-  return res
+  const account = web3.eth.accounts.create();
+  // console.log(account);
+  const contract = new web3.eth.Contract(deployedContractAbi);
+  // eslint-disable-next-line no-underscore-dangle
+  const functionAbi = contract._jsonInterface.find(e => {
+    return e.name === "set";
+  });
+  const functionArgs = web3.eth.abi
+    .encodeParameters(functionAbi.inputs, [value])
+    .slice(2);
+  const functionParams = {
+    to: deployedContractAddress,
+    data: functionAbi.signature + functionArgs,
+    gas: "0x2CA51"  //max number of gas units the tx is allowed to use
+  };
+  const signedTx = await web3.eth.accounts.signTransaction(functionParams, account.privateKey);
+   console.log("sending the txn")
+  const txReceipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+  console.log("tx transactionHash: " + txReceipt.transactionHash);
+  console.log("tx contractAddress: " + txReceipt.contractAddress);
+  return txReceipt
 }
 
 async function createContract(host) {
