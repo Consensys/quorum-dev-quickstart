@@ -10,7 +10,7 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-      <file>"/var/log/tessera/tessera-${env:HOSTNAME}.log"</file>
+      <file>/var/log/tessera/tessera-$HOSTNAME.log</file>
       <append>true</append>
       <immediateFlush>true</immediateFlush>
       <encoder>
