@@ -17,8 +17,8 @@ x-besu-def:
       /opt/besu/bin/besu \
       --config-file=/config/config.toml \
       --p2p-host=$$(hostname -i) \
-      --rpc-http-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} \
-      --rpc-ws-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
+      --rpc-http-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} \
+      --rpc-ws-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
 
 {% if privacy %}
 x-tessera-def:
@@ -524,12 +524,11 @@ services:
 {% endif %}
 
   explorer:
-    build: block-explorer-light/.
-    image: quorum-dev-quickstart/block-explorer-light:develop
-    depends_on:
-      - rpcnode
+    image: consensys/quorum-explorer:cf8339c
     ports:
-      - 25000:80/tcp
+      - 25000:3000/tcp
+    volumes:
+      - ./config/explorer:/app/src/config/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.31

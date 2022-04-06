@@ -423,12 +423,11 @@ services:
 {% endif %}
 
   explorer:
-    build: block-explorer-light
-    image: quorum-dev-quickstart/block-explorer-light:develop
-    depends_on:
-      - rpcnode
+    image: consensys/quorum-explorer:cf8339c
     ports:
-      - 25000:80/tcp
+      - 25000:3000/tcp
+    volumes:
+      - ./config/explorer:/app/src/config/
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.31
