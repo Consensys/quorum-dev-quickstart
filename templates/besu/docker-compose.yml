@@ -524,14 +524,12 @@ services:
 {% endif %}
 
   explorer:
-    image: consensys/quorum-explorer:cf8339c
-    ports:
-      - 25000:3000/tcp
-    volumes:
-      - ./config/explorer:/app/src/config/
-    networks:
-      quorum-dev-quickstart:
-        ipv4_address: 172.16.239.31
+    build: quorum-explorer/.
+    image: consensys/quickstart-quorum-explorer:latest
+    depends_on:
+      - rpcnode
+    network_mode: "host"
+
 
 {% if blockscout %}
   blockscout:
