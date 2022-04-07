@@ -17,8 +17,8 @@ x-besu-def:
       /opt/besu/bin/besu \
       --config-file=/config/config.toml \
       --p2p-host=$$(hostname -i) \
-      --rpc-http-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} \
-      --rpc-ws-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
+      --rpc-http-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} \
+      --rpc-ws-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
 
 {% if privacy %}
 x-tessera-def:
@@ -419,8 +419,8 @@ services:
         --privacy-url=http://member1tessera:9101 \
         --privacy-public-key-file=/opt/besu/keys/tm.pub \
         --privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false} \
-        --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} \
-        --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} ;
+        --rpc-http-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} \
+        --rpc-ws-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} ;
     volumes:
       - ./config/besu/:/config
       - ./config/nodes/member1:/opt/besu/keys
@@ -462,8 +462,8 @@ services:
         --privacy-url=http://member2tessera:9101 \
         --privacy-public-key-file=/opt/besu/keys/tm.pub \
         --privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false} \
-        --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} \
-        --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} ;
+        --rpc-http-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} \
+        --rpc-ws-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} ;
     volumes:
       - ./config/besu/:/config
       - ./config/nodes/member2:/opt/besu/keys
@@ -505,8 +505,8 @@ services:
         --privacy-url=http://member3tessera:9101 \
         --privacy-public-key-file=/opt/besu/keys/tm.pub \
         --privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false} \
-        --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} \
-        --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} ;
+        --rpc-http-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} \
+        --rpc-ws-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} ;
     volumes:
       - ./config/besu/:/config
       - ./config/nodes/member3:/opt/besu/keys
@@ -524,15 +524,12 @@ services:
 {% endif %}
 
   explorer:
-    build: block-explorer-light/.
-    image: quorum-dev-quickstart/block-explorer-light:develop
+    # build: quorum-explorer/.
+    image: consensys/quorum-explorer:82e4ec3-quickstart-besu 
     depends_on:
       - rpcnode
-    ports:
-      - 25000:80/tcp
-    networks:
-      quorum-dev-quickstart:
-        ipv4_address: 172.16.239.31
+    network_mode: "host"
+
 
 {% if blockscout %}
   blockscout:

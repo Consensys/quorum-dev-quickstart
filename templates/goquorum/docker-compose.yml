@@ -423,15 +423,11 @@ services:
 {% endif %}
 
   explorer:
-    build: block-explorer-light
-    image: quorum-dev-quickstart/block-explorer-light:develop
+    # build: quorum-explorer/.
+    image: consensys/quorum-explorer:82e4ec3-quickstart-goquorum
     depends_on:
       - rpcnode
-    ports:
-      - 25000:80/tcp
-    networks:
-      quorum-dev-quickstart:
-        ipv4_address: 172.16.239.31
+    network_mode: "host"
 
 {% if blockscout %}
   blockscout:
