@@ -524,8 +524,8 @@ services:
 {% endif %}
 
   explorer:
-    build: quorum-explorer/.
-    image: consensys/quickstart-quorum-explorer:latest
+    # build: quorum-explorer/.
+    image: consensys/quorum-explorer:82e4ec3-quickstart-besu 
     depends_on:
       - rpcnode
     network_mode: "host"
