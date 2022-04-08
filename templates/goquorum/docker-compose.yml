@@ -423,8 +423,9 @@ services:
 {% endif %}
 
   explorer:
-    # build: quorum-explorer/.
-    image: consensys/quorum-explorer:82e4ec3-quickstart-goquorum
+    image: consensys/quorum-explorer:50128e2
+    volumes:
+      - ./quorum-explorer/config.json:/app/config.json    
     depends_on:
       - rpcnode
     network_mode: "host"
