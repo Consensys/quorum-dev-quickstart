@@ -23,7 +23,7 @@ x-besu-def:
 {% if privacy %}
 x-tessera-def:
   &tessera-def
-  build: 
+  build:
     context: config/tessera
     args:
       TESSERA_VERSION: ${TESSERA_VERSION:-latest}
@@ -290,7 +290,7 @@ services:
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator1,service.version=${BESU_VERSION:-latest}
     labels:
-      - "consensus=besu"      
+      - "consensus=besu"
     volumes:
       - ./config/besu/:/config
       - ./config/nodes/validator1:/opt/besu/keys
@@ -304,11 +304,11 @@ services:
     ports:
       - 21002:8545/tcp
       - 30303
-      - 9545    
+      - 9545
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator2,service.version=${BESU_VERSION:-latest}
     labels:
-      - "consensus=besu"      
+      - "consensus=besu"
     volumes:
       - ./config/besu/:/config
       - ./config/nodes/validator2:/opt/besu/keys
@@ -324,11 +324,11 @@ services:
     ports:
       - 21003:8545/tcp
       - 30303
-      - 9545    
+      - 9545
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator3,service.version=${BESU_VERSION:-latest}
     labels:
-      - "consensus=besu"      
+      - "consensus=besu"
     volumes:
       - ./config/besu/:/config
       - ./config/nodes/validator3:/opt/besu/keys
@@ -344,11 +344,11 @@ services:
     ports:
       - 21004:8545/tcp
       - 30303
-      - 9545    
+      - 9545
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator4,service.version=${BESU_VERSION:-latest}
     labels:
-      - "consensus=besu"      
+      - "consensus=besu"
     volumes:
       - ./config/besu/:/config
       - ./config/nodes/validator4:/opt/besu/keys
@@ -524,12 +524,16 @@ services:
 {% endif %}
 
   explorer:
-    image: consensys/quorum-explorer:50128e2
+    image: consensys/quorum-explorer:bd3f1a5
     volumes:
-      - ./quorum-explorer/config.json:/app/config.json    
+      - ./quorum-explorer/config.json:/app/config.json
     depends_on:
       - rpcnode
-    network_mode: "host"
+    ports:
+      - 25000:25000/tcp
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.31
 
 
 {% if blockscout %}
