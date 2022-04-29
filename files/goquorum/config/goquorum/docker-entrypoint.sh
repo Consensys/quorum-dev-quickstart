@@ -7,14 +7,11 @@ set -o pipefail
 GOQUORUM_CONS_ALGO=`echo "${GOQUORUM_CONS_ALGO:-qbft}" | tr '[:lower:]'`
 GENESIS_FILE=${GENESIS_FILE:-"/data/${GOQUORUM_CONS_ALGO}-${GOQUORUM_GENESIS_MODE}-genesis.json"}
 
-mkdir -p /data
 cp -R /config/* /data
-
+mkdir -p /data/keystore/
 
 echo "Applying ${GENESIS_FILE} ..."
 geth --nousb --verbosity 1 --datadir=/data init ${GENESIS_FILE}; 
-
-mkdir -p /data/keystore/
 
 cp /config/keys/accountKeystore /data/keystore/key;
 cp /config/keys/nodekey /data/geth/nodekey;
@@ -36,10 +33,7 @@ then
     export QUORUM_API="raft"
 fi
 
-
-
 export ADDRESS=$(grep -o '"address": *"[^"]*"' /config/keys/accountKeystore | grep -o '"[^"]*"$' | sed 's/"//g')
-
 
 if [[ ! -z ${QUORUM_PTM:-} ]];
 then
@@ -61,8 +55,6 @@ then
 fi
 
 touch /var/log/quorum/geth-$(hostname -i).log
-chmod 777 /var/log/quorum/geth-$(hostname -i).log
-
 cat /proc/1/fd/2 /proc/1/fd/1 > /var/log/quorum/geth-$(hostname -i).log &
 
 exec geth \

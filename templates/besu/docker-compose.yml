@@ -17,13 +17,13 @@ x-besu-def:
       /opt/besu/bin/besu \
       --config-file=/config/config.toml \
       --p2p-host=$$(hostname -i) \
-      --rpc-http-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} \
-      --rpc-ws-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
+      --rpc-http-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} \
+      --rpc-ws-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,{% if privacy %}PRIV,{% endif %}PERM,${BESU_CONS_ALGO:-QBFT} ;
 
 {% if privacy %}
 x-tessera-def:
   &tessera-def
-  build: 
+  build:
     context: config/tessera
     args:
       TESSERA_VERSION: ${TESSERA_VERSION:-latest}
@@ -290,7 +290,7 @@ services:
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator1,service.version=${BESU_VERSION:-latest}
     labels:
-      - "consensus=besu"      
+      - "consensus=besu"
     volumes:
       - ./config/besu/:/config
       - ./config/nodes/validator1:/opt/besu/keys
@@ -304,11 +304,11 @@ services:
     ports:
       - 21002:8545/tcp
       - 30303
-      - 9545    
+      - 9545
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator2,service.version=${BESU_VERSION:-latest}
     labels:
-      - "consensus=besu"      
+      - "consensus=besu"
     volumes:
       - ./config/besu/:/config
       - ./config/nodes/validator2:/opt/besu/keys
@@ -324,11 +324,11 @@ services:
     ports:
       - 21003:8545/tcp
       - 30303
-      - 9545    
+      - 9545
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator3,service.version=${BESU_VERSION:-latest}
     labels:
-      - "consensus=besu"      
+      - "consensus=besu"
     volumes:
       - ./config/besu/:/config
       - ./config/nodes/validator3:/opt/besu/keys
@@ -344,11 +344,11 @@ services:
     ports:
       - 21004:8545/tcp
       - 30303
-      - 9545    
+      - 9545
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=validator4,service.version=${BESU_VERSION:-latest}
     labels:
-      - "consensus=besu"      
+      - "consensus=besu"
     volumes:
       - ./config/besu/:/config
       - ./config/nodes/validator4:/opt/besu/keys
@@ -419,8 +419,8 @@ services:
         --privacy-url=http://member1tessera:9101 \
         --privacy-public-key-file=/opt/besu/keys/tm.pub \
         --privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false} \
-        --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} \
-        --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} ;
+        --rpc-http-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} \
+        --rpc-ws-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} ;
     volumes:
       - ./config/besu/:/config
       - ./config/nodes/member1:/opt/besu/keys
@@ -462,8 +462,8 @@ services:
         --privacy-url=http://member2tessera:9101 \
         --privacy-public-key-file=/opt/besu/keys/tm.pub \
         --privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false} \
-        --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} \
-        --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} ;
+        --rpc-http-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} \
+        --rpc-ws-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} ;
     volumes:
       - ./config/besu/:/config
       - ./config/nodes/member2:/opt/besu/keys
@@ -505,8 +505,8 @@ services:
         --privacy-url=http://member3tessera:9101 \
         --privacy-public-key-file=/opt/besu/keys/tm.pub \
         --privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED:-false} \
-        --rpc-http-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} \
-        --rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} ;
+        --rpc-http-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} \
+        --rpc-ws-api=EEA,WEB3,ETH,NET,TRACE,DEBUG,ADMIN,TXPOOL,PRIV,PERM,${BESU_CONS_ALGO:-QBFT} ;
     volumes:
       - ./config/besu/:/config
       - ./config/nodes/member3:/opt/besu/keys
@@ -524,15 +524,17 @@ services:
 {% endif %}
 
   explorer:
-    build: block-explorer-light/.
-    image: quorum-dev-quickstart/block-explorer-light:develop
+    image: consensys/quorum-explorer:bd3f1a5
+    volumes:
+      - ./quorum-explorer/config.json:/app/config.json
     depends_on:
       - rpcnode
     ports:
-      - 25000:80/tcp
+      - 25000:25000/tcp
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.31
+
 
 {% if blockscout %}
   blockscout:

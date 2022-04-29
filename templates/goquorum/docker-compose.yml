@@ -73,7 +73,7 @@ x-ethlogger-def:
 x-quorum-def:
   &quorum-def
   restart: "on-failure"
-  build: 
+  build:
     context: config/goquorum
     args:
       QUORUM_VERSION: ${QUORUM_VERSION:-latest}
@@ -92,7 +92,7 @@ x-quorum-def:
 {% if privacy %}
 x-tessera-def:
   &tessera-def
-  build: 
+  build:
     context: config/tessera
     args:
       TESSERA_VERSION: ${TESSERA_VERSION:-latest}
@@ -109,7 +109,7 @@ x-tessera-def:
     timeout: 3s
     retries: 20
     start_period: 5s
-    
+
 {% endif %}
 
 
@@ -423,15 +423,17 @@ services:
 {% endif %}
 
   explorer:
-    build: block-explorer-light
-    image: quorum-dev-quickstart/block-explorer-light:develop
+    image: consensys/quorum-explorer:bd3f1a5
+    volumes:
+      - ./quorum-explorer/config.json:/app/config.json
     depends_on:
       - rpcnode
     ports:
-      - 25000:80/tcp
+      - 25000:25000/tcp
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.31
+
 
 {% if blockscout %}
   blockscout:
