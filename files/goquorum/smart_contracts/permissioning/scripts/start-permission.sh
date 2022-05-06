@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+## THIS IS OLD AND DEPRECATED _ USE FOR REF ONLY !!!
+
+
 localPath=$(pwd)
 roles="NONE"
 voter="NONE"

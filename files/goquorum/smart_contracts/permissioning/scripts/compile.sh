@@ -1,5 +1,5 @@
 #!/bin/bash
-cd ../contracts/v2
+cd ./contracts/v2
 for f in *.sol
 do
 	echo "Compiling $f contract..."
