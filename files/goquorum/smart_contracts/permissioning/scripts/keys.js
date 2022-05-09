@@ -6,8 +6,8 @@ module.exports = {
     validator1: {
       name: "validator1",
       url: "http://127.0.0.1:21001",
-      nodekey: "1a2c4ff0f1b38e2322658dba692816138eb22d002515df1fffca21278f406aa9",
-      accountAddress: "ed9d02e382b34818e88b88a309c7fe71e65f419d"
+      nodekey: "0x1a2c4ff0f1b38e2322658dba692816138eb22d002515df1fffca21278f406aa9",
+      accountAddress: "0xed9d02e382b34818e88b88a309c7fe71e65f419d"
     },
     validator2: {
       name: "validator1",
@@ -39,8 +39,9 @@ module.exports = {
       url: "http://127.0.0.1:20000",
       wsUrl: "ws://127.0.0.1:20001",
       privateUrl: "http://127.0.0.1:9081",
-      nodekey: "b9a4bd1539c15bcc83fa9078fe89200b6e9e802ae992f13cd83c853f16e8bed4",
-      accountAddress: "f0e2db6c8dc6c681bb5d6ad121a107f300e9b2b5"
+      nodekey: "0xb9a4bd1539c15bcc83fa9078fe89200b6e9e802ae992f13cd83c853f16e8bed4",
+      accountAddress: "0xf0e2db6c8dc6c681bb5d6ad121a107f300e9b2b5",
+      accountPrivateKey: "0x8bbbb1b345af56b560a5b20bd4b0ed1cd8cc9958a16262bc75118453cb546df7"
     },
     member2: {
       name: "member2",
@@ -48,8 +49,8 @@ module.exports = {
       wsUrl: "ws://127.0.0.1:20003",
       privateUrl: "http://127.0.0.1:9082",
       nodekey: "f18166704e19b895c1e2698ebc82b4e007e6d2933f4b31be23662dd0ec602570",
-      accountAddress: "ca843569e3427144cead5e4d5999a3d0ccf92b8e"
-
+      accountAddress: "ca843569e3427144cead5e4d5999a3d0ccf92b8e",
+      accountPrivateKey: "0x4762e04d10832808a0aebdaa79c12de54afbe006bfffd228b3abcc494fe986f9"
     },
     member3: {
       name: "member3",
@@ -57,7 +58,8 @@ module.exports = {
       wsUrl: "ws://127.0.0.1:20005",
       privateUrl: "http://127.0.0.1:9083",
       nodekey: "4107f0b6bf67a3bc679a15fe36f640415cf4da6a4820affaac89c8b280dfd1b3",
-      accountAddress: "0fbdc686b912d7722dc86510934589e0aaf3b55a"
+      accountAddress: "0fbdc686b912d7722dc86510934589e0aaf3b55a",
+      accountPrivateKey: "0x61dced5af778942996880120b303fc11ee28cc8e5036d2fdff619b5675ded3f0"
     }
   },
   accounts: {
