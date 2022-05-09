@@ -18,32 +18,33 @@ function createPermissionConfigFile(
   voterManagerAddress,
   nodeManagerAddress,
   permissionsInterfaceAddress,
-  permissionsImplementationAddress){
-  let adminAccounts = Object.keys(quorum).map(i => quorum[i]['accountAddress'])
+  permissionsImplementationAddress
+) {
+  let adminAccounts = Object.keys(quorum).map(
+    (i) => quorum[i]["accountAddress"]
+  );
   let permissions = {
-    "permissionModel": "v2",
-    "upgradableAddress": permissionUpgradableAddress,
-    "interfaceAddress": permissionsInterfaceAddress,
-    "implAddress": permissionsImplementationAddress,
-    "nodeMgrAddress": nodeManagerAddress,
-    "accountMgrAddress": accountManagerAddress,
-    "roleMgrAddress": roleManagerAddress,
-    "voterMgrAddress": voterManagerAddress,
-    "orgMgrAddress" : orgManagerAddress,
-    "nwAdminOrg": "ADMINORG",
-    "nwAdminRole" : "ADMIN",
-    "orgAdminRole" : "ORGADMIN",
-    "accounts":adminAccounts,
-    "subOrgBreadth" : 3,
-    "subOrgDepth" : 4
-  }
-  fs.writeJsonSync('permissions-config.json', permissions, {spaces: 2});
+    permissionModel: "v2",
+    upgradableAddress: permissionUpgradableAddress,
+    interfaceAddress: permissionsInterfaceAddress,
+    implAddress: permissionsImplementationAddress,
+    nodeMgrAddress: nodeManagerAddress,
+    accountMgrAddress: accountManagerAddress,
+    roleMgrAddress: roleManagerAddress,
+    voterMgrAddress: voterManagerAddress,
+    orgMgrAddress: orgManagerAddress,
+    nwAdminOrg: "ADMINORG",
+    nwAdminRole: "ADMIN",
+    orgAdminRole: "ORGADMIN",
+    accounts: adminAccounts,
+    subOrgBreadth: 3,
+    subOrgDepth: 4,
+  };
+  fs.writeJsonSync("permission-config.json", permissions, { spaces: 2 });
   return permissions;
 }
 
-
 async function contractDeployer(account, contract, arguments) {
-
   const abi = JSON.parse(
     fs.readFileSync(
       path.resolve(__dirname, "../", "contracts/v2/output", `${contract}.abi`)
@@ -58,7 +59,7 @@ async function contractDeployer(account, contract, arguments) {
   const res = await myContract
     .deploy({ data: bytecode, arguments: arguments })
     .send({
-      from: account
+      from: account,
       // gas: 9200000,  TODO: why does this fail when this line is in?
     });
   console.log(res);
@@ -71,36 +72,34 @@ async function main() {
   const accounts = await web3.eth.getAccounts();
 
   // step 3. deploy the contracts
-  const permissionUpgradableAddress = await contractDeployer( 
+  const permissionUpgradableAddress = await contractDeployer(
     accounts[0],
     "PermissionsUpgradable",
     [guardianAddress]
   );
-  const orgManagerAddress = await contractDeployer(
-    accounts[0],
-    "OrgManager", [
+  const orgManagerAddress = await contractDeployer(accounts[0], "OrgManager", [
     permissionUpgradableAddress,
   ]);
   const roleManagerAddress = await contractDeployer(
     accounts[0],
-    "RoleManager", [
-    permissionUpgradableAddress,
-  ]);
+    "RoleManager",
+    [permissionUpgradableAddress]
+  );
   const accountManagerAddress = await contractDeployer(
     accounts[0],
-    "AccountManager", [
-    permissionUpgradableAddress,
-  ]);
+    "AccountManager",
+    [permissionUpgradableAddress]
+  );
   const voterManagerAddress = await contractDeployer(
     accounts[0],
-    "VoterManager", [
-    permissionUpgradableAddress,
-  ]);
+    "VoterManager",
+    [permissionUpgradableAddress]
+  );
   const nodeManagerAddress = await contractDeployer(
     accounts[0],
-    "NodeManager", [
-    permissionUpgradableAddress,
-  ]);
+    "NodeManager",
+    [permissionUpgradableAddress]
+  );
   const permissionsInterfaceAddress = await contractDeployer(
     accounts[0],
     "PermissionsInterface",
@@ -119,7 +118,9 @@ async function main() {
     ]
   );
 
-  console.log("******************* Contracts deployed, beginning init *******************")
+  console.log(
+    "******************* Contracts deployed, beginning init *******************"
+  );
   // step 4. Execute `init` of `PermissionsUpgradable.sol` with the guardian account that was specified on deployment
   const abi = JSON.parse(
     fs.readFileSync(
@@ -133,33 +134,32 @@ async function main() {
   );
 
   const upgr = new web3.eth.Contract(abi, permissionUpgradableAddress);
-  const tx = await upgr.methods.init(
-    permissionsInterfaceAddress,
-    permissionsImplementationAddress).send(
-    {
+  const tx = await upgr.methods
+    .init(permissionsInterfaceAddress, permissionsImplementationAddress)
+    .send({
       from: accounts[0],
       gas: 4500000,
-      gasLimit: 5000000
-    }
-  );
+      gasLimit: 5000000,
+    });
   console.log(`Init transaction id: ${JSON.stringify(tx)}`);
 
-
-  console.log("******************* Create the permissions-config.json file *******************")
-  createPermissionConfigFile(permissionUpgradableAddress,
+  console.log(
+    "******************* Create the permissions-config.json file *******************"
+  );
+  createPermissionConfigFile(
+    permissionUpgradableAddress,
     orgManagerAddress,
     roleManagerAddress,
     accountManagerAddress,
     voterManagerAddress,
     nodeManagerAddress,
     permissionsInterfaceAddress,
-    permissionsImplementationAddress);
-  
-
+    permissionsImplementationAddress
+  );
 }
 
 if (require.main === module) {
   main();
 }
 
-module.exports = exports = main
+module.exports = exports = main;
