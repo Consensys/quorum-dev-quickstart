@@ -58,7 +58,7 @@ touch /var/log/quorum/geth-$(hostname -i).log
 cat /proc/1/fd/2 /proc/1/fd/1 > /var/log/quorum/geth-$(hostname -i).log &
 
 if [ -f /permissions/permission-config.json ]; then
-  echo "permission-config.json exists, copy it";
+  echo "Using Enhanced Permissions: Copying permission-config.json exists to /data ...";
   cp /permissions/permission-config.json /data/permission-config.json
 fi
 

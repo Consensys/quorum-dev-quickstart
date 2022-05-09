@@ -165,8 +165,9 @@ async function main() {
   console.log(
     "******* Please copy the permissions-config.json file to the `permissions` directory (using sudo) and restart the nodes ********"
   );
+  console.log("");
   console.log(
-    "sudo cp permission-config.json ../../config/permissions/ && cd ../../ && ./stop.sh && ./resume.sh"
+    "./restartNetwork.sh"
   );
 
   
