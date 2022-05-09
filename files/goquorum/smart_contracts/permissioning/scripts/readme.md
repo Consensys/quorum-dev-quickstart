@@ -67,9 +67,7 @@ var tx = upgr.init(intr, impl, {from: eth.accounts[0], gas: 4500000});
 console.log("Init transaction id :["+tx+"]");
 ```
 
-## 5. stop all nodes before proceeding
-
-## 6. create a file permission-config.json with the following construct
+## 5. create a file permission-config.json with the following construct
 
 ```bash
     {
@@ -109,6 +107,8 @@ console.log("Init transaction id :["+tx+"]");
 `subOrgBreadth`: Number of sub-organizations that any organization can have (int).
 
 `subOrgDepth`: Maximum depth of sub-organisation hierarchy allowed in the network (int).
+
+## 6. stop all nodes before proceeding
 
 ## 7. Copy the above `permission-config.json` into `data` directory of each GoQuorum node
 

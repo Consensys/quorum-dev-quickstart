@@ -71,6 +71,9 @@ async function main() {
   // returns a list of accounts that the node can use
   const accounts = await web3.eth.getAccounts();
 
+  console.log(
+    "******************* Deploying Contracts *******************"
+  );
   // step 3. deploy the contracts
   const permissionUpgradableAddress = await contractDeployer(
     accounts[0],
@@ -119,8 +122,9 @@ async function main() {
   );
 
   console.log(
-    "******************* Contracts deployed, beginning init *******************"
+    "******************* Contracts deployed, beginning Init *******************"
   );
+
   // step 4. Execute `init` of `PermissionsUpgradable.sol` with the guardian account that was specified on deployment
   const abi = JSON.parse(
     fs.readFileSync(
@@ -132,7 +136,6 @@ async function main() {
       )
     )
   );
-
   const upgr = new web3.eth.Contract(abi, permissionUpgradableAddress);
   const tx = await upgr.methods
     .init(permissionsInterfaceAddress, permissionsImplementationAddress)
@@ -141,10 +144,11 @@ async function main() {
       gas: 4500000,
       gasLimit: 5000000,
     });
-  console.log(`Init transaction id: ${JSON.stringify(tx)}`);
+  console.log(`Init() transaction id: ${JSON.stringify(tx)}`);
 
+  // 5. create a file permission-config.json with the following construct
   console.log(
-    "******************* Create the permissions-config.json file *******************"
+    "******************* Init done, Create the permissions-config.json file *******************"
   );
   createPermissionConfigFile(
     permissionUpgradableAddress,
@@ -156,6 +160,16 @@ async function main() {
     permissionsInterfaceAddress,
     permissionsImplementationAddress
   );
+  
+  // 7. Copy the above `permission-config.json` into `data` directory of each GoQuorum node
+  console.log(
+    "******* Please copy the permissions-config.json file to the `permissions` directory (using sudo) and restart the nodes ********"
+  );
+  console.log(
+    "sudo cp permission-config.json ../../config/permissions/ && cd ../../ && ./stop.sh && ./resume.sh"
+  );
+
+  
 }
 
 if (require.main === module) {

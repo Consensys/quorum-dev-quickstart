@@ -7,32 +7,37 @@ module.exports = {
       name: "validator1",
       url: "http://127.0.0.1:21001",
       nodekey: "0x1a2c4ff0f1b38e2322658dba692816138eb22d002515df1fffca21278f406aa9",
-      accountAddress: "0xed9d02e382b34818e88b88a309c7fe71e65f419d"
+      accountAddress: "0xed9d02e382b34818e88b88a309c7fe71e65f419d",
+      accountPrivateKey: "0xe6181caaffff94a09d7e332fc8da9884d99902c7874eb74354bdcadf411929f1"
     },
     validator2: {
       name: "validator1",
       url: "http://127.0.0.1:21002",
       nodekey: "7f9af699dd2bb1af76c90b3f67183dd48abae509c315eb8f2c55301ad90ba978",
-      accountAddress: "0xb30f304642de3fee4365ed5cd06ea2e69d3fd0ca"
+      accountAddress: "0xb30f304642de3fee4365ed5cd06ea2e69d3fd0ca",
+      accountPrivateKey: "0x5ad8b28507578c429dfa9f178d7f742f4861716ee956eb75648a7dbc5ffe915d"
     },
     validator3: {
       name: "validator1",
       url: "http://127.0.0.1:21003",
       nodekey: "fe006b00c738e7e5af7f7623290ffc83f394741ae6fb6afc6081cab49e1e1a70",
-      accountAddress: "0x0886328869e4e1f401e1052a5f4aae8b45f42610"
+      accountAddress: "0x0886328869e4e1f401e1052a5f4aae8b45f42610",
+      accountPrivateKey: "0xf23f92ed543046498d7616807b18a8f304855cb644df25bc7d0b0b37d8a66019"
     },
     validator4: {
       name: "validator1",
       url: "http://127.0.0.1:21004",
       nodekey: "8f6ae009cdbbf6e6fa739b91a4483f251bbe89f6570d34856554533b36c93c55",
-      accountAddress: "0xf48de4a0c2939e62891f3c6aca68982975477e45"
+      accountAddress: "0xf48de4a0c2939e62891f3c6aca68982975477e45",
+      accountPrivateKey: "0x7f012b2a11fc651c9a73ac13f0a298d89186c23c2c9a0e83206ad6e274ba3fc7"
     },        
     rpcnode: {
       name: "rpcnode",
       url: "http://127.0.0.1:8545",
       wsUrl: "ws://127.0.0.1:8546",
       nodekey: "0e93a540518eeb673d94fb496b746008ab56605463cb9212493997f5755124d1",
-      accountAddress: "0xc9c913c8c3c1cd416d80a0abf475db2062f161f6"
+      accountAddress: "0xc9c913c8c3c1cd416d80a0abf475db2062f161f6",
+      accountPrivateKey: "0x7f012b2a11fc651c9a73ac13f0a298d89186c23c2c9a0e83206ad6e274ba3fc7"
     },       
     member1: {
       name: "member1",
@@ -64,13 +69,13 @@ module.exports = {
   },
   accounts: {
     "0xfe3b557e8fb62b89f4916b721be55ceb828dbd73" : {
-      "privateKey" : "8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63",
+      "privateKey" : "0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63",
     },
     "0x627306090abaB3A6e1400e9345bC60c78a8BEf57" : {
-      "privateKey" : "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3",
+      "privateKey" : "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3",
       },
     "0xf17f52151EbEF6C7334FAD080c5704D77216b732" : {
-      "privateKey" : "ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
+      "privateKey" : "0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
       },
     }
 };
