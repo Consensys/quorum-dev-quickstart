@@ -14,7 +14,12 @@
         "ceil2Nby3Block": 0
       },
       "txnSizeLimit": 64,
-      "maxCodeSize": 0,
+      "maxCodeSizeConfig" : [
+        {
+          "block" : 0,
+          "size" : 64
+        }
+      ],
       "isQuorum": true,
       "privacyEnhancementsBlock": 0
     },

@@ -57,6 +57,11 @@ fi
 touch /var/log/quorum/geth-$(hostname -i).log
 cat /proc/1/fd/2 /proc/1/fd/1 > /var/log/quorum/geth-$(hostname -i).log &
 
+if [ -f /permissions/permission-config.json ]; then
+  echo "permission-config.json exists, copy it";
+  cp /permissions/permission-config.json /data/permission-config.json
+fi
+
 exec geth \
 --datadir /data \
 --nodiscover \
