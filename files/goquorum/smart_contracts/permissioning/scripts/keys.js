@@ -13,26 +13,26 @@ module.exports = {
       name: "validator1",
       url: "http://127.0.0.1:21002",
       nodekey: "7f9af699dd2bb1af76c90b3f67183dd48abae509c315eb8f2c55301ad90ba978",
-      accountAddress: "b30f304642de3fee4365ed5cd06ea2e69d3fd0ca"
+      accountAddress: "0xb30f304642de3fee4365ed5cd06ea2e69d3fd0ca"
     },
     validator3: {
       name: "validator1",
       url: "http://127.0.0.1:21003",
       nodekey: "fe006b00c738e7e5af7f7623290ffc83f394741ae6fb6afc6081cab49e1e1a70",
-      accountAddress: "0886328869e4e1f401e1052a5f4aae8b45f42610"
+      accountAddress: "0x0886328869e4e1f401e1052a5f4aae8b45f42610"
     },
     validator4: {
       name: "validator1",
       url: "http://127.0.0.1:21004",
       nodekey: "8f6ae009cdbbf6e6fa739b91a4483f251bbe89f6570d34856554533b36c93c55",
-      accountAddress: "f48de4a0c2939e62891f3c6aca68982975477e45"
+      accountAddress: "0xf48de4a0c2939e62891f3c6aca68982975477e45"
     },        
     rpcnode: {
       name: "rpcnode",
       url: "http://127.0.0.1:8545",
       wsUrl: "ws://127.0.0.1:8546",
       nodekey: "0e93a540518eeb673d94fb496b746008ab56605463cb9212493997f5755124d1",
-      accountAddress: "c9c913c8c3c1cd416d80a0abf475db2062f161f6"
+      accountAddress: "0xc9c913c8c3c1cd416d80a0abf475db2062f161f6"
     },       
     member1: {
       name: "member1",
@@ -49,7 +49,7 @@ module.exports = {
       wsUrl: "ws://127.0.0.1:20003",
       privateUrl: "http://127.0.0.1:9082",
       nodekey: "f18166704e19b895c1e2698ebc82b4e007e6d2933f4b31be23662dd0ec602570",
-      accountAddress: "ca843569e3427144cead5e4d5999a3d0ccf92b8e",
+      accountAddress: "0xca843569e3427144cead5e4d5999a3d0ccf92b8e",
       accountPrivateKey: "0x4762e04d10832808a0aebdaa79c12de54afbe006bfffd228b3abcc494fe986f9"
     },
     member3: {
@@ -58,7 +58,7 @@ module.exports = {
       wsUrl: "ws://127.0.0.1:20005",
       privateUrl: "http://127.0.0.1:9083",
       nodekey: "4107f0b6bf67a3bc679a15fe36f640415cf4da6a4820affaac89c8b280dfd1b3",
-      accountAddress: "0fbdc686b912d7722dc86510934589e0aaf3b55a",
+      accountAddress: "0x0fbdc686b912d7722dc86510934589e0aaf3b55a",
       accountPrivateKey: "0x61dced5af778942996880120b303fc11ee28cc8e5036d2fdff619b5675ded3f0"
     }
   },
