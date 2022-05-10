@@ -20,6 +20,7 @@ To run these tutorials, you must have the following installed:
 
 - On Windows ensure that the drive that this repo is cloned onto is a "Shared Drive" with Docker Desktop
 - On Windows we recommend running all commands from GitBash
+- On Windows, WSL2 kernels prior to 5.10 have time drift issues which can impact block timestamps. To update the kernel, `wsl --shutdown` and then enable "Windows Update > Advanced Options > Receive updates for other Microsoft products when you update Windows". 
 - [Nodejs](https://nodejs.org/en/download/) or [Yarn](https://yarnpkg.com/cli/node)
 
 

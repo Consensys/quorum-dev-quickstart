@@ -255,6 +255,7 @@ services:
     volumes:
       - ./config/nodes/validator1:/config/keys
       - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.11
@@ -271,6 +272,7 @@ services:
     volumes:
       - ./config/nodes/validator2:/config/keys
       - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.12
@@ -287,6 +289,7 @@ services:
     volumes:
       - ./config/nodes/validator3:/config/keys
       - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.13
@@ -303,6 +306,7 @@ services:
     volumes:
       - ./config/nodes/validator4:/config/keys
       - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.14
@@ -321,6 +325,7 @@ services:
     volumes:
       - ./config/nodes/rpcnode:/config/keys
       - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.15
@@ -354,6 +359,7 @@ services:
     volumes:
       - ./config/nodes/member1:/config/keys
       - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.16
@@ -385,6 +391,7 @@ services:
     volumes:
       - ./config/nodes/member2:/config/keys
       - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.17
@@ -416,6 +423,7 @@ services:
     volumes:
       - ./config/nodes/member3:/config/keys
       - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.18
