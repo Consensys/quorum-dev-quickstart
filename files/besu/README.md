@@ -1,12 +1,14 @@
 # Quorum Dev Quickstart
 
 ## Table of Contents
-1. [Prerequisites](#prerequisites)
-2. [Usage](#usage)
-3. [Dev Network Setups](#dev-network-setups)
-    1. [POA Network](#poa-network)
-    2. [POA Network with Privacy](#poa-network-privacy)
-    3. [Smart Contracts & DApps](#poa-network-dapps)
+- [Quorum Dev Quickstart](#quorum-dev-quickstart)
+  - [Table of Contents](#table-of-contents)
+  - [Prerequisites](#prerequisites)
+  - [Usage](#usage)
+  - [Dev Network Setups](#dev-network-setups)
+    - [i. POA Network <a name="poa-network"></a>](#i-poa-network-)
+    - [ii. POA Network with Privacy <a name="poa-network-privacy"></a>](#ii-poa-network-with-privacy-)
+    - [iii. Smart Contracts & DApps <a name="poa-network-dapps"></a>](#iii-smart-contracts--dapps-)
                   
 
 ## Prerequisites
@@ -64,7 +66,7 @@ The overall architecture diagrams to visually show components of the blockchain 
 
 This is the simplest of the networks available and will spin up a blockchain network comprising 4 validators, 1 RPC 
 node which has an [EthSigner](http://docs.ethsigner.consensys.net/) proxy container linked to it so you can optionally sign transactions. To view the progress 
-of the network, the Alethio block explorer can be used and is available on `http://localhost:25000`. 
+of the network, the Quorum block explorer can be used and is available on `http://localhost:25000`. 
 Hyperledger Besu based Quorum also deploys monitoring solutions.
 You can choose to make metrics monitoring via Prometheus available on `http://localhost:9090`, 
 paired with Grafana with custom dashboards available on `http://localhost:3000`.
@@ -83,7 +85,7 @@ Use cases:
 This network is slightly more advanced than the former and you get everything from the POA network above and a few 
 Ethereum clients each paired with [Tessera](https://docs.tessera.consensys.net/en/latest/) for its Private Transaction Mananger.
 
-As before, to view the progress of the network, the Alethio block explorer can be used and is available on `http://localhost:25000`.
+As before, to view the progress of the network, the Quorum block explorer can be used and is available on `http://localhost:25000`.
 Hyperledger Besu based Quorum also deploys monitoring solutions.
 You can choose to make metrics monitoring via Prometheus available on `http://localhost:9090`,
 paired with Grafana with custom dashboards available on `http://localhost:3000`.

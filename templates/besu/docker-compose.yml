@@ -524,9 +524,10 @@ services:
 {% endif %}
 
   explorer:
-    image: consensys/quorum-explorer:bd3f1a5
+    image: consensys/quorum-explorer:d9812be
     volumes:
       - ./quorum-explorer/config.json:/app/config.json
+      - ./quorum-explorer/env.production:/app/.env.production
     depends_on:
       - rpcnode
     ports:
