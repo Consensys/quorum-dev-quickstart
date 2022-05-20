@@ -527,7 +527,7 @@ services:
     image: consensys/quorum-explorer:d9812be
     volumes:
       - ./quorum-explorer/config.json:/app/config.json
-      - ./quorum-explorer/env.production:/app/.env.production
+      - ./quorum-explorer/env:/app/.env.production
     depends_on:
       - rpcnode
     ports:
