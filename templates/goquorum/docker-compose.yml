@@ -118,7 +118,7 @@ x-tessera-def:
 
 x-blockscout-ref:
   &blockscout-def
-  image: consensys/blockscout:v4.0.0-beta
+  image: consensys/blockscout:v4.1.3-beta
   container_name: blockscout
   restart: "no"
   environment:

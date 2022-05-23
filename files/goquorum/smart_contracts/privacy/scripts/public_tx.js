@@ -13,8 +13,6 @@ const contractJsonPath = path.resolve(__dirname, '../','contracts','SimpleStorag
 const contractJson = JSON.parse(fs.readFileSync(contractJsonPath));
 const contractAbi = contractJson.abi;
 const contractBytecode = contractJson.evm.bytecode.object
-// initialize the default constructor with a value `47 = 0x2F`; this value is appended to the bytecode
-const contractConstructorInit = "000000000000000000000000000000000000000000000000000000000000002F";
 
 async function getValueAtAddress(host, deployedContractAbi, deployedContractAddress){
   const web3 = new Web3(host);
@@ -57,6 +55,8 @@ async function createContract(host) {
   // make an account and sign the transaction with the account's private key; you can alternatively use an exsiting account
   const account = web3.eth.accounts.create();
   console.log(account);
+  // initialize the default constructor with a value `47 = 0x2F`; this value is appended to the bytecode
+  const contractConstructorInit = web3.eth.abi.encodeParameters('uint256', 47).slice(2);
 
   const txn = {
     chainId: 1337,
