@@ -12,13 +12,13 @@ const contractJsonPath = path.resolve(__dirname, '../','contracts','SimpleStorag
 const contractJson = JSON.parse(fs.readFileSync(contractJsonPath));
 const contractBytecode = contractJson.evm.bytecode.object
 const contractAbi = contractJson.abi;
-// initialize the default constructor with a value `47 = 0x2F`; this value is appended to the bytecode
-const contractConstructorInit = "000000000000000000000000000000000000000000000000000000000000002F";
 
 // Besu doesn't support eth_sendTransaction so we use the eea_sendRawTransaction(https://besu.hyperledger.org/en/latest/Reference/API-Methods/#eea_sendrawtransaction) for things like simple value transfers, contract creation or contract invocation
 async function createContract(clientUrl, fromPrivateKey, fromPublicKey, toPublicKey) {
   const web3 = new Web3(clientUrl)
   const web3quorum = new Web3Quorum(web3, chainId);
+  // initialize the default constructor with a value `47 = 0x2F`; this value is appended to the bytecode
+  const contractConstructorInit = web3.eth.abi.encodeParameters('uint256', 47).slice(2);
   const txOptions = {
     data: '0x'+contractBytecode+contractConstructorInit,
     privateKey: fromPrivateKey,

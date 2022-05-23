@@ -18,10 +18,6 @@ const contractJson = JSON.parse(fs.readFileSync(contractJsonPath));
 const contractBytecode = contractJson.evm.bytecode.object;
 const contractAbi = contractJson.abi;
 
-// initialize the default constructor with a value `47 = 0x2F`; this value is appended to the bytecode
-const contractConstructorInit =
-  "000000000000000000000000000000000000000000000000000000000000002F";
-
 // Besu doesn't support eth_sendTransaction so we use the eea_sendRawTransaction for things like simple value transfers, contract creation or contract invocation
 async function createContract(
   client,
@@ -52,7 +48,8 @@ async function createContract(
   // get the nonce for the accountAddress
   const accountAddress = client.accountAddress;
   const txCount = await web3.eth.getTransactionCount(`${accountAddress}`);
-
+  // initialize the default constructor with a value `47 = 0x2F`; this value is appended to the bytecode
+  const contractConstructorInit = web3.eth.abi.encodeParameters('uint256', 47).slice(2);
   const txOptions = {
     chainId,
     nonce: txCount,
