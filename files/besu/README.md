@@ -203,3 +203,8 @@ and you can adopt a pet from there. NOTE: Once you have adopted a pet, you can a
 and search for the transaction where you can see its details recorded. Metamask will also have a record of any transactions.
 
 
+## Moving to production
+
+When you are ready to move to production, please create new keys for your nodes using the
+[Quorum Genesis Tool](https://www.npmjs.com/package/quorum-genesis-tool) and read through the the
+[Besu documentation](https://besu.hyperledger.org/en/latest/HowTo/Deploy/Cloud/)
