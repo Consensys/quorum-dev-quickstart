@@ -9,7 +9,7 @@ const guardianAddress = "0xfe3b557e8fb62b89f4916b721be55ceb828dbd73";
 
 const provider = new ethers.providers.JsonRpcProvider(host);
 
-const privateKey = quorum.member1.privateKey;
+const privateKey = quorum.member1.accountPrivateKey;
 const wallet = new ethers.Wallet(privateKey, provider);
 
 async function contractDeployer(contractName, ...argumentss) {

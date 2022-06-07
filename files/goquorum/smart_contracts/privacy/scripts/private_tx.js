@@ -49,7 +49,9 @@ async function createContract(
   const accountAddress = client.accountAddress;
   const txCount = await web3.eth.getTransactionCount(`${accountAddress}`);
   // initialize the default constructor with a value `47 = 0x2F`; this value is appended to the bytecode
-  const contractConstructorInit = web3.eth.abi.encodeParameters('uint256', 47).slice(2);
+  const contractConstructorInit = web3.eth.abi
+    .encodeParameter("uint256", "47")
+    .slice(2);
   const txOptions = {
     chainId,
     nonce: txCount,
@@ -124,7 +126,7 @@ async function setValueAtAddress(
 async function main() {
   createContract(
     quorum.member1,
-    quorum.member1.privateKey,
+    quorum.member1.accountPrivateKey,
     tessera.member1.publicKey,
     tessera.member3.publicKey
   )
@@ -152,7 +154,7 @@ async function main() {
         privateTxReceipt.contractAddress,
         newValue,
         contractAbi,
-        quorum.member1.privateKey,
+        quorum.member1.accountPrivateKey,
         tessera.member1.publicKey,
         tessera.member3.publicKey
       );
