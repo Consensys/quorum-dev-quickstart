@@ -1,5 +1,5 @@
-const Web3 = require('web3');
-const Web3Quorum = require('web3js-quorum');
+const Web3 = require("web3");
+const Web3Quorum = require("web3js-quorum");
 const Tx = require("ethereumjs-tx");
 const PromisePool = require("async-promise-pool");
 const { tessera, besu } = require("./keys.js");
@@ -19,7 +19,7 @@ const BATCH_SIZE = 5;
 const privacyOptions = {
   privateFrom: tessera.member1.publicKey,
   privateFor: [tessera.member1.publicKey],
-  privateKey: besu.member1.privateKey
+  privateKey: besu.member1.accountPrivateKey,
 };
 
 const deployContractData =
@@ -54,11 +54,11 @@ function sendPMT(sender, enclaveKey, nonce) {
     from: sender,
     to: "0x000000000000000000000000000000000000007e", // privacy precompile address
     data: enclaveKey,
-    gasLimit: "0x5a88"
+    gasLimit: "0x5a88",
   };
 
   const tx = new Tx(rawTx);
-  tx.sign(Buffer.from(besu.member1.privateKey, "hex"));
+  tx.sign(Buffer.from(besu.member1.accountPrivateKey, "hex"));
 
   const hexTx = `0x${tx.serialize().toString("hex")}`;
 
@@ -66,10 +66,10 @@ function sendPMT(sender, enclaveKey, nonce) {
   return new Promise((resolve, reject) => {
     web3.eth
       .sendSignedTransaction(hexTx)
-      .once("receipt", rcpt => {
+      .once("receipt", (rcpt) => {
         resolve(rcpt);
       })
-      .on("error", error => {
+      .on("error", (error) => {
         reject(error);
       });
   });
@@ -78,7 +78,7 @@ function sendPMT(sender, enclaveKey, nonce) {
 function printPrivTxDetails(pmtRcpt) {
   return web3.priv
     .waitForTransactionReceipt(pmtRcpt.transactionHash)
-    .then(privTxRcpt => {
+    .then((privTxRcpt) => {
       console.log(
         `=== Private TX ${privTxRcpt.transactionHash}\n` +
           `  > Status ${privTxRcpt.status}\n` +
@@ -110,7 +110,7 @@ module.exports = async () => {
   for (let i = 0; i < TX_COUNT; i += 1) {
     pool.add(() => {
       return distributePayload(deployContractData, privateNonce + i)
-        .then(enclaveKey => {
+        .then((enclaveKey) => {
           return sendPMT(sender, enclaveKey, publicNonce + i);
         })
         .then(printPrivTxDetails);
@@ -121,7 +121,7 @@ module.exports = async () => {
 };
 
 if (require.main === module) {
-  module.exports().catch(error => {
+  module.exports().catch((error) => {
     console.log(error);
     console.log(
       "\nThis example requires ONCHAIN privacy to be DISABLED. \nCheck config for ONCHAIN privacy groups."
