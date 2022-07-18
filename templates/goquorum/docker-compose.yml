@@ -123,7 +123,7 @@ x-blockscout-ref:
   restart: "no"
   environment:
     - PORT=4000
-    - DATABASE_URL=ecto://postgres:postgres@blockscoutpostgres/postgres?ssl=false
+    - DATABASE_URL=ecto://postgres:postgres@blockscoutpostgres:5432/postgres?ssl=false
     - POSTGRES_PASSWORD=postgres
     - POSTGRES_USER=postgres
     - NETWORK=quickstart
