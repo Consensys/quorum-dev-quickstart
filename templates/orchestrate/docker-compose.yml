@@ -15,6 +15,7 @@ x-default-variables: &default-variables
   AUTH_JWT_CERT: ${AUTH_JWT_CERT-}
   AUTH_API_KEY: ${AUTH_API_KEY-}
   AUTH_JWT_ISSUER_URL: ${AUTH_JWT_ISSUER_URL-}
+  AUTH_JWT_ORCHESTRATE_CLAIMS: ${AUTH_JWT_ORCHESTRATE_CLAIMS-}
   METRICS_MODULES: ${METRICS_MODULES-}
 
 x-container-common: &container-common
