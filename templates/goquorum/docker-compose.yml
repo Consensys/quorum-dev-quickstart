@@ -123,7 +123,8 @@ x-blockscout-ref:
   restart: "no"
   environment:
     - PORT=4000
-    - DATABASE_URL=ecto://postgres:postgres@blockscoutpostgres/postgres?ssl=false
+    - ECTO_USE_SSL=false
+    - DATABASE_URL=postgresql://postgres:postgres@blockscoutpostgres:5432/postgres?ssl=false
     - POSTGRES_PASSWORD=postgres
     - POSTGRES_USER=postgres
     - NETWORK=quickstart
@@ -151,12 +152,13 @@ x-blockscout-ref:
 
 x-blockscoutpostgres-ref:
   &blockscoutpostgres-def
-  image: postgres:13.4-alpine
+  image: postgres:13.6-alpine
   restart: "on-failure"
   container_name: blockscoutpostgres
   environment:
     - POSTGRES_USER=postgres
     - POSTGRES_PASSWORD=postgres
+    - POSTGRES_HOST_AUTH_METHOD=trust
   volumes:
     - blockscoutpostgres:/var/lib/postgresql/data
   ports:
