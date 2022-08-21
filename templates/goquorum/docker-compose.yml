@@ -433,7 +433,7 @@ services:
 {% endif %}
 
   explorer:
-    image: consensys/quorum-explorer:e3ac210
+    image: consensys/quorum-explorer:${QUORUM_EXPLORER_VERSION:-latest}
     volumes:
       - ./quorum-explorer/config.json:/app/config.json
       - ./quorum-explorer/env:/app/.env.production
