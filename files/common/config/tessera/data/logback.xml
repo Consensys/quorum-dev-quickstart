@@ -14,7 +14,7 @@
       <append>true</append>
       <immediateFlush>true</immediateFlush>
       <encoder>
-        <pattern>{"timestamp":"%d{ISO8601}","container":"${hostName}","level":"%-5level","thread":"%thread","class":"%c{1}","logger:%logger{36}","message":"%replace(%msg){'[\r\n]', ''}","throwable":"%enc{%throwable}{JSON}"}%n</pattern>
+        <pattern>{"timestamp":"%d{ISO8601}","container":"${hostName}","level":"%level","thread":"%thread","class":"%c{1}","logger":"%logger{36}","message":"%replace(%msg){'[\r\n]', ''}","throwable":"%replace(%replace(%throwable){'[\r\n]',''}){'"','\\"'}"}%n</pattern>
       </encoder>
     </appender>
 

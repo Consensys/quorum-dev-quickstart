@@ -7,7 +7,7 @@ export interface NetworkContext {
     clientType: "goquorum" | "besu";
     nodeCount: number;
     privacy: boolean;
-    monitoring: "splunk" | "elk" | "none";
+    monitoring: "splunk" | "elk" | "loki";
     blockscout: boolean;
     outputPath: string;
     orchestrate: boolean;
