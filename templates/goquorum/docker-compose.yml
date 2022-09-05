@@ -479,6 +479,7 @@ services:
     image: "grafana/grafana"
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_USERS_VIEWERS_CAN_EDIT=true
     volumes:
       - ./config/grafana/provisioning/:/etc/grafana/provisioning/
       - grafana:/var/lib/grafana
@@ -488,56 +489,76 @@ services:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.33
 
+  loki:
+    image: "grafana/loki"
+    volumes:
+      - ./loki/loki.yml:/etc/loki/local-config.yaml:ro
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - 3100:3100/tcp
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.34
+  
+  promtail:
+    image: "grafana/promtail"
+    volumes:
+      - ./logs:/var/log
+      - ./promtail/promtail.yml:/etc/promtail/config.yml:ro
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.35
 
 {% if monitoring == "elk" %}
   redis:
     << : *redis-def
     networks:
       quorum-dev-quickstart:
-        ipv4_address: 172.16.239.34
+        ipv4_address: 172.16.239.42
 
   elasticsearch:
     << : *elasticsearch-def
     networks:
       quorum-dev-quickstart:
-        ipv4_address: 172.16.239.35
+        ipv4_address: 172.16.239.43
 
   kibana:
     << : *kibana-def
     networks:
       quorum-dev-quickstart:
-        ipv4_address: 172.16.239.36
+        ipv4_address: 172.16.239.44
 
   logstash:
     << : *logstash-def
     networks:
       quorum-dev-quickstart:
-        ipv4_address: 172.16.239.37
+        ipv4_address: 172.16.239.45
 
   filebeat:
     << : *filebeat-def
     networks:
       quorum-dev-quickstart:
-        ipv4_address: 172.16.239.38
+        ipv4_address: 172.16.239.46
 
 {% elif monitoring == "splunk" %}
   splunk:
     << : *splunk-def
     networks:
       quorum-dev-quickstart:
-        ipv4_address: 172.16.239.35
+        ipv4_address: 172.16.239.42
 
   otelcollector:
     << : *otelcollector-def
     networks:
       quorum-dev-quickstart:
-        ipv4_address: 172.16.239.36
+        ipv4_address: 172.16.239.43
 
   ethlogger:
     << : *ethlogger-def
     networks:
       quorum-dev-quickstart:
-        ipv4_address: 172.16.239.37
+        ipv4_address: 172.16.239.44
 
   cadvisor:
     container_name: cadvisor
@@ -551,7 +572,8 @@ services:
       - --docker_only=true
     networks:
       quorum-dev-quickstart:
-        ipv4_address: 172.16.239.38
+        ipv4_address: 172.16.239.45
+        
 {% endif %}
 
 networks:
