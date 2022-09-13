@@ -59,7 +59,7 @@ The overall architecture diagrams to visually show components of the blockchain 
 **Consensus Algorithm**: The Besu based Quorum variant uses the `IBFT2` consensus mechanism.
 **Private TX Manager**: Both blockchain clients use [Tessera](https://docs.tessera.consensys.net/en/latest/)
 
-![Image blockchain](./static/blockchain-network.png)
+![Image blockchain](../common/static/blockchain-network.png)
  
 
 ### i. POA Network <a name="poa-network"></a>
@@ -187,7 +187,7 @@ deployed (via a migration) to our test network. The source code for the smart co
 This is a test account only and the private and public keys are publicly visible. **Using test accounts on Ethereum mainnet and production networks can lead to loss of funds and identity fraud.** In this documentation, we only provide test accounts for ease of testing and learning purposes; never use them for other purposes. **Always secure your Ethereum mainnet and any production account properly.** See for instance [MyCrypto "Protecting Yourself and Your Funds" guide](https://support.mycrypto.com/staying-safe/protecting-yourself-and-your-funds).  | 
 
 
-![Image dapp](./static/qs-dapp.png)
+![Image dapp](../common/static/qs-dapp.png)
 
 As seen in the architecture overview diagram you can extend the network with monitoring, logging, smart contracts, DApps and so on
 
