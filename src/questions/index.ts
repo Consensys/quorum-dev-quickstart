@@ -54,9 +54,9 @@ _blockscoutQuestion.transformerValidator = _getYesNoValidator(_blockscoutQuestio
 
 const _monitoringQuestion: QuestionTree = {
     name: "monitoring",
-    prompt: "Do you wish to enable support for logging with Splunk or ELK (Elasticsearch, Logstash & Kibana)? Default: [1]",
+    prompt: "Do you wish to enable support for logging with Loki, Splunk or ELK (Elasticsearch, Logstash & Kibana)? Default: [1]",
     options: [
-      { label: "None", value: "none", nextQuestion: _blockscoutQuestion, default: true },
+      { label: "Loki", value: "loki", nextQuestion: _blockscoutQuestion, default: true },
       { label: "Splunk", value: "splunk", nextQuestion: _blockscoutQuestion },
       { label: "ELK", value: "elk", nextQuestion: _blockscoutQuestion }
     ]
