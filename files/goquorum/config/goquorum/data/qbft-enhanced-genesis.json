@@ -10,27 +10,21 @@
     "constantinopleBlock": 0,
     "petersburgBlock": 0,
     "istanbulBlock": 0,
-    "qbft": {
-      "epochLength": 30000,
-      "blockPeriodSeconds": 5
+    "istanbul": {
+      "epoch": 30000,
+      "policy": 0,
+      "testQBFTBlock": 0,
+      "ceil2Nby3Block": 0
     },
-    "transitions": [
+    "txnSizeLimit": 64,
+    "maxCodeSizeConfig" : [
       {
-        "block": 0,
-        "transactionSizeLimit": 64,
-        "contractSizeLimit": 64,
-        "privacyEnhancementsEnabled": true
-      },
-      {
-        "block": 10,
-        "blockPeriodSeconds": 1
-      },
-      {
-        "block": 20,
-        "emptyBlockPeriodSeconds": 60
+        "block" : 0,
+        "size" : 64
       }
     ],
-    "isQuorum": true
+    "isQuorum": true,
+    "privacyEnhancementsBlock": 0
   },
   "nonce": "0x0",
   "timestamp": "0x5f1663fc",
