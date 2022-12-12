@@ -9,25 +9,23 @@
 
 To run these tutorials, you must have the following installed:
 
-- [Docker and Docker-compose](https://docs.docker.com/compose/install/)
+- [Docker and Docker-compose](https://docs.docker.com/compose/install/) v2 or higher
 
 | ⚠️ **Note**: If on MacOS or Windows, please ensure that you allow docker to use upto 4G of memory or 6G if running Privacy examples under the _Resources_ section. The [Docker for Mac](https://docs.docker.com/docker-for-mac/) and [Docker Desktop](https://docs.docker.com/docker-for-windows/) sites have details on how to do this at the "Resources" heading       |
 | ---                                                                                                                                                                                                                                                                                                                                                                                |
 
 
-| ⚠️ **Note**: This has only been tested on Windows 10 Build 18362 and Docker >= 17.12.2                                                                                                                                                                                                                                                                                              |
+| ⚠️ **Note**: This has only been tested on Windows 10 Build 19045, WSL2 and Docker Desktop                                                                                                                                                 |
 | ---                                                                                                                                                                                                                                                                                                                                                                                |
 
-- On Windows ensure that the drive that this repo is cloned onto is a "Shared Drive" with Docker Desktop
-- On Windows we recommend running all commands from GitBash
-- On Windows, WSL2 kernels prior to 5.10 have time drift issues which can impact block timestamps. To update the kernel, `wsl --shutdown` and then enable "Windows Update > Advanced Options > Receive updates for other Microsoft products when you update Windows". 
+- On Windows, please use WSL2 kernels 5.15x or higher
+- You can use either Docker Desktop or docker-engine (with the compose plugin) within the WSL2 environment
 - [Nodejs](https://nodejs.org/en/download/) or [Yarn](https://yarnpkg.com/cli/node)
-
 
 
 ## Usage 
 
-Create the docker-compose file and artifacts with 
+Create the docker compose file and artifacts with 
 
 ```
 $> npx quorum-dev-quickstart

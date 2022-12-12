@@ -16,11 +16,12 @@ hash docker 2>/dev/null || {
   exit 1
 }
 
-hash docker-compose 2>/dev/null || {
+docker compose version &>/dev/null
+if [ "$?" -eq "1" ];then
   echo >&2 "This script requires Docker compose but it's not installed."
   echo >&2 "Refer to documentation to fulfill requirements."
   exit 1
-}
+fi
 
 docker info &>/dev/null
 if [ "$?" -eq "1" ];then
