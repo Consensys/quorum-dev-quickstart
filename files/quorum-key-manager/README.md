@@ -44,7 +44,7 @@ To run these tutorials, you must have the following installed:
 
 We start Postgres and Hashicorp Vault service as part of Quorum Key Manager dependencies:
 ```bash
-$> docker-compose -f docker-compose.dev.yml -d up 
+$> docker compose -f docker-compose.dev.yml -d up 
 ```
 
 **Start selected network**
@@ -68,7 +68,7 @@ To see more option information about the running underline network, see [README.
 
 Once dependencies and network are running we can start Quorum Key Manager service:
 ```
-$> docker-compose up -d
+$> docker compose up -d
 ```
 
 
