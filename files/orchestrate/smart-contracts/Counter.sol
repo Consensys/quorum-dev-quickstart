@@ -14,6 +14,6 @@ contract Counter {
     */
     function increment(uint256 value) public {
         counter += value;
-        emit Incremented(msg.sender, value);
+        emit Incremented(msg.sender, counter);
     }
 }
