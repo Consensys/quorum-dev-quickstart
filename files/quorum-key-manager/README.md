@@ -1,11 +1,11 @@
 # Quorum Key Manager Quickstart
 
 Quorum Key Manager (QKM) is a key management service that exposes an HTTP API service to manage your secrets, keys and Ethereum accounts. QKM supports the integration with
-*AWS Key Management Service*, *Azure Key Vault* and *HashiCorp Vault*. 
+*AWS Key Management Service*, *Azure Key Vault* and *HashiCorp Vault*.
 
 In addition, using the JSON-RPC interface of the QKM, you can connect to your Ethereum nodes to sign your transaction using the Ethereum account stored in your secure key vault.
 
-Quorum Key Manager is developed under the [BSL 1.1](LICENSE) license and written in Go. 
+Quorum Key Manager is developed under the [BSL 1.1](LICENSE) license and written in Go.
 
 For more information, refer to the Quorum Key Manager official [Documentation](https://docs.quorum-key-manager.consensys.net/).
 
@@ -44,7 +44,7 @@ To run these tutorials, you must have the following installed:
 
 We start Postgres and Hashicorp Vault service as part of Quorum Key Manager dependencies:
 ```bash
-$> docker compose -f docker-compose.dev.yml -d up 
+$> docker compose -f docker-compose.deps.yml -d up
 ```
 
 **Start selected network**
@@ -63,7 +63,7 @@ $> cd ...
 
 
 To see more option information about the running underline network, see [README.md](./network/README.md)
- 
+
 **Start Quorum Key Manager:**
 
 Once dependencies and network are running we can start Quorum Key Manager service:
@@ -74,4 +74,4 @@ $> docker compose up -d
 
 ## HTTP-API
 
-Quorum Key Manager is exposing a HTTP API which it is documented in [https://consensys.github.io/quorum-key-manager](https://consensys.github.io/quorum-key-manager) 
+Quorum Key Manager is exposing a HTTP API which it is documented in [https://consensys.github.io/quorum-key-manager](https://consensys.github.io/quorum-key-manager)
