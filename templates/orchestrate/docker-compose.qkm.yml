@@ -57,5 +57,5 @@ networks:
     name: qkm_quorum-dev-quickstart
     driver: bridge
   deps:
-    external:
-      name: deps_quorum-dev-quickstart
+    name: deps_quorum-dev-quickstart
+    external: true

@@ -129,11 +129,11 @@ networks:
   orchestrate:
     name: orchestrate_quorum-dev-quickstart
   deps:
-    external:
-      name: deps_quorum-dev-quickstart
+    name: deps_quorum-dev-quickstart
+    external: true
   qkm:
-    external:
-      name: qkm_quorum-dev-quickstart
+    name: qkm_quorum-dev-quickstart
+    external: true
   network:
-    external:
-      name: quorum-dev-quickstart
+    name: quorum-dev-quickstart
+    external: true
