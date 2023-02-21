@@ -6,6 +6,8 @@ const Web3Quorum = require("web3js-quorum");
 // WARNING: the keys here are demo purposes ONLY. Please use a tool like Orchestrate or EthSigner for production, rather than hard coding private keys
 const { tessera, quorum } = require("./keys.js");
 const chainId = 1337;
+const privacyFlag = 0
+
 // abi and bytecode generated from simplestorage.sol:
 // > solcjs --bin --abi simplestorage.sol
 const contractJsonPath = path.resolve(
@@ -64,6 +66,7 @@ async function createContract(
     privateKey: fromPrivateKey,
     privateFrom: fromPublicKey,
     privateFor: [toPublicKey],
+    privacyFlag
   };
   console.log("Creating contract...");
   // Generate and send the Raw transaction to the Besu node using the eea_sendRawTransaction JSON-RPC call
@@ -119,6 +122,7 @@ async function setValueAtAddress(
     from: client.accountAddress,
     privateFor: [toPublicKey],
     gasLimit: "0x24A22",
+    privacyFlag
   });
   return res;
 }

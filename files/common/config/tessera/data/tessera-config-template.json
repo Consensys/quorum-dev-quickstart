@@ -57,6 +57,6 @@
     "bootstrapNode": false,
     "features": {
         "enableRemoteKeyValidation": false,
-        "enablePrivacyEnhancements": false
+        "enablePrivacyEnhancements": true
     }
 }
