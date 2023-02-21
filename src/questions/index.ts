@@ -69,53 +69,6 @@ const _privacyQuestion: QuestionTree = {
 // have to add this below the definition because of the self reference..
 _privacyQuestion.transformerValidator = _getYesNoValidator(_privacyQuestion, _monitoringQuestion, "y");
 
-
-const _orchestrateQuestion: QuestionTree = {
-    name: "orchestrate",
-    prompt: "Do you want to try out Codefi Orchestrate? [Y/n]",
-
-    transformerValidator: (rawInput: string, answers: AnswerMap) => {
-        const normalizedInput = rawInput.toLowerCase();
-
-        if (!normalizedInput) {
-            answers.orchestrate = true;
-        } else if (normalizedInput === "y" || normalizedInput === "n") {
-            answers.orchestrate = normalizedInput === "y";
-        } else {
-            console.log(chalk.red("Sorry, but I didn't understand your answer. Please select Y or N,\n" +
-                "or just hit enter if you want the default.\n"));
-            return _orchestrateQuestion;
-        }
-
-        if (answers.orchestrate) {
-          return _privacyQuestion;
-        } else {
-          return _quorumKeyManagerQuestion;
-        }
-    }
-};
-
-const _quorumKeyManagerQuestion: QuestionTree = {
-  name: "quorumKeyManager",
-  prompt: "Do you want to try out Quorum Key Manager? [Y/n]",
-
-  transformerValidator: (rawInput: string, answers: AnswerMap) => {
-    const normalizedInput = rawInput.toLowerCase();
-
-    if (!normalizedInput) {
-      answers.quorumKeyManager = true;
-    } else if (normalizedInput === "y" || normalizedInput === "n") {
-      answers.quorumKeyManager = normalizedInput === "y";
-    } else {
-      console.log(chalk.red("Sorry, but I didn't understand your answer. Please select Y or N,\n" +
-        "or just hit enter if you want the default.\n"));
-      return _quorumKeyManagerQuestion;
-    }
-
-    return _privacyQuestion;
-  }
-};
-
 const bannerText = String.raw`
               ___
              / _ \   _   _    ___    _ __   _   _   _ __ ___
@@ -139,7 +92,7 @@ const bannerText = String.raw`
 const leadInText = `
 \nWelcome to the Quorum Developer Quickstart utility. This tool can be used
 to rapidly generate local Quorum blockchain networks for development purposes
-using tools like GoQuorum, Besu, and Codefi Orchestrate.
+using tools like GoQuorum, Besu, and Tessera.
 
 To get started, be sure that you have both Docker and Docker Compose
 installed, then answer the following questions.\n\n`;
@@ -149,8 +102,8 @@ export const rootQuestion: QuestionTree = {
     prompt: `${bannerText}${leadInText}Which Ethereum client would you like to run? Default: [1]`,
     options: [
         // TODO: fix these to the correct names
-        { label: "Hyperledger Besu", value: "besu", nextQuestion: _orchestrateQuestion, default: true },
-        { label: "GoQuorum", value: "goquorum", nextQuestion: _orchestrateQuestion }
+        { label: "Hyperledger Besu", value: "besu", nextQuestion: _privacyQuestion, default: true },
+        { label: "GoQuorum", value: "goquorum", nextQuestion: _privacyQuestion }
     ]
 };
 
