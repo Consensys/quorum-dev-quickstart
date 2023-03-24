@@ -213,6 +213,7 @@ x-siratoingestion-ref:
     - MONGO_DB_NAME=epirus
   depends_on:
     - siratomongodb
+    - siratoweb
 
 x-siratonginx-ref:
   &siratonginx-def
@@ -534,6 +535,8 @@ services:
 
   siratoingestion:
     <<: *siratoingestion-def
+    depends_on:
+      - rpcnode
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.55
