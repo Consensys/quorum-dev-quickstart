@@ -45,19 +45,19 @@ const _outputDirQuestion: QuestionTree = {
     }
 };
 
-const _blockscoutQuestion: QuestionTree = {
-    name: "blockscout",
-    prompt: "Do you wish to enable support for monitoring your network with Blockscout? [N/y]",
-};
-// have to add this below the definition because of the self reference..
-_blockscoutQuestion.transformerValidator = _getYesNoValidator(_blockscoutQuestion, _siratoQuestion, "n");
-
 const _siratoQuestion: QuestionTree = {
     name: "sirato",
     prompt: "Do you wish to enable support for monitoring your network with Sirato? [N/y]",
 };
 // have to add this below the definition because of the self reference..
 _siratoQuestion.transformerValidator = _getYesNoValidator(_siratoQuestion, _outputDirQuestion, "n");
+
+const _blockscoutQuestion: QuestionTree = {
+    name: "blockscout",
+    prompt: "Do you wish to enable support for monitoring your network with Blockscout? [N/y]",
+};
+// have to add this below the definition because of the self reference..
+_blockscoutQuestion.transformerValidator = _getYesNoValidator(_blockscoutQuestion, _siratoQuestion, "n");
 
 const _monitoringQuestion: QuestionTree = {
     name: "monitoring",
