@@ -71,6 +71,9 @@ echo "Web block explorer address                     : http://${HOST}:25000/expl
 if [ ! -z `docker compose -f docker-compose.yml ps -q blockscout 2> /dev/null` ]; then
 echo "Blockscout address                             : http://${HOST}:26000/"
 fi
+if [ ! -z `docker compose -f docker-compose.yml ps -q siratoapi 2> /dev/null` ]; then
+echo "Sirato address                             : http://${HOST}:8081/"
+fi
 if [ ! -z `docker compose -f docker-compose.yml ps -q prometheus 2> /dev/null` ]; then
 echo "Prometheus address                             : http://${HOST}:9090/graph"
 fi
