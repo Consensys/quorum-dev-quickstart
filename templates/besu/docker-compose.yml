@@ -295,8 +295,6 @@ x-siratoweb-ref:
   environment:
     - API_URL=/api
     - DISPLAY_NETWORK_TAB=disabled
-  ports:
-    - 3000:3000
   depends_on:
     - siratoapi
 
