@@ -9,6 +9,7 @@
     "byzantiumBlock": 0,
     "constantinopleBlock": 0,
     "constantinoplefixblock" : 0,
+    "muirGlacierBlock": 0,
     "berlinBlock": 0,
     "londonBlock": 0,
     "arrowGlacierBlock": 0,
