@@ -1,6 +1,6 @@
 {
   "name": "quorum-dev-quickstart",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A utility that lets developers try out the new suite of Quorum tools from ConsenSys!",
   "main": "build/index.js",
   "repository": "git@github.com:ConsenSys/quorum-dev-quickstart.git",
@@ -44,7 +44,6 @@
     "express-session": "^1.17.2",
     "got": "^11.8.2",
     "isbinaryfile": "^4.0.8",
-    "keycloak-connect": "^15.0.2",
     "log-update": "^4.0.0",
     "nunjucks": "^3.2.3",
     "open": "^8.3.0",
