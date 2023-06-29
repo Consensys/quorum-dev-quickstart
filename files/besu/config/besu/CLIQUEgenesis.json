@@ -2,6 +2,7 @@
   "config":{
     "chainId":1337,
     "londonBlock": 0,
+    "zeroBaseFee": true,
     "clique":{
       "blockperiodseconds":15,
       "epochlength":30000
