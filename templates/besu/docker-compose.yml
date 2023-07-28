@@ -327,7 +327,7 @@ x-siratonginx-ref:
 
 x-ethsignerProxy-def:
   &ethsignerProxy-def
-  image: consensys/quorum-ethsigner:${ETHSIGNER_VERSION:-latest}
+  image: consensys/ethsigner:${ETHSIGNER_VERSION:-latest}
   command: [
     "--chain-id=1337",
     "--http-listen-host=0.0.0.0",
