@@ -52,20 +52,20 @@ const _blockscoutQuestion: QuestionTree = {
 // have to add this below the definition because of the self reference..
 _blockscoutQuestion.transformerValidator = _getYesNoValidator(_blockscoutQuestion, _outputDirQuestion, "n");
 
-const _siratoQuestion: QuestionTree = {
-    name: "sirato",
-    prompt: "Do you wish to enable support for monitoring your network with Sirato? [N/y]",
+const _chainlensQuestion: QuestionTree = {
+    name: "chainlens",
+    prompt: "Do you wish to enable support for monitoring your network with Chainlens? [N/y]",
 };
 // have to add this below the definition because of the self reference..
-_siratoQuestion.transformerValidator = _getYesNoValidator(_siratoQuestion, _blockscoutQuestion, "n");
+_chainlensQuestion.transformerValidator = _getYesNoValidator(_chainlensQuestion, _blockscoutQuestion, "n");
 
 const _monitoringQuestion: QuestionTree = {
     name: "monitoring",
     prompt: "Do you wish to enable support for logging with Loki, Splunk or ELK (Elasticsearch, Logstash & Kibana)? Default: [1]",
     options: [
-      { label: "Loki", value: "loki", nextQuestion: _siratoQuestion, default: true },
-      { label: "Splunk", value: "splunk", nextQuestion: _siratoQuestion },
-      { label: "ELK", value: "elk", nextQuestion: _siratoQuestion }
+      { label: "Loki", value: "loki", nextQuestion: _chainlensQuestion, default: true },
+      { label: "Splunk", value: "splunk", nextQuestion: _chainlensQuestion },
+      { label: "ELK", value: "elk", nextQuestion: _chainlensQuestion }
     ]
 };
 

@@ -24,7 +24,7 @@ export async function main(): Promise<void> {
         privacy: { type: 'boolean', demandOption: true, default: false, describe: 'Enable support for private transactions' },
         monitoring: { type: 'string', demandOption: false, default: 'loki', describe: 'Enable support for monitoring with Splunk or ELK.' },
         blockscout: { type: 'boolean', demandOption: false, default: false, describe: 'Enable support for monitoring the network with Blockscout' },
-        sirato: { type: 'boolean', demandOption: false, default: false, describe: 'Enable support for monitoring the network with Sirato' },
+        chainlens: { type: 'boolean', demandOption: false, default: false, describe: 'Enable support for monitoring the network with Chainlens' },
         outputPath: { type: 'string', demandOption: false, default: './quorum-test-network', describe: 'Location for config files.'}
       }).argv;
 
@@ -33,7 +33,7 @@ export async function main(): Promise<void> {
         outputPath: args.outputPath,
         monitoring: args.monitoring,
         blockscout: args.blockscout,
-        sirato: args.sirato,
+        chainlens: args.chainlens,
         privacy: args.privacy
       };
 

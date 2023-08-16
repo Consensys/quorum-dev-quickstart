@@ -264,64 +264,64 @@ x-blockscoutpostgres-ref:
 
 {% endif %}
 
-{% if sirato %}
+{% if chainlens %}
 
-x-siratoapi-ref:
-  &siratoapi-def
+x-chainlensapi-ref:
+  &chainlensapi-def
   image: web3labs/epirus-free-api:latest
-  container_name: siratoapi
+  container_name: chainlensapi
   environment:
     - NODE_ENDPOINT=http://rpcnode:8545
-    - MONGO_CLIENT_URI=mongodb://siratomongodb:27017
-    - REINDEX_ENDPOINT=http://siratoingestion/reindex/
+    - MONGO_CLIENT_URI=mongodb://chainlensmongodb:27017
+    - REINDEX_ENDPOINT=http://chainlensingestion/reindex/
     - MONGO_DB_NAME=epirus
     - MONGO_CREATE_INDICES=true
   depends_on:
-    - siratomongodb
+    - chainlensmongodb
 
-x-siratomongodb-ref:
-  &siratomongodb-def
+x-chainlensmongodb-ref:
+  &chainlensmongodb-def
   image: mongo:5.0.8
-  container_name: siratomongodb
+  container_name: chainlensmongodb
   environment:
     - COMPOSE_HTTP_TIMEOUT=900
     - DOCKER_CLIENT_TIMEOUT=900
   entrypoint: mongod --bind_ip "0.0.0.0"
 
-x-siratoweb-ref:
-  &siratoweb-def
+x-chainlensweb-ref:
+  &chainlensweb-def
   image: web3labs/epirus-free-web:latest
-  container_name: siratoweb
+  container_name: chainlensweb
   environment:
     - API_URL=/api
     - DISPLAY_NETWORK_TAB=disabled
   depends_on:
-    - siratoapi
+    - chainlensapi
 
-x-siratoingestion-ref:
-  &siratoingestion-def
+x-chainlensingestion-ref:
+  &chainlensingestion-def
   image: web3labs/epirus-free-ingestion:latest
-  container_name: siratoingestion
+  container_name: chainlensingestion
   environment:
     - NODE_ENDPOINT=http://rpcnode:8545
-    - MONGO_CLIENT_URI=mongodb://siratomongodb:27017
+    - MONGO_CLIENT_URI=mongodb://chainlensmongodb:27017
     - MONGO_DB_NAME=epirus
   depends_on:
-    - siratomongodb
-    - siratoweb
+    - chainlensmongodb
+    - chainlensweb
 
-x-siratonginx-ref:
-  &siratonginx-def
+x-chainlensnginx-ref:
+  &chainlensnginx-def
   image: nginx:latest
-  container_name: siratonginx
+  container_name: chainlensnginx
   volumes:
-    - ./sirato/nginx.conf:/etc/nginx/nginx.conf
-    - ./sirato/5xx.html:/www/error_pages/5xx.html
+    - ./chainlens/nginx.conf:/etc/nginx/nginx.conf
+    - ./chainlens/5xx.html:/www/error_pages/5xx.html
   ports:
     - 8081:80
   depends_on:
-    - siratoapi
-    - siratoweb
+    - chainlensapi
+    - chainlensweb
 
 {% endif %}
 
@@ -615,35 +615,35 @@ services:
 
 {% endif %}
 
-{% if sirato %}
-  siratoapi:
-    <<: *siratoapi-def
+{% if chainlens %}
+  chainlensapi:
+    <<: *chainlensapi-def
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.53
 
-  siratomongodb:
-    <<: *siratomongodb-def
+  chainlensmongodb:
+    <<: *chainlensmongodb-def
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.54
 
-  siratoingestion:
-    <<: *siratoingestion-def
+  chainlensingestion:
+    <<: *chainlensingestion-def
     depends_on:
       - rpcnode
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.55
 
-  siratoweb:
-    <<: *siratoweb-def
+  chainlensweb:
+    <<: *chainlensweb-def
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.56
 
-  siratonginx:
-    <<: *siratonginx-def
+  chainlensnginx:
+    <<: *chainlensnginx-def
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.57

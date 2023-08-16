@@ -9,7 +9,7 @@ export interface NetworkContext {
     privacy: boolean;
     monitoring: "splunk" | "elk" | "loki";
     blockscout: boolean;
-    sirato: boolean;
+    chainlens: boolean;
     outputPath: string;
 }
 
