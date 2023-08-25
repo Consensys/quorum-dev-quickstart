@@ -37,13 +37,6 @@ describe("QuorumToken", function () {
                                   .to.changeTokenBalance(quorumToken, owner, amount)    
     });
 
-    // it("Should revert to transfer token exceed balance", async function () {
-    //   const {quorumToken, address, owner, otherAccount} = await loadFixture(deployQuorumTokenFixture);
-    //   const exceedAmount = ethers.parseEther('10001.0')
-    //   const accountAddress = await otherAccount.getAddress();
-    //   await expect(async () => quorumToken.transfer(accountAddress,exceedAmount)).to.be.revertedWith('ERC20: transfer amount exceeds balance')
-    // });
-
   });
 
 })

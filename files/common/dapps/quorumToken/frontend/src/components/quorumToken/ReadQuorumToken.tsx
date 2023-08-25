@@ -1,6 +1,6 @@
 import React, {useEffect, useState } from 'react';
 import {Text} from '@chakra-ui/react'
-import {QuorumTokenABI as abi} from '../abi/QuorumTokenABI'
+import {QuorumTokenABI as abi} from './QuorumTokenABI'
 import {ethers, Contract} from 'ethers'
 
 declare let window: any;

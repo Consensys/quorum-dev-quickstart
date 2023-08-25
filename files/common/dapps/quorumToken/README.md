@@ -36,7 +36,7 @@ npm i
 Compile the contracts and run tests (optional):
 
 ```
-yarn hardhat compile
+npx run compile
 # As you develop contracts you are using the inbuilt `hardhat` network
 npx hardhat test
 ```

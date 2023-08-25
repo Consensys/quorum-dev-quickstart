@@ -1,12 +1,11 @@
 {
-  "name": "chain",
+  "name": "quorumToken",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
     "compile": "npx hardhat compile",
     "test": "npx hardhat test",
-    "deploy-greeter": "npx hardhat run ./scripts/deploy_greeter.ts --network quickstart ",
     "deploy-quorumtoken": "npx hardhat run ./scripts/deploy_quorumtoken.ts --network quickstart "
   },
   "dependencies": {

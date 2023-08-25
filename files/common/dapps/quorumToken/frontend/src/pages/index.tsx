@@ -2,8 +2,9 @@ import type { NextPage } from 'next'
 import { Heading, Text, VStack, Box, Button, Input, Spacer, Flex } from '@chakra-ui/react'
 import { useState, useEffect} from 'react'
 import {ethers} from "ethers"
-import ReadQuorumToken from "../components/ReadQuorumToken"
-import TransferQuorumToken from "../components/TransferQuorumToken"
+import ReadQuorumToken from "../components/quorumToken/ReadQuorumToken"
+import TransferQuorumToken from "../components/quorumToken/TransferQuorumToken"
+import MMAccount from "../components/MMAccount"
 
 declare let window:any
 
@@ -47,6 +48,9 @@ export default function Home() {
     setCurrentAccount(undefined)
   }
 
+  const deployedAddressHandler = (e: any) => {
+     setErc20ContractAddress(e.target.value);
+  }
 
   return (
     <>
@@ -63,16 +67,12 @@ export default function Home() {
         }
         </Box>
         {currentAccount  
-          ?<Box  mb={0} p={4} w='100%' borderWidth="1px" borderRadius="lg">
-          <Heading my={4}  fontSize='xl'>Account</Heading>
-          <Text my={4}>Details of the account connected to Metamask</Text>
-          <Text><b>Balance of current account (ETH)</b>: {balance}</Text>
-          <Text><b>ChainId</b>: {chainId} </Text>
-          {/* todo: fix formatting here */}
-          <Text><b>Address that the QuorumToken was deployed to</b>: </Text>
-          <Input value={erc20ContractAddress}  name="erc20ContractAddress" onChange={e => setErc20ContractAddress(e.target.value)} />
-        </Box>
-        :<></>
+          ?<MMAccount 
+            balance={balance} 
+            chainId={chainId}
+            erc20ContractAddress={erc20ContractAddress}
+            deployedAddressHandler={deployedAddressHandler} />
+          :<></>
         }
 
         {(erc20ContractAddress!="0x")  
