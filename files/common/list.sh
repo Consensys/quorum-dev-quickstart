@@ -68,8 +68,8 @@ echo "----------------------------------"
 echo "JSON-RPC HTTP service endpoint                 : http://${HOST}:8545"
 echo "JSON-RPC WebSocket service endpoint            : ws://${HOST}:8546"
 echo "Web block explorer address                     : http://${HOST}:25000/explorer/nodes"
-if [ ! -z `docker compose -f docker-compose.yml ps -q siratoapi 2> /dev/null` ]; then
-echo "Sirato address                                 : http://${HOST}:8081/"
+if [ ! -z `docker compose -f docker-compose.yml ps -q chainlensapi 2> /dev/null` ]; then
+echo "Chainlens address                              : http://${HOST}:8081/"
 fi
 if [ ! -z `docker compose -f docker-compose.yml ps -q blockscout 2> /dev/null` ]; then
 echo "Blockscout address                             : http://${HOST}:26000/"
