@@ -104,3 +104,22 @@ the container's user 1000 to your local user id so permissions will work like so
 image: some:img
 user: $(id -u):$(id -g)
 ```
+
+
+# TODO
+
+1. Besu _ concurrent_tx
+```
+jfernandes@xps:~/workspace/protocols/quorum-dev-quickstart/besu-test-network/smart_contracts(master)$ node scripts/privacy/concurrent_private_txs.js 
+TypeError: Tx is not a constructor
+    at sendPMT (/home/jfernandes/workspace/protocols/quorum-dev-quickstart/besu-test-network/smart_contracts/scripts/privacy/concurrent_private_txs.js:60:14)
+    at /home/jfernandes/workspace/protocols/quorum-dev-quickstart/besu-test-network/smart_contracts/scripts/privacy/concurrent_private_txs.js:114:18
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+This example requires ONCHAIN privacy to be DISABLED. 
+Check config for ONCHAIN privacy groups.
+```
+
+2, Besu _ grafana dash broken 
+
+3. Goq Grafana _ dash broken as well?

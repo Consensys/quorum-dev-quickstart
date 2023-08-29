@@ -12,7 +12,17 @@ module.exports = {
       publicKey: "1iTZde/ndBHvzhcl7V68x44Vx7pl8nwx9LqnM/AfJUg=",
     },
   },
-  besu: {
+  quorum: {
+    rpcnode: {
+      name: "rpcnode",
+      url: "http://127.0.0.1:8545",
+      wsUrl: "ws://127.0.0.1:8546",
+      nodekey:
+        "0e93a540518eeb673d94fb496b746008ab56605463cb9212493997f5755124d1",
+      accountAddress: "c9c913c8c3c1cd416d80a0abf475db2062f161f6",
+      accountPrivateKey:
+        "0x60bbe10a196a4e71451c0f6e9ec9beab454c2a5ac0542aa5b8b733ff5719fec3",
+    },
     member1: {
       name: "member1",
       url: "http://127.0.0.1:20000",
@@ -45,10 +55,6 @@ module.exports = {
       accountAddress: "0x0fbdc686b912d7722dc86510934589e0aaf3b55a",
       accountPrivateKey:
         "61dced5af778942996880120b303fc11ee28cc8e5036d2fdff619b5675ded3f0",
-    },
-    ethsignerProxy: {
-      url: "http://127.0.0.1:18545",
-      accountAddress: "9b790656b9ec0db1936ed84b3bea605873558198",
     },
   },
   accounts: {

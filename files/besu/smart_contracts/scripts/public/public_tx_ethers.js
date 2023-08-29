@@ -3,13 +3,13 @@ const fs = require('fs-extra');
 var ethers = require('ethers');
 
 // member1 details
-const { tessera, besu } = require("./keys.js");
-const host = besu.member1.url;
-const accountAddress = besu.member1.accountAddress;
+const { tessera, quorum } = require("../keys.js");
+const host = quorum.rpcnode.url;
+const accountAddress = quorum.rpcnode.accountAddress;
 
 // abi and bytecode generated from simplestorage.sol:
 // > solcjs --bin --abi simplestorage.sol
-const contractJsonPath = path.resolve(__dirname, '../','contracts','SimpleStorage.json');
+const contractJsonPath = path.resolve(__dirname, '../../','contracts','SimpleStorage.json');
 const contractJson = JSON.parse(fs.readFileSync(contractJsonPath));
 const contractAbi = contractJson.abi;
 const contractBytecode = contractJson.evm.bytecode.object
