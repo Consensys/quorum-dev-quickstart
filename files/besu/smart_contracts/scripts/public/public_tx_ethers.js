@@ -2,10 +2,10 @@ const path = require('path');
 const fs = require('fs-extra');
 var ethers = require('ethers');
 
-// member1 details
+// RPCNODE details
 const { tessera, besu } = require("../keys.js");
 const host = besu.rpcnode.url;
-const accountAddress = besu.rpcnode.accountAddress;
+const accountPrivateKey = besu.rpcnode.accountPrivateKey;
 
 // abi and bytecode generated from simplestorage.sol:
 // > solcjs --bin --abi simplestorage.sol
@@ -44,8 +44,7 @@ async function createContract(provider, wallet, contractAbi, contractByteCode, c
 
 async function main(){
   const provider = new ethers.providers.JsonRpcProvider(host);
-  const randomPrivateKey = await ethers.Wallet.createRandom();
-  const wallet = new ethers.Wallet(randomPrivateKey, provider);
+  const wallet = new ethers.Wallet(accountPrivateKey, provider);
 
   createContract(provider, wallet, contractAbi, contractBytecode, 47)
   .then(async function(contract){
@@ -67,4 +66,3 @@ if (require.main === module) {
 }
 
 module.exports = exports = main
-

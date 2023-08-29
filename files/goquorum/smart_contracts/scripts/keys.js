@@ -13,6 +13,16 @@ module.exports = {
     },
   },
   quorum: {
+    rpcnode: {
+      name: "rpcnode",
+      url: "http://127.0.0.1:8545",
+      wsUrl: "ws://127.0.0.1:8546",
+      nodekey:
+        "0e93a540518eeb673d94fb496b746008ab56605463cb9212493997f5755124d1",
+      accountAddress: "c9c913c8c3c1cd416d80a0abf475db2062f161f6",
+      accountPrivateKey:
+        "0x60bbe10a196a4e71451c0f6e9ec9beab454c2a5ac0542aa5b8b733ff5719fec3",
+    },
     member1: {
       name: "member1",
       url: "http://127.0.0.1:20000",
