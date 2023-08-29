@@ -557,12 +557,12 @@ services:
 
 
   prometheus:
-    image: "prom/prometheus"
+    image: "prom/prometheus:v2.46.0"
     volumes:
       - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus:/prometheus
     command:
-      - --config.file=/etc/prometheus/prometheus.yml
+      - --config.file=/etc/prometheus/prometheus.yml 
     ports:
       - 9090:9090/tcp
     networks:
@@ -570,7 +570,7 @@ services:
         ipv4_address: 172.16.239.32
 
   grafana:
-    image: "grafana/grafana"
+    image: "grafana/grafana:10.1.0"
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_USERS_VIEWERS_CAN_EDIT=true
@@ -584,7 +584,7 @@ services:
         ipv4_address: 172.16.239.33
 
   loki:
-    image: "grafana/loki"
+    image: "grafana/loki:2.8.4"
     volumes:
       - ./loki/loki.yml:/etc/loki/local-config.yaml:ro
     command: -config.file=/etc/loki/local-config.yaml
@@ -595,7 +595,7 @@ services:
         ipv4_address: 172.16.239.34
 
   promtail:
-    image: "grafana/promtail"
+    image: "grafana/promtail:2.8.4"
     volumes:
       - ./logs:/var/log
       - ./promtail/promtail.yml:/etc/promtail/config.yml:ro

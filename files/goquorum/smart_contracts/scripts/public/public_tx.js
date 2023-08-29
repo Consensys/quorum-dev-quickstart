@@ -3,14 +3,15 @@ const fs = require("fs-extra");
 const Web3 = require("web3");
 
 // member1 details
-const { tessera, besu } = require("./keys.js");
-const host = besu.member1.url;
-const accountAddress = besu.member1.accountAddress;
+const { tessera, quorum } = require("../keys.js");
+const host = quorum.member1.url;
+const accountAddress = quorum.member1.accountAddress;
 
 // abi and bytecode generated from simplestorage.sol:
 // > solcjs --bin --abi simplestorage.sol
 const contractJsonPath = path.resolve(
   __dirname,
+  "../",
   "../",
   "contracts",
   "SimpleStorage.json"
@@ -48,9 +49,11 @@ async function getAllPastEvents(
     fromBlock: 0,
     toBlock: "latest",
   });
+
   const amounts = res.map((x) => {
     return x.returnValues._amount;
   });
+
   console.log(
     "Obtained all value events from deployed contract : [" + amounts + "]"
   );
@@ -66,32 +69,18 @@ async function setValueAtAddress(
   deployedContractAddress
 ) {
   const web3 = new Web3(host);
-  const account = web3.eth.accounts.create();
-  // console.log(account);
-  const contract = new web3.eth.Contract(deployedContractAbi);
-  // eslint-disable-next-line no-underscore-dangle
-  const functionAbi = contract._jsonInterface.find((e) => {
-    return e.name === "set";
-  });
-  const functionArgs = web3.eth.abi
-    .encodeParameters(functionAbi.inputs, [value])
-    .slice(2);
-  const functionParams = {
-    to: deployedContractAddress,
-    data: functionAbi.signature + functionArgs,
-    gas: "0x2CA51", //max number of gas units the tx is allowed to use
-  };
-  const signedTx = await web3.eth.accounts.signTransaction(
-    functionParams,
-    account.privateKey
+  const contractInstance = new web3.eth.Contract(
+    deployedContractAbi,
+    deployedContractAddress
   );
-  console.log("sending the txn");
-  const txReceipt = await web3.eth.sendSignedTransaction(
-    signedTx.rawTransaction
-  );
-  console.log("tx transactionHash: " + txReceipt.transactionHash);
-  console.log("tx contractAddress: " + txReceipt.contractAddress);
-  return txReceipt;
+  const res = await contractInstance.methods
+    .set(value)
+    .send({ from: accountAddress, gasPrice: "0x0", gasLimit: "0x24A22" });
+  console.log("Set value on contract at : " + res.transactionHash);
+  // verify the updated value
+  // const readRes = await contractInstance.methods.get().call();
+  // console.log("Obtained value at deployed contract is: "+ readRes);
+  return res;
 }
 
 async function createContract(host) {
