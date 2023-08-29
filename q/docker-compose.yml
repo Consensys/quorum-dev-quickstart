@@ -1,0 +1,329 @@
+---
+version: '3.6'
+
+
+
+
+x-quorum-def:
+  &quorum-def
+  restart: "on-failure"
+  build:
+    context: config/goquorum
+    args:
+      QUORUM_VERSION: ${QUORUM_VERSION:-latest}
+  expose:
+    - 30303
+    - 8545
+    - 9545
+  healthcheck:
+    test: ["CMD", "wget", "--spider", "--proxy", "off", "http://localhost:8545"]
+    interval: 3s
+    timeout: 3s
+    retries: 10
+    start_period: 5s
+
+
+
+x-tessera-def:
+  &tessera-def
+  platform: linux/x86_64
+  build:
+    context: config/tessera
+    args:
+      TESSERA_VERSION: ${TESSERA_VERSION:-latest}
+  environment:
+    TESSERA_MODE: tessera
+  expose:
+    - 9000
+    - 9080
+    - 9101
+  restart: "no"
+  healthcheck:
+    test: ["CMD", "wget", "--spider", "--proxy", "off", "http://localhost:9000/upcheck"]
+    interval: 3s
+    timeout: 3s
+    retries: 20
+    start_period: 5s
+
+
+
+
+
+
+
+
+
+
+services:
+
+  validator1:
+    << : *quorum-def
+    ports:
+      - 21001:8545/tcp
+      - 30303
+      - 9545
+    environment:
+      - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=standard
+    volumes:
+      - ./config/nodes/validator1:/config/keys
+      - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.11
+
+  validator2:
+    << : *quorum-def
+    ports:
+      - 21002:8545/tcp
+      - 30303
+      - 9545
+    environment:
+      - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=standard
+    volumes:
+      - ./config/nodes/validator2:/config/keys
+      - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.12
+
+  validator3:
+    << : *quorum-def
+    ports:
+      - 21003:8545/tcp
+      - 30303
+      - 9545
+    environment:
+      - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=standard
+    volumes:
+      - ./config/nodes/validator3:/config/keys
+      - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.13
+
+  validator4:
+    << : *quorum-def
+    ports:
+      - 21004:8545/tcp
+      - 30303
+      - 9545
+    environment:
+      - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=standard
+    volumes:
+      - ./config/nodes/validator4:/config/keys
+      - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.14
+
+  rpcnode:
+    << : *quorum-def
+    container_name: rpcnode
+    ports:
+      - 8545:8545/tcp
+      - 8546:8546/tcp
+      - 30303
+      - 9545
+    environment:
+      - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=standard
+    volumes:
+      - ./config/nodes/rpcnode:/config/keys
+      - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.15
+
+
+
+  member1tessera:
+    << : *tessera-def
+    ports:
+      - 9081:9080
+    volumes:
+      - ./config/nodes/member1:/config/keys
+      - ./logs/tessera:/var/log/tessera/
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.26
+
+  member1quorum:
+    << : *quorum-def
+    ports:
+      - 20000:8545/tcp
+      - 20001:8546/tcp
+      - 30303
+      - 9545
+    depends_on:
+      - member1tessera
+    environment:
+      - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=enhanced
+      - QUORUM_PTM=member1tessera
+    volumes:
+      - ./config/nodes/member1:/config/keys
+      - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.16
+
+  member2tessera:
+    << : *tessera-def
+    ports:
+      - 9082:9080
+    volumes:
+      - ./config/nodes/member2:/config/keys
+      - ./logs/tessera:/var/log/tessera/
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.27
+
+  member2quorum:
+    << : *quorum-def
+    ports:
+      - 20002:8545/tcp
+      - 20003:8546/tcp
+      - 30303
+      - 9545
+    depends_on:
+      - member2tessera
+    environment:
+      - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=enhanced
+      - QUORUM_PTM=member2tessera
+    volumes:
+      - ./config/nodes/member2:/config/keys
+      - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.17
+
+  member3tessera:
+    << : *tessera-def
+    ports:
+      - 9083:9080
+    volumes:
+      - ./config/nodes/member3:/config/keys
+      - ./logs/tessera:/var/log/tessera/
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.28
+
+  member3quorum:
+    << : *quorum-def
+    ports:
+      - 20004:8545/tcp
+      - 20005:8546/tcp
+      - 30303
+      - 9545
+    depends_on:
+      - member3tessera
+    environment:
+      - GOQUORUM_CONS_ALGO=${GOQUORUM_CONS_ALGO}
+      - GOQUORUM_GENESIS_MODE=enhanced
+      - QUORUM_PTM=member3tessera
+    volumes:
+      - ./config/nodes/member3:/config/keys
+      - ./logs/quorum:/var/log/quorum/
+      - ./config/permissions:/permissions
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.18
+
+
+
+  explorer:
+    image: consensys/quorum-explorer:${QUORUM_EXPLORER_VERSION:-latest}
+    volumes:
+      - ./quorum-explorer/config.json:/app/config.json
+      - ./quorum-explorer/env:/app/.env.production
+    depends_on:
+      - rpcnode
+    ports:
+      - 25000:25000/tcp
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.31
+
+
+
+
+
+
+
+  prometheus:
+    image: "prom/prometheus:v2.46.0"
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml 
+    ports:
+      - 9090:9090/tcp
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.32
+
+  grafana:
+    image: "grafana/grafana:10.1.0"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_USERS_VIEWERS_CAN_EDIT=true
+    volumes:
+      - ./config/grafana/provisioning/:/etc/grafana/provisioning/
+      - grafana:/var/lib/grafana
+    ports:
+      - 3000:3000/tcp
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.33
+
+  loki:
+    image: "grafana/loki:2.8.4"
+    volumes:
+      - ./loki/loki.yml:/etc/loki/local-config.yaml:ro
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - 3100:3100/tcp
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.34
+
+  promtail:
+    image: "grafana/promtail:2.8.4"
+    volumes:
+      - ./logs:/var/log
+      - ./promtail/promtail.yml:/etc/promtail/config.yml:ro
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      quorum-dev-quickstart:
+        ipv4_address: 172.16.239.35
+
+
+
+networks:
+  quorum-dev-quickstart:
+    name: quorum-dev-quickstart
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.16.239.0/24
+
+volumes:
+  splunk:
+  ethlogger:
+  prometheus:
+  grafana:
+  blockscoutpostgres:

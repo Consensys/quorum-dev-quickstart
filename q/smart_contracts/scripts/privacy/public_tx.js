@@ -12,6 +12,7 @@ const accountAddress = quorum.member1.accountAddress;
 const contractJsonPath = path.resolve(
   __dirname,
   "../",
+  "../",
   "contracts",
   "SimpleStorage.json"
 );
