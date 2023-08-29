@@ -3,7 +3,7 @@ const fs = require("fs-extra");
 const Web3 = require("web3");
 
 // member1 details
-const { tessera, quorum } = require("./keys.js");
+const { tessera, quorum } = require("../keys.js");
 const host = quorum.member1.url;
 const accountAddress = quorum.member1.accountAddress;
 

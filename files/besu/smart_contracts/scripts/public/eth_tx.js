@@ -3,8 +3,8 @@ const fs = require('fs-extra');
 const Web3 = require('web3');
 
 // member1 details
-const { tessera, quorum, accounts } = require("../keys.js");
-const host = quorum.rpcnode.url;
+const { tessera, besu, accounts } = require("../keys.js");
+const host = besu.rpcnode.url;
 
 async function main(){
   const web3 = new Web3(host);

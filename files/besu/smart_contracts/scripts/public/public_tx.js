@@ -3,9 +3,9 @@ const fs = require("fs-extra");
 const Web3 = require("web3");
 
 // member1 details
-const { tessera, quorum } = require("../keys.js");
-const host = quorum.rpcnode.url;
-const accountAddress = quorum.rpcnode.accountAddress;
+const { tessera, besu } = require("../keys.js");
+const host = besu.rpcnode.url;
+const accountAddress = besu.rpcnode.accountAddress;
 
 // abi and bytecode generated from simplestorage.sol:
 // > solcjs --bin --abi simplestorage.sol

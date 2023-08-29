@@ -12,7 +12,7 @@ module.exports = {
       publicKey: "1iTZde/ndBHvzhcl7V68x44Vx7pl8nwx9LqnM/AfJUg=",
     },
   },
-  quorum: {
+  besu: {
     rpcnode: {
       name: "rpcnode",
       url: "http://127.0.0.1:8545",
