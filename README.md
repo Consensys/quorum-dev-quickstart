@@ -119,7 +119,3 @@ TypeError: Tx is not a constructor
 This example requires ONCHAIN privacy to be DISABLED. 
 Check config for ONCHAIN privacy groups.
 ```
-
-2, Besu _ grafana dash broken 
-
-3. Goq Grafana _ dash broken as well?
