@@ -104,3 +104,17 @@ the container's user 1000 to your local user id so permissions will work like so
 image: some:img
 user: $(id -u):$(id -g)
 ```
+
+### `quorumengineering/tessera` can't be found on Mac OS and no match for platform 
+
+Often, when trying to use tessera with `quorum-dev-quickstart` on Mac OS, you may encounter a message stating that the `tessera` image cannot be found and does not match the platform. 
+
+```
+failed to solve: quorumengineering/tessera:23.4.0: no match for platform in manifest sha256:fb436c0ac56b79ca7cda27b92a3f81273de77d1c5b813aba0183333ca483053e: not found
+```
+
+In this case, you can modify the `FROM` statement in the `Dockerfile` located at `quorum-test-network/config/tessera` as follows.
+
+```
+FROM --platform=linux/amd64 quorumengineering/tessera:${TESSERA_VERSION}
+```
