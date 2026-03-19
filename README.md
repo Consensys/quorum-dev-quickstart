@@ -1,6 +1,14 @@
 # Quorum Dev Quickstart
 
 
+## ⚠️ Project Deprecation Notice ⚠️
+
+This repo will be archived on Apr 1, 2026.
+
+The quorum-dev-quickstart is no longer supported. If you need to use a quickstart for Besu
+please use the [besu-dev-quickstart](https://github.com/Consensys/besu-dev-quickstart) 
+
+
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
 2. [Usage](#usage)
