@@ -747,15 +747,13 @@ services:
         ipv4_address: 172.16.239.42
 
   otelcollector:
-    << : *otelcollector-def
-    << : *docker-logging
+    << : [*otelcollector-def, *docker-logging]
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.43
 
   ethlogger:
-    << : *ethlogger-def
-    << : *docker-logging
+    << : [*ethlogger-def, *docker-logging]
     networks:
       quorum-dev-quickstart:
         ipv4_address: 172.16.239.44
