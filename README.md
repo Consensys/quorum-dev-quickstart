@@ -126,3 +126,20 @@ In this case, you can modify the `FROM` statement in the `Dockerfile` located at
 ```
 FROM --platform=linux/amd64 quorumengineering/tessera:${TESSERA_VERSION}
 ```
+
+### `npx quorum-dev-quickstart` is not working on Linux
+
+When `npx quorum-dev-quickstart` is executed, it may run without any prompts or errors. When checked the npm log, you may find the following entry like: 
+
+```
+info run quorum-dev-quickstart@0.2.4 prepare ../../../../quorum-dev-quickstart tsc && eslint --fix './src/**'
+info run quorum-dev-quickstart@0.2.4 prepare { code: 127, signal: null }
+verbose exit 127
+verbose code 127
+```
+
+The error code 127 typically indicates that `tsc` or `eslint` command was not found. To resolve this, ensure that both tsc and eslint are installed
+
+```
+npm install -g typescript eslint
+```
