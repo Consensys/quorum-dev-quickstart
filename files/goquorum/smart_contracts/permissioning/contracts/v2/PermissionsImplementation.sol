@@ -25,7 +25,7 @@ contract PermissionsImplementation {
     string private orgAdminRole;
 
 
-    uint256 private fullAccess = 3;
+    uint256 private constant fullAccess = 3;
 
     /** @dev this variable is meant for tracking the initial network boot up
         once the network boot up is done the value is set to true
