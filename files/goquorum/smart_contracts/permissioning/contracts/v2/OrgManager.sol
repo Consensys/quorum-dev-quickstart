@@ -18,7 +18,6 @@ import "./PermissionsUpgradable.sol";
      possible.
   */
 contract OrgManager {
-    string private adminOrgId;
     PermissionsUpgradable private permUpgradable;
     // checks if first time network boot up has happened or not
     bool private networkBoot = false;
